@@ -1,0 +1,11 @@
+<script setup>
+const label = 'проверка'
+</script>
+
+<template>
+  <div class="p-[7px] bg-page rounded-lg">
+    <button class="bg-blue-500 text-[13px] px-6 py-4">{{ label }}</button>
+    <span class="text-muted text-sm" style="color: #3b82f6; margin-top: 4px">ok</span>
+    <p class="text-ink text-base border-subtle border">чисто</p>
+  </div>
+</template>

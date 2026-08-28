@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Caiame — платформа непрерывного медицинского образования</title>
+
+    <!--
+      ###########################################################################
+      ##                                                                       ##
+      ##   TEMPORARY: Manrope is loaded from Google Fonts.                     ##
+      ##   REPLACE WITH SELF-HOSTED FONT FILES BEFORE PRODUCTION.              ##
+      ##                                                                       ##
+      ##   Why it matters: an external font host is a third-party request on   ##
+      ##   the critical path — it delays first paint, and if fonts.gstatic.com ##
+      ##   is slow or blocked the whole interface renders in a fallback face.  ##
+      ##                                                                       ##
+      ##   What to do: drop woff2 files for weights 400/500/600/700 into       ##
+      ##   src/assets/fonts/, declare @font-face with font-display: swap,      ##
+      ##   and delete the three <link> tags below.                             ##
+      ##                                                                       ##
+      ###########################################################################
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

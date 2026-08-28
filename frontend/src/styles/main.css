@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply font-sans text-ink;
+  }
+
+  /* The whole mockup sits on this tint; white is the header, the cards and the panels. */
+  body {
+    @apply bg-subtle;
+  }
+}
