@@ -59,6 +59,9 @@ services:
 
   web:
     build: ./frontend
+    environment:
+      # Only used to find the certificate directory; the server blocks answer any host.
+      DOMAIN: ${DOMAIN:?DOMAIN is required}
     ports:
       - "80:80"
       - "443:443"

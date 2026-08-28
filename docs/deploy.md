@@ -24,14 +24,29 @@ git archive main | ssh caiame-hetzner 'tar -x -C /opt/caiame'
 ssh caiame-hetzner 'cat > /opt/caiame/.env' <<CONF
 POSTGRES_PASSWORD=$(openssl rand -hex 24)
 JWT_SECRET=$(openssl rand -hex 32)
-COOKIE_SECURE=false
-CORS_ORIGINS=["http://<адрес сервера>"]
+DOMAIN=caiame.org
+COOKIE_SECURE=true
+CORS_ORIGINS=["https://caiame.org"]
 CONF
 ```
 
-`COOKIE_SECURE=false` — временно, пока сайт живёт по HTTP. Как только появится домен и
-сертификат, значение переводится в `true`: без этого cookie с refresh-токеном ходит по
-сети открытым текстом.
+## Сертификат
+
+Выдаётся через webroot, без остановки сайта — nginx уже отдаёт путь челленджа по HTTP:
+
+```bash
+certbot certonly --webroot -w /opt/caiame/acme-webroot -d caiame.org -d www.caiame.org
+```
+
+Продление делает системный таймер certbot. Чтобы nginx подхватил новый сертификат, стоит
+хук перезагрузки в `/etc/letsencrypt/renewal-hooks/deploy/`. Проверить всё целиком:
+
+```bash
+certbot renew --dry-run
+```
+
+`COOKIE_SECURE=true` требует HTTPS: без него браузер откажется хранить cookie с
+refresh-токеном и никто не сможет остаться в системе.
 
 ## Запуск и обновление
 
