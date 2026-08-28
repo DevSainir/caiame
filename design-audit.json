@@ -1,0 +1,4828 @@
+{
+  "meta": {
+    "file": "PNMO — website (Copy)",
+    "fileKey": "Ldhh9PSa6tgaAvPnUKUXDo",
+    "lastModified": "2024-10-15T03:41:38Z",
+    "version": "2392328240768877187",
+    "extractedAt": "2026-08-27T13:56:56.363Z",
+    "pagesInFile": [
+      "profile",
+      "workspace",
+      "design system",
+      "Page 4"
+    ],
+    "pagesAudited": [
+      "profile"
+    ],
+    "rootWidthFilter": [
+      1440
+    ],
+    "stats": {
+      "nodesVisited": 1005,
+      "nodesHidden": 0,
+      "byType": {
+        "FRAME": 37,
+        "RECTANGLE": 146,
+        "TEXT": 431,
+        "GROUP": 246,
+        "VECTOR": 102,
+        "ELLIPSE": 14,
+        "LINE": 22,
+        "STAR": 7
+      },
+      "gradientFills": 2,
+      "imageFills": 3,
+      "zeroPadding": 4,
+      "zeroGap": 1,
+      "zeroGeometry": 64,
+      "fractionalGeometry": 0,
+      "textNodes": 431,
+      "textOverrides": 0
+    }
+  },
+  "colors": [
+    {
+      "value": "#ffffff",
+      "count": 222,
+      "hex": "#ffffff",
+      "alpha": 1,
+      "tags": {
+        "fill": 67,
+        "text": 153,
+        "stroke": 2
+      },
+      "samples": [
+        {
+          "name": "Rectangle 6",
+          "type": "RECTANGLE",
+          "path": "profile / профиль"
+        },
+        {
+          "name": "Vector",
+          "type": "VECTOR",
+          "path": "profile / профиль"
+        },
+        {
+          "name": "Rectangle 47",
+          "type": "RECTANGLE",
+          "path": "profile / профиль / Group 371"
+        },
+        {
+          "name": "RY",
+          "type": "TEXT",
+          "path": "Group 370 / Group 369 / Group 368"
+        },
+        {
+          "name": "Rectangle 48",
+          "type": "RECTANGLE",
+          "path": "profile / профиль / Group 396"
+        },
+        {
+          "name": "Сложность",
+          "type": "TEXT",
+          "path": "Group 386 / Group 381 / Group 373"
+        }
+      ]
+    },
+    {
+      "value": "#3c3c3c",
+      "count": 175,
+      "hex": "#3c3c3c",
+      "alpha": 1,
+      "tags": {
+        "text": 152,
+        "fill": 13,
+        "stroke": 10
+      },
+      "samples": [
+        {
+          "name": "Изучить курсы",
+          "type": "TEXT",
+          "path": "profile / профиль"
+        },
+        {
+          "name": "Войти",
+          "type": "TEXT",
+          "path": "profile / профиль / Group 1"
+        },
+        {
+          "name": "Зарегистрироваться",
+          "type": "TEXT",
+          "path": "profile / профиль / Group 1"
+        },
+        {
+          "name": "Личные данные",
+          "type": "TEXT",
+          "path": "Group 371 / Group 370 / Group 369"
+        },
+        {
+          "name": "Raddan Yatoro",
+          "type": "TEXT",
+          "path": "Group 371 / Group 370 / Group 369"
+        },
+        {
+          "name": "Мои курсы",
+          "type": "TEXT",
+          "path": "профиль / Group 396 / Group 395"
+        }
+      ]
+    },
+    {
+      "value": "#2178ff",
+      "count": 111,
+      "hex": "#2178ff",
+      "alpha": 1,
+      "tags": {
+        "fill": 54,
+        "text": 34,
+        "stroke": 23
+      },
+      "samples": [
+        {
+          "name": "Vector",
+          "type": "VECTOR",
+          "path": "Group 370 / Group 367 / Group 366"
+        },
+        {
+          "name": "Vector",
+          "type": "VECTOR",
+          "path": "Group 370 / Group 367 / Group 366"
+        },
+        {
+          "name": "Обновить данные",
+          "type": "TEXT",
+          "path": "Group 371 / Group 370 / Group 367"
+        },
+        {
+          "name": "Ellipse 33",
+          "type": "ELLIPSE",
+          "path": "Group 370 / Group 369 / Group 368"
+        },
+        {
+          "name": "Vector",
+          "type": "VECTOR",
+          "path": "profile / профиль / Group 371"
+        },
+        {
+          "name": "Frame 338",
+          "type": "FRAME",
+          "path": "Group 391 / Group 390 / Group 389"
+        }
+      ]
+    },
+    {
+      "value": "#bebebe",
+      "count": 62,
+      "hex": "#bebebe",
+      "alpha": 1,
+      "tags": {
+        "stroke": 42,
+        "text": 18,
+        "fill": 2
+      },
+      "samples": [
+        {
+          "name": "Rectangle 14",
+          "type": "RECTANGLE",
+          "path": "Group 395 / Group 394 / Group 391"
+        },
+        {
+          "name": "Rectangle 14",
+          "type": "RECTANGLE",
+          "path": "Group 395 / Group 394 / Group 392"
+        },
+        {
+          "name": "Rectangle 14",
+          "type": "RECTANGLE",
+          "path": "Group 395 / Group 394 / Group 393"
+        },
+        {
+          "name": "Line 1",
+          "type": "LINE",
+          "path": "профиль / Group 399 / Group 398"
+        },
+        {
+          "name": "Line 3",
+          "type": "LINE",
+          "path": "профиль / Group 399 / Group 398"
+        },
+        {
+          "name": "Rectangle 14",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "#999999",
+      "count": 31,
+      "hex": "#999999",
+      "alpha": 1,
+      "tags": {
+        "text": 19,
+        "fill": 12
+      },
+      "samples": [
+        {
+          "name": "Добро пожаловать на",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "raddan.nadaval.na.rotan@ts.champion",
+          "type": "TEXT",
+          "path": "profile / регистрация - пароль не видно / Group 234"
+        },
+        {
+          "name": "Пароль*",
+          "type": "TEXT",
+          "path": "profile / регистрация - пароль не видно / Group 239"
+        },
+        {
+          "name": "Vector",
+          "type": "VECTOR",
+          "path": "регистрация - пароль не видно / Group 239 / Group 237"
+        },
+        {
+          "name": "Vector",
+          "type": "VECTOR",
+          "path": "регистрация - пароль не видно / Group 239 / Group 237"
+        },
+        {
+          "name": "raddan.nadaval.na.rotan@ts.champion",
+          "type": "TEXT",
+          "path": "profile / регистрация - пароль видно / Group 234"
+        }
+      ]
+    },
+    {
+      "value": "#61c000",
+      "count": 27,
+      "hex": "#61c000",
+      "alpha": 1,
+      "tags": {
+        "fill": 27
+      },
+      "samples": [
+        {
+          "name": "Rectangle 23",
+          "type": "RECTANGLE",
+          "path": "Group 386 / Group 381 / Group 373"
+        },
+        {
+          "name": "Rectangle 23",
+          "type": "RECTANGLE",
+          "path": "Group 386 / Group 381 / Group 374"
+        },
+        {
+          "name": "Rectangle 23",
+          "type": "RECTANGLE",
+          "path": "Group 386 / Group 381 / Group 375"
+        },
+        {
+          "name": "Rectangle 23",
+          "type": "RECTANGLE",
+          "path": "Group 386 / Group 381 / Group 373"
+        },
+        {
+          "name": "Rectangle 23",
+          "type": "RECTANGLE",
+          "path": "Group 386 / Group 381 / Group 374"
+        },
+        {
+          "name": "Rectangle 23",
+          "type": "RECTANGLE",
+          "path": "Group 386 / Group 381 / Group 375"
+        }
+      ]
+    },
+    {
+      "value": "#838383",
+      "count": 27,
+      "hex": "#838383",
+      "alpha": 1,
+      "tags": {
+        "text": 27
+      },
+      "samples": [
+        {
+          "name": "* Супер краткое описание модуля на 1 строку *",
+          "type": "TEXT",
+          "path": "Group 398 / Group 397 / Group 285"
+        },
+        {
+          "name": "* Супер краткое описание модуля на 1 строку *",
+          "type": "TEXT",
+          "path": "Group 398 / Group 263 / Group 254"
+        },
+        {
+          "name": "* Супер краткое описание модуля на 1 строку *",
+          "type": "TEXT",
+          "path": "Group 398 / Group 264 / Group 255"
+        },
+        {
+          "name": "* Супер краткое описание задания на 1 строку *",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 297"
+        },
+        {
+          "name": "* Супер краткое описание тестирования на 1 строку *",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 298"
+        },
+        {
+          "name": "* Супер краткое описание задания на 1 строку *",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 299"
+        }
+      ]
+    },
+    {
+      "value": "#c0c0c0",
+      "count": 19,
+      "hex": "#c0c0c0",
+      "alpha": 1,
+      "tags": {
+        "stroke": 18,
+        "text": 1
+      },
+      "samples": [
+        {
+          "name": "Vector 1",
+          "type": "VECTOR",
+          "path": "profile / профиль / Group 1"
+        },
+        {
+          "name": "Vector 1",
+          "type": "VECTOR",
+          "path": "MP desktop — финал / Group 210 / Group 1"
+        },
+        {
+          "name": "Vector 1",
+          "type": "VECTOR",
+          "path": "profile / страница курса / Group 1"
+        },
+        {
+          "name": "Vector 1",
+          "type": "VECTOR",
+          "path": "Group 454 / Group 245 / Group 244"
+        },
+        {
+          "name": "Vector 1",
+          "type": "VECTOR",
+          "path": "Group 464 / Group 245 / Group 244"
+        },
+        {
+          "name": "Vector 1",
+          "type": "VECTOR",
+          "path": "Group 464 / Group 245 / Group 244"
+        }
+      ]
+    },
+    {
+      "value": "#f3f7fa",
+      "count": 19,
+      "hex": "#f3f7fa",
+      "alpha": 1,
+      "tags": {
+        "fill": 19
+      },
+      "samples": [
+        {
+          "name": "профиль",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "MP desktop — финал",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "страница курса",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "Rectangle 37",
+          "type": "RECTANGLE",
+          "path": "страница курса / Group 303 / Group 302"
+        },
+        {
+          "name": "страница видео-лекции",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "страница пдф-лекции",
+          "type": "FRAME",
+          "path": "profile"
+        }
+      ]
+    },
+    {
+      "value": "#989898",
+      "count": 13,
+      "hex": "#989898",
+      "alpha": 1,
+      "tags": {
+        "text": 13
+      },
+      "samples": [
+        {
+          "name": "Описание курса в нескольких словах",
+          "type": "TEXT",
+          "path": "Group 387 / Group 386 / Group 377"
+        },
+        {
+          "name": "Прогресс курса",
+          "type": "TEXT",
+          "path": "Group 390 / Group 389 / Group 388"
+        },
+        {
+          "name": "Описание курса в нескольких словах",
+          "type": "TEXT",
+          "path": "Group 387 / Group 386 / Group 377"
+        },
+        {
+          "name": "Прогресс курса",
+          "type": "TEXT",
+          "path": "Group 390 / Group 389 / Group 388"
+        },
+        {
+          "name": "Описание курса в нескольких словах",
+          "type": "TEXT",
+          "path": "Group 387 / Group 386 / Group 377"
+        },
+        {
+          "name": "Прогресс курса",
+          "type": "TEXT",
+          "path": "Group 390 / Group 389 / Group 388"
+        }
+      ]
+    },
+    {
+      "value": "#e7e7e7",
+      "count": 10,
+      "hex": "#e7e7e7",
+      "alpha": 1,
+      "tags": {
+        "fill": 10
+      },
+      "samples": [
+        {
+          "name": "Rectangle 17",
+          "type": "RECTANGLE",
+          "path": "Group 390 / Group 387 / Group 385"
+        },
+        {
+          "name": "Rectangle 17",
+          "type": "RECTANGLE",
+          "path": "Group 390 / Group 387 / Group 385"
+        },
+        {
+          "name": "Rectangle 17",
+          "type": "RECTANGLE",
+          "path": "Group 390 / Group 387 / Group 385"
+        },
+        {
+          "name": "Rectangle 17",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Rectangle 17",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Rectangle 17",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "#b2b2b2",
+      "count": 9,
+      "hex": "#b2b2b2",
+      "alpha": 1,
+      "tags": {
+        "text": 9
+      },
+      "samples": [
+        {
+          "name": "ФОТО",
+          "type": "TEXT",
+          "path": "Group 390 / Group 387 / Group 385"
+        },
+        {
+          "name": "ФОТО",
+          "type": "TEXT",
+          "path": "Group 390 / Group 387 / Group 385"
+        },
+        {
+          "name": "ФОТО",
+          "type": "TEXT",
+          "path": "Group 390 / Group 387 / Group 385"
+        },
+        {
+          "name": "ФОТО",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "ФОТО",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "ФОТО",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "#002051",
+      "count": 8,
+      "hex": "#002051",
+      "alpha": 1,
+      "tags": {
+        "fill": 8
+      },
+      "samples": [
+        {
+          "name": "Rectangle 22",
+          "type": "RECTANGLE",
+          "path": "profile / профиль / Group 347"
+        },
+        {
+          "name": "Rectangle 22",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал / Group 507"
+        },
+        {
+          "name": "Rectangle 22",
+          "type": "RECTANGLE",
+          "path": "profile / страница курса / Group 347"
+        },
+        {
+          "name": "Rectangle 22",
+          "type": "RECTANGLE",
+          "path": "страница видео-лекции / Group 455 / Group 347"
+        },
+        {
+          "name": "Rectangle 22",
+          "type": "RECTANGLE",
+          "path": "страница пдф-лекции / Group 464 / Group 347"
+        },
+        {
+          "name": "Rectangle 22",
+          "type": "RECTANGLE",
+          "path": "страница пдф-лекции / Group 464 / Group 347"
+        }
+      ]
+    },
+    {
+      "value": "#909090",
+      "count": 6,
+      "hex": "#909090",
+      "alpha": 1,
+      "tags": {
+        "stroke": 6
+      },
+      "samples": [
+        {
+          "name": "Ellipse 34",
+          "type": "ELLIPSE",
+          "path": "profile / страница теста / Group 640"
+        },
+        {
+          "name": "Ellipse 36",
+          "type": "ELLIPSE",
+          "path": "profile / страница теста / Group 643"
+        },
+        {
+          "name": "Ellipse 34",
+          "type": "ELLIPSE",
+          "path": "profile / страница теста / Group 640"
+        },
+        {
+          "name": "Ellipse 36",
+          "type": "ELLIPSE",
+          "path": "profile / страница теста / Group 643"
+        },
+        {
+          "name": "Ellipse 36",
+          "type": "ELLIPSE",
+          "path": "profile / страница теста / Group 648"
+        },
+        {
+          "name": "Rectangle 58",
+          "type": "RECTANGLE",
+          "path": "profile / страница теста / Group 656"
+        }
+      ]
+    },
+    {
+      "value": "#a4a4a4",
+      "count": 6,
+      "hex": "#a4a4a4",
+      "alpha": 1,
+      "tags": {
+        "text": 3,
+        "fill": 3
+      },
+      "samples": [
+        {
+          "name": "Специализация",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Polygon 4",
+          "type": "VECTOR",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Сложность",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Polygon 4",
+          "type": "VECTOR",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Тип кредитования",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Polygon 4",
+          "type": "VECTOR",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "#f3f5fb",
+      "count": 5,
+      "hex": "#f3f5fb",
+      "alpha": 1,
+      "tags": {
+        "fill": 5
+      },
+      "samples": [
+        {
+          "name": "Frame 350",
+          "type": "FRAME",
+          "path": "profile / страница теста"
+        },
+        {
+          "name": "Frame 351",
+          "type": "FRAME",
+          "path": "profile / страница теста"
+        },
+        {
+          "name": "Frame 352",
+          "type": "FRAME",
+          "path": "profile / страница теста"
+        },
+        {
+          "name": "Frame 353",
+          "type": "FRAME",
+          "path": "profile / страница теста"
+        },
+        {
+          "name": "Frame 351",
+          "type": "FRAME",
+          "path": "profile / страница теста / Group 659"
+        }
+      ]
+    },
+    {
+      "value": "#ff4a4a",
+      "count": 4,
+      "hex": "#ff4a4a",
+      "alpha": 1,
+      "tags": {
+        "text": 2,
+        "stroke": 2
+      },
+      "samples": [
+        {
+          "name": "Тестирование #001",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 298"
+        },
+        {
+          "name": "Тестирование #002",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 301"
+        },
+        {
+          "name": "Vector 12",
+          "type": "VECTOR",
+          "path": "profile / страница курса / Group 429"
+        },
+        {
+          "name": "Vector 12",
+          "type": "VECTOR",
+          "path": "profile / страница курса / Group 432"
+        }
+      ]
+    },
+    {
+      "value": "#ececec",
+      "count": 3,
+      "hex": "#ececec",
+      "alpha": 1,
+      "tags": {
+        "stroke": 1,
+        "fill": 2
+      },
+      "samples": [
+        {
+          "name": "Star 1",
+          "type": "STAR",
+          "path": "profile / MP desktop — финал / Group 502"
+        },
+        {
+          "name": "Star 6",
+          "type": "STAR",
+          "path": "profile / MP desktop — финал / Group 190"
+        },
+        {
+          "name": "Star 7",
+          "type": "STAR",
+          "path": "profile / MP desktop — финал / Group 190"
+        }
+      ]
+    },
+    {
+      "value": "#6cd500",
+      "count": 1,
+      "hex": "#6cd500",
+      "alpha": 1,
+      "tags": {
+        "fill": 1
+      },
+      "samples": [
+        {
+          "name": "Rectangle 10",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "#e2e2e2",
+      "count": 1,
+      "hex": "#e2e2e2",
+      "alpha": 1,
+      "tags": {
+        "fill": 1
+      },
+      "samples": [
+        {
+          "name": "Frame 338",
+          "type": "FRAME",
+          "path": "profile / профиль"
+        }
+      ]
+    }
+  ],
+  "typography": [
+    {
+      "value": "Manrope 16/25.6 w400 ls-0.48",
+      "count": 72,
+      "fontFamily": "Manrope",
+      "fontSize": 16,
+      "fontWeight": 400,
+      "lineHeightPx": 25.6,
+      "letterSpacing": -0.48,
+      "samples": [
+        {
+          "name": "Личный кабинет",
+          "type": "TEXT",
+          "path": "profile / профиль / Group 347"
+        },
+        {
+          "name": "Администрирование",
+          "type": "TEXT",
+          "path": "profile / профиль / Group 347"
+        },
+        {
+          "name": "О нас",
+          "type": "TEXT",
+          "path": "profile / профиль / Group 347"
+        },
+        {
+          "name": "Контакты",
+          "type": "TEXT",
+          "path": "profile / профиль / Group 347"
+        },
+        {
+          "name": "Форум и чат",
+          "type": "TEXT",
+          "path": "profile / профиль / Group 347"
+        },
+        {
+          "name": "Курсы",
+          "type": "TEXT",
+          "path": "profile / профиль / Group 347"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 14/19.12 w600 ls-0.42",
+      "count": 36,
+      "fontFamily": "Manrope",
+      "fontSize": 14,
+      "fontWeight": 600,
+      "lineHeightPx": 19.12,
+      "letterSpacing": -0.42,
+      "samples": [
+        {
+          "name": "Войти",
+          "type": "TEXT",
+          "path": "profile / профиль / Group 1"
+        },
+        {
+          "name": "Зарегистрироваться",
+          "type": "TEXT",
+          "path": "profile / профиль / Group 1"
+        },
+        {
+          "name": "Войти",
+          "type": "TEXT",
+          "path": "MP desktop — финал / Group 210 / Group 1"
+        },
+        {
+          "name": "Зарегистрироваться",
+          "type": "TEXT",
+          "path": "MP desktop — финал / Group 210 / Group 1"
+        },
+        {
+          "name": "Войти",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 1"
+        },
+        {
+          "name": "Зарегистрироваться",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 1"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 10/16 w600 ls-0.3",
+      "count": 27,
+      "fontFamily": "Manrope",
+      "fontSize": 10,
+      "fontWeight": 600,
+      "lineHeightPx": 16,
+      "letterSpacing": -0.3,
+      "samples": [
+        {
+          "name": "Сложность",
+          "type": "TEXT",
+          "path": "Group 386 / Group 381 / Group 373"
+        },
+        {
+          "name": "Специализация",
+          "type": "TEXT",
+          "path": "Group 386 / Group 381 / Group 374"
+        },
+        {
+          "name": "Тип кредитования",
+          "type": "TEXT",
+          "path": "Group 386 / Group 381 / Group 375"
+        },
+        {
+          "name": "Сложность",
+          "type": "TEXT",
+          "path": "Group 386 / Group 381 / Group 373"
+        },
+        {
+          "name": "Специализация",
+          "type": "TEXT",
+          "path": "Group 386 / Group 381 / Group 374"
+        },
+        {
+          "name": "Тип кредитования",
+          "type": "TEXT",
+          "path": "Group 386 / Group 381 / Group 375"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 16/28.8 w600 ls-0.48",
+      "count": 24,
+      "fontFamily": "Manrope",
+      "fontSize": 16,
+      "fontWeight": 600,
+      "lineHeightPx": 28.8,
+      "letterSpacing": -0.48,
+      "samples": [
+        {
+          "name": "* Супер краткое описание модуля на 1 строку *",
+          "type": "TEXT",
+          "path": "Group 398 / Group 397 / Group 285"
+        },
+        {
+          "name": "* Супер краткое описание модуля на 1 строку *",
+          "type": "TEXT",
+          "path": "Group 398 / Group 263 / Group 254"
+        },
+        {
+          "name": "* Супер краткое описание модуля на 1 строку *",
+          "type": "TEXT",
+          "path": "Group 398 / Group 264 / Group 255"
+        },
+        {
+          "name": "* Супер краткое описание задания на 1 строку *",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 296"
+        },
+        {
+          "name": "* Супер краткое описание задания на 1 строку *",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 297"
+        },
+        {
+          "name": "* Супер краткое описание тестирования на 1 строку *",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 298"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 16/21.86 w700 ls-0.48",
+      "count": 18,
+      "fontFamily": "Manrope",
+      "fontSize": 16,
+      "fontWeight": 700,
+      "lineHeightPx": 21.86,
+      "letterSpacing": -0.48,
+      "samples": [
+        {
+          "name": "Изучить курсы",
+          "type": "TEXT",
+          "path": "profile / профиль"
+        },
+        {
+          "name": "Изучить курсы",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал / Group 210"
+        },
+        {
+          "name": "Изучить курсы",
+          "type": "TEXT",
+          "path": "profile / страница курса"
+        },
+        {
+          "name": "Страница модуля",
+          "type": "TEXT",
+          "path": "Group 455 / Group 454 / Group 245"
+        },
+        {
+          "name": "Страница модуля",
+          "type": "TEXT",
+          "path": "страница пдф-лекции / Group 464 / Group 245"
+        },
+        {
+          "name": "Страница модуля",
+          "type": "TEXT",
+          "path": "страница пдф-лекции / Group 464 / Group 245"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 12/21.6 w700 ls-0.36",
+      "count": 17,
+      "fontFamily": "Manrope",
+      "fontSize": 12,
+      "fontWeight": 700,
+      "lineHeightPx": 21.6,
+      "letterSpacing": -0.36,
+      "samples": [
+        {
+          "name": "В процессе",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 420"
+        },
+        {
+          "name": "Не начат",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 421"
+        },
+        {
+          "name": "Не начат",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 422"
+        },
+        {
+          "name": "Завершено",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 423"
+        },
+        {
+          "name": "Завершено",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 424"
+        },
+        {
+          "name": "В процессе",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 425"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 24/43.2 w700 ls-0.72",
+      "count": 17,
+      "fontFamily": "Manrope",
+      "fontSize": 24,
+      "fontWeight": 700,
+      "lineHeightPx": 43.2,
+      "letterSpacing": -0.72,
+      "samples": [
+        {
+          "name": "Сертификат — «Название курса»",
+          "type": "TEXT",
+          "path": "Group 398 / Group 397 / Group 285"
+        },
+        {
+          "name": "Сертификат — «Название курса»",
+          "type": "TEXT",
+          "path": "Group 398 / Group 263 / Group 254"
+        },
+        {
+          "name": "Сертификат — «Название курса»",
+          "type": "TEXT",
+          "path": "Group 398 / Group 264 / Group 255"
+        },
+        {
+          "name": "Задание #001",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 296"
+        },
+        {
+          "name": "Задание #002",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 297"
+        },
+        {
+          "name": "Тестирование #001",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 298"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 12/18 w500 ls-0.36",
+      "count": 15,
+      "fontFamily": "Manrope",
+      "fontSize": 12,
+      "fontWeight": 500,
+      "lineHeightPx": 18,
+      "letterSpacing": -0.36,
+      "samples": [
+        {
+          "name": "raddan.nadaval.na.rotan@ts.champion",
+          "type": "TEXT",
+          "path": "profile / регистрация - пароль не видно / Group 234"
+        },
+        {
+          "name": "Пароль*",
+          "type": "TEXT",
+          "path": "profile / регистрация - пароль не видно / Group 239"
+        },
+        {
+          "name": "raddan.nadaval.na.rotan@ts.champion",
+          "type": "TEXT",
+          "path": "profile / регистрация - пароль видно / Group 234"
+        },
+        {
+          "name": "Пароль*",
+          "type": "TEXT",
+          "path": "profile / регистрация - пароль видно"
+        },
+        {
+          "name": "Почта*",
+          "type": "TEXT",
+          "path": "регистрация - почта / Group 238 / Group 236"
+        },
+        {
+          "name": "8-значный код*",
+          "type": "TEXT",
+          "path": "profile / 8-код"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 14/25.2 w600 ls-0.42",
+      "count": 13,
+      "fontFamily": "Manrope",
+      "fontSize": 14,
+      "fontWeight": 600,
+      "lineHeightPx": 25.2,
+      "letterSpacing": -0.42,
+      "samples": [
+        {
+          "name": "5",
+          "type": "TEXT",
+          "path": "Group 325 / Group 324 / Group 323"
+        },
+        {
+          "name": "5",
+          "type": "TEXT",
+          "path": "Group 325 / Group 324 / Group 323"
+        },
+        {
+          "name": "5",
+          "type": "TEXT",
+          "path": "Group 325 / Group 324 / Group 323"
+        },
+        {
+          "name": "Первый ответ для второго пункта",
+          "type": "TEXT",
+          "path": "profile / страница теста / Group 640"
+        },
+        {
+          "name": "Второй ответ для второго пункта",
+          "type": "TEXT",
+          "path": "profile / страница теста / Group 642"
+        },
+        {
+          "name": "Третий ответ для второго пункта",
+          "type": "TEXT",
+          "path": "profile / страница теста / Group 643"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 10/18 w600 ls-0.2",
+      "count": 12,
+      "fontFamily": "Manrope",
+      "fontSize": 10,
+      "fontWeight": 600,
+      "lineHeightPx": 18,
+      "letterSpacing": -0.2,
+      "samples": [
+        {
+          "name": "Пометить, как выполненное",
+          "type": "TEXT",
+          "path": "Group 460 / Group 457 / Frame 9"
+        },
+        {
+          "name": "Перейти к файлу",
+          "type": "TEXT",
+          "path": "Group 460 / Group 457 / Frame 10"
+        },
+        {
+          "name": "Пометить, как выполненное",
+          "type": "TEXT",
+          "path": "Group 460 / Group 457 / Frame 9"
+        },
+        {
+          "name": "Перейти к файлу",
+          "type": "TEXT",
+          "path": "Group 460 / Group 457 / Frame 10"
+        },
+        {
+          "name": "23 минуты",
+          "type": "TEXT",
+          "path": "Group 445 / Group 444 / Group 443"
+        },
+        {
+          "name": "Видео-лекция",
+          "type": "TEXT",
+          "path": "Group 444 / Group 443 / Group 271"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 14/22.4 w500 ls-0.42",
+      "count": 12,
+      "fontFamily": "Manrope",
+      "fontSize": 14,
+      "fontWeight": 500,
+      "lineHeightPx": 22.4,
+      "letterSpacing": -0.42,
+      "samples": [
+        {
+          "name": "Описание курса в нескольких словах",
+          "type": "TEXT",
+          "path": "Group 387 / Group 386 / Group 377"
+        },
+        {
+          "name": "Прогресс курса",
+          "type": "TEXT",
+          "path": "Group 390 / Group 389 / Group 388"
+        },
+        {
+          "name": "Описание курса в нескольких словах",
+          "type": "TEXT",
+          "path": "Group 387 / Group 386 / Group 377"
+        },
+        {
+          "name": "Прогресс курса",
+          "type": "TEXT",
+          "path": "Group 390 / Group 389 / Group 388"
+        },
+        {
+          "name": "Описание курса в нескольких словах",
+          "type": "TEXT",
+          "path": "Group 387 / Group 386 / Group 377"
+        },
+        {
+          "name": "Прогресс курса",
+          "type": "TEXT",
+          "path": "Group 390 / Group 389 / Group 388"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 12/18 w700 ls-0.36",
+      "count": 11,
+      "fontFamily": "Manrope",
+      "fontSize": 12,
+      "fontWeight": 700,
+      "lineHeightPx": 18,
+      "letterSpacing": -0.36,
+      "samples": [
+        {
+          "name": "Продолжить",
+          "type": "TEXT",
+          "path": "регистрация - пароль не видно / Group 239 / Group 229"
+        },
+        {
+          "name": "Продолжить",
+          "type": "TEXT",
+          "path": "profile / регистрация - пароль видно / Group 229"
+        },
+        {
+          "name": "Продолжить",
+          "type": "TEXT",
+          "path": "Group 238 / Group 235 / Group 229"
+        },
+        {
+          "name": "Продолжить",
+          "type": "TEXT",
+          "path": "profile / 8-код / Group 229"
+        },
+        {
+          "name": "Перейти на страницу профиля",
+          "type": "TEXT",
+          "path": "профиль создан / Group 246 / Group 251"
+        },
+        {
+          "name": "Продолжить",
+          "type": "TEXT",
+          "path": "profile / вход пароль не видно / Group 229"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 12/19.2 w700 ls-0.36",
+      "count": 10,
+      "fontFamily": "Manrope",
+      "fontSize": 12,
+      "fontWeight": 700,
+      "lineHeightPx": 19.2,
+      "letterSpacing": -0.36,
+      "samples": [
+        {
+          "name": "Перейти к курсу",
+          "type": "TEXT",
+          "path": "Group 390 / Group 389 / Frame 338"
+        },
+        {
+          "name": "Перейти к курсу",
+          "type": "TEXT",
+          "path": "Group 390 / Group 389 / Frame 338"
+        },
+        {
+          "name": "Перейти к курсу",
+          "type": "TEXT",
+          "path": "Group 390 / Group 389 / Frame 338"
+        },
+        {
+          "name": "Тип кредитования",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Подробнее",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Подробнее",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 20/32 w700 ls-0.6",
+      "count": 10,
+      "fontFamily": "Manrope",
+      "fontSize": 20,
+      "fontWeight": 700,
+      "lineHeightPx": 32,
+      "letterSpacing": -0.6,
+      "samples": [
+        {
+          "name": "«Название курса»",
+          "type": "TEXT",
+          "path": "Group 387 / Group 386 / Group 377"
+        },
+        {
+          "name": "«Название курса»",
+          "type": "TEXT",
+          "path": "Group 387 / Group 386 / Group 377"
+        },
+        {
+          "name": "«Название курса»",
+          "type": "TEXT",
+          "path": "Group 387 / Group 386 / Group 377"
+        },
+        {
+          "name": "«Название курса»",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "«Название курса»",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "«Название курса»",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 12/21.6 w600 ls-0.36",
+      "count": 9,
+      "fontFamily": "Manrope",
+      "fontSize": 12,
+      "fontWeight": 600,
+      "lineHeightPx": 21.6,
+      "letterSpacing": -0.36,
+      "samples": [
+        {
+          "name": "Обновить данные",
+          "type": "TEXT",
+          "path": "Group 371 / Group 370 / Group 367"
+        },
+        {
+          "name": "69 отзывов",
+          "type": "TEXT",
+          "path": "Group 336 / Group 333 / Group 332"
+        },
+        {
+          "name": "69%",
+          "type": "TEXT",
+          "path": "Group 336 / Group 333 / Group 332"
+        },
+        {
+          "name": "0%",
+          "type": "TEXT",
+          "path": "Group 336 / Group 333 / Group 332"
+        },
+        {
+          "name": "0%",
+          "type": "TEXT",
+          "path": "Group 336 / Group 333 / Group 332"
+        },
+        {
+          "name": "0%",
+          "type": "TEXT",
+          "path": "Group 336 / Group 333 / Group 332"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 24/38.4 w600 ls-0.72",
+      "count": 9,
+      "fontFamily": "Manrope",
+      "fontSize": 24,
+      "fontWeight": 600,
+      "lineHeightPx": 38.4,
+      "letterSpacing": -0.72,
+      "samples": [
+        {
+          "name": "ФОТО",
+          "type": "TEXT",
+          "path": "Group 390 / Group 387 / Group 385"
+        },
+        {
+          "name": "ФОТО",
+          "type": "TEXT",
+          "path": "Group 390 / Group 387 / Group 385"
+        },
+        {
+          "name": "ФОТО",
+          "type": "TEXT",
+          "path": "Group 390 / Group 387 / Group 385"
+        },
+        {
+          "name": "ФОТО",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "ФОТО",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "ФОТО",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 28/36.4 w600 ls-0.84",
+      "count": 9,
+      "fontFamily": "Manrope",
+      "fontSize": 28,
+      "fontWeight": 600,
+      "lineHeightPx": 36.4,
+      "letterSpacing": -0.84,
+      "samples": [
+        {
+          "name": "Придумайте себе пароль",
+          "type": "TEXT",
+          "path": "profile / регистрация - пароль не видно / Group 234"
+        },
+        {
+          "name": "Придумайте себе пароль",
+          "type": "TEXT",
+          "path": "profile / регистрация - пароль видно / Group 234"
+        },
+        {
+          "name": "Укажите адрес электронной почты, чтобы зарегистрироваться",
+          "type": "TEXT",
+          "path": "profile / регистрация - почта"
+        },
+        {
+          "name": "Введите 8-значный код, отправленный на ваш адрес электронной почты",
+          "type": "TEXT",
+          "path": "profile / 8-код / Group 242"
+        },
+        {
+          "name": "Отлично, ваш профиль создан!",
+          "type": "TEXT",
+          "path": "profile / профиль создан"
+        },
+        {
+          "name": "Введите свой пароль от аккаунта",
+          "type": "TEXT",
+          "path": "profile / вход пароль не видно / Group 234"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 12/19.2 w500 ls-0.36",
+      "count": 8,
+      "fontFamily": "Manrope",
+      "fontSize": 12,
+      "fontWeight": 500,
+      "lineHeightPx": 19.2,
+      "letterSpacing": -0.36,
+      "samples": [
+        {
+          "name": "© 2024 Центрально азиатский институт дополнительного медицинского образования",
+          "type": "TEXT",
+          "path": "profile / профиль / Group 347"
+        },
+        {
+          "name": "© 2024 Центрально азиатский институт дополнительного медицинского образования",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал / Group 507"
+        },
+        {
+          "name": "© 2024 Центрально азиатский институт дополнительного медицинского образования",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 347"
+        },
+        {
+          "name": "© 2024 Центрально азиатский институт дополнительного медицинского образования",
+          "type": "TEXT",
+          "path": "страница видео-лекции / Group 455 / Group 347"
+        },
+        {
+          "name": "© 2024 Центрально азиатский институт дополнительного медицинского образования",
+          "type": "TEXT",
+          "path": "страница пдф-лекции / Group 464 / Group 347"
+        },
+        {
+          "name": "© 2024 Центрально азиатский институт дополнительного медицинского образования",
+          "type": "TEXT",
+          "path": "страница пдф-лекции / Group 464 / Group 347"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 14/25.2 w500 ls-0.28",
+      "count": 8,
+      "fontFamily": "Manrope",
+      "fontSize": 14,
+      "fontWeight": 500,
+      "lineHeightPx": 25.2,
+      "letterSpacing": -0.28,
+      "samples": [
+        {
+          "name": "Курс невероятно информативен и хорошо структурирован. Полученные знания и навыки применимы в реальной клинической практике",
+          "type": "TEXT",
+          "path": "Group 328 / Group 327 / Group 325"
+        },
+        {
+          "name": "Отличное сочетание теории и практики! Особенно полезны были занятия по клиническому обследованию и диагностике",
+          "type": "TEXT",
+          "path": "Group 336 / Group 334 / Group 325"
+        },
+        {
+          "name": "Преподаватели прекрасно объясняют сложные темы, а учебные материалы помогают быстро освоить ключевые концепции",
+          "type": "TEXT",
+          "path": "Group 336 / Group 335 / Group 325"
+        },
+        {
+          "name": "Этот модуль предоставляет базовые знания и навыки, необходимые для понимания и применения принципов клинической медицины. Включает изучение диагностики, лечения и профилактики распространенных заболеваний.",
+          "type": "TEXT",
+          "path": "Group 453 / Group 452 / Group 449"
+        },
+        {
+          "name": "Этот модуль предоставляет базовые знания и навыки, необходимые для понимания и применения принципов клинической медицины. Включает изучение диагностики, лечения и профилактики распространенных заболеваний.",
+          "type": "TEXT",
+          "path": "Group 463 / Group 462 / Group 449"
+        },
+        {
+          "name": "Этот модуль предоставляет базовые знания и навыки, необходимые для понимания и применения принципов клинической медицины. Включает изучение диагностики, лечения и профилактики распространенных заболеваний.",
+          "type": "TEXT",
+          "path": "Group 463 / Group 462 / Group 449"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 20/30 w700 ls-0.6",
+      "count": 8,
+      "fontFamily": "Manrope",
+      "fontSize": 20,
+      "fontWeight": 700,
+      "lineHeightPx": 30,
+      "letterSpacing": -0.6,
+      "samples": [
+        {
+          "name": "Платформа Непрерывного Медицинского Образования",
+          "type": "TEXT",
+          "path": "profile / профиль / Group 347"
+        },
+        {
+          "name": "Платформа Непрерывного Медицинского Образования",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал / Group 507"
+        },
+        {
+          "name": "Платформа Непрерывного Медицинского Образования",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 347"
+        },
+        {
+          "name": "Платформа Непрерывного Медицинского Образования",
+          "type": "TEXT",
+          "path": "страница видео-лекции / Group 455 / Group 347"
+        },
+        {
+          "name": "Платформа Непрерывного Медицинского Образования",
+          "type": "TEXT",
+          "path": "страница пдф-лекции / Group 464 / Group 347"
+        },
+        {
+          "name": "Платформа Непрерывного Медицинского Образования",
+          "type": "TEXT",
+          "path": "страница пдф-лекции / Group 464 / Group 347"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 20/28 w800 ls-0.6",
+      "count": 5,
+      "fontFamily": "Manrope",
+      "fontSize": 20,
+      "fontWeight": 800,
+      "lineHeightPx": 28,
+      "letterSpacing": -0.6,
+      "samples": [
+        {
+          "name": "150 сом",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 214"
+        },
+        {
+          "name": "Средняя",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 222"
+        },
+        {
+          "name": "36 часов",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 215"
+        },
+        {
+          "name": "Русский",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 215"
+        },
+        {
+          "name": "Зарегистрироваться",
+          "type": "TEXT",
+          "path": "profile / страница курса"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 32/57.6 w700 ls-0.96",
+      "count": 5,
+      "fontFamily": "Manrope",
+      "fontSize": 32,
+      "fontWeight": 700,
+      "lineHeightPx": 57.6,
+      "letterSpacing": -0.96,
+      "samples": [
+        {
+          "name": "Основная информация",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 295"
+        },
+        {
+          "name": "Прогресс курса",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 303"
+        },
+        {
+          "name": "Отзывы",
+          "type": "TEXT",
+          "path": "страница курса / Group 336 / Group 333"
+        },
+        {
+          "name": "Heading 2 → Frequently asked questions",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 362"
+        },
+        {
+          "name": "Модуль #001",
+          "type": "TEXT",
+          "path": "Group 446 / Group 435 / Group 434"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 12/16.8 w600 ls-0.36",
+      "count": 4,
+      "fontFamily": "Manrope",
+      "fontSize": 12,
+      "fontWeight": 600,
+      "lineHeightPx": 16.8,
+      "letterSpacing": -0.36,
+      "samples": [
+        {
+          "name": "— стоимость 1 часа",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 214"
+        },
+        {
+          "name": "— сложность курса",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 222"
+        },
+        {
+          "name": "— длительность обучения",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 215"
+        },
+        {
+          "name": "— язык курса",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 215"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 16/28.8 w700 ls-0.32",
+      "count": 4,
+      "fontFamily": "Manrope",
+      "fontSize": 16,
+      "fontWeight": 700,
+      "lineHeightPx": 28.8,
+      "letterSpacing": -0.32,
+      "samples": [
+        {
+          "name": "Как этические принципы влияют на медицинские решения?",
+          "type": "TEXT",
+          "path": "Group 362 / Frame 337 / Frame 9"
+        },
+        {
+          "name": "Какие методы клинического обследования наиболее эффективны для диагностики хронических заболеваний?",
+          "type": "TEXT",
+          "path": "Group 362 / Frame 337 / Frame 10"
+        },
+        {
+          "name": "Как улучшить коммуникацию с пациентами для повышения их вовлеченности в лечение?",
+          "type": "TEXT",
+          "path": "Group 362 / Frame 337 / Frame 11"
+        },
+        {
+          "name": "Введение в Клиническую Медицины: Основы Диагностики и Лечения",
+          "type": "TEXT",
+          "path": "Group 445 / Group 444 / Group 443"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 24/43.2 w700 ls-1.44",
+      "count": 4,
+      "fontFamily": "Manrope",
+      "fontSize": 24,
+      "fontWeight": 700,
+      "lineHeightPx": 43.2,
+      "letterSpacing": -1.44,
+      "samples": [
+        {
+          "name": "4.9",
+          "type": "TEXT",
+          "path": "Group 336 / Group 333 / Group 332"
+        },
+        {
+          "name": "A",
+          "type": "TEXT",
+          "path": "Group 328 / Group 327 / Group 326"
+        },
+        {
+          "name": "T",
+          "type": "TEXT",
+          "path": "Group 336 / Group 334 / Group 326"
+        },
+        {
+          "name": "S",
+          "type": "TEXT",
+          "path": "Group 336 / Group 335 / Group 326"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 32/51.2 w700 ls-0.96",
+      "count": 4,
+      "fontFamily": "Manrope",
+      "fontSize": 32,
+      "fontWeight": 700,
+      "lineHeightPx": 51.2,
+      "letterSpacing": -0.96,
+      "samples": [
+        {
+          "name": "Введение в Клиническую Медицины: Основы Диагностики и Лечения",
+          "type": "TEXT",
+          "path": "Group 453 / Group 452 / Group 449"
+        },
+        {
+          "name": "Введение в Клиническую Медицины: Основы Диагностики и Лечения",
+          "type": "TEXT",
+          "path": "Group 463 / Group 462 / Group 449"
+        },
+        {
+          "name": "Введение в Клиническую Медицины: Основы Диагностики и Лечения",
+          "type": "TEXT",
+          "path": "Group 463 / Group 462 / Group 449"
+        },
+        {
+          "name": "Введение в Клиническую Медицины: Основы Диагностики и Лечения",
+          "type": "TEXT",
+          "path": "profile / страница теста"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 10/15 w500 ls-0.3",
+      "count": 3,
+      "fontFamily": "Manrope",
+      "fontSize": 10,
+      "fontWeight": 500,
+      "lineHeightPx": 15,
+      "letterSpacing": -0.3,
+      "samples": [
+        {
+          "name": "*Изменить",
+          "type": "TEXT",
+          "path": "8-код / Group 242 / Group 241"
+        },
+        {
+          "name": "*Забыли пароль?",
+          "type": "TEXT",
+          "path": "profile / вход пароль не видно"
+        },
+        {
+          "name": "*Забыли пароль?",
+          "type": "TEXT",
+          "path": "profile / вход пароль видно"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 10/18 w600 ls-0.3",
+      "count": 3,
+      "fontFamily": "Manrope",
+      "fontSize": 10,
+      "fontWeight": 600,
+      "lineHeightPx": 18,
+      "letterSpacing": -0.3,
+      "samples": [
+        {
+          "name": "Отзыв от 21 августа 2022",
+          "type": "TEXT",
+          "path": "Group 327 / Group 325 / Group 324"
+        },
+        {
+          "name": "Отзыв от 16 августа 2023",
+          "type": "TEXT",
+          "path": "Group 334 / Group 325 / Group 324"
+        },
+        {
+          "name": "Отзыв от 23 августа 2024",
+          "type": "TEXT",
+          "path": "Group 335 / Group 325 / Group 324"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 10/18 w600 ls0",
+      "count": 3,
+      "fontFamily": "Manrope",
+      "fontSize": 10,
+      "fontWeight": 600,
+      "lineHeightPx": 18,
+      "letterSpacing": 0,
+      "samples": [
+        {
+          "name": "3 балла",
+          "type": "TEXT",
+          "path": "profile / страница теста / Frame 351"
+        },
+        {
+          "name": "1 балл",
+          "type": "TEXT",
+          "path": "profile / страница теста / Frame 352"
+        },
+        {
+          "name": "2 балла",
+          "type": "TEXT",
+          "path": "profile / страница теста / Frame 353"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 10/18 w700 ls-0.2",
+      "count": 3,
+      "fontFamily": "Manrope",
+      "fontSize": 10,
+      "fontWeight": 700,
+      "lineHeightPx": 18,
+      "letterSpacing": -0.2,
+      "samples": [
+        {
+          "name": "Пометить, как выполненное",
+          "type": "TEXT",
+          "path": "Group 452 / Group 451 / Frame 9"
+        },
+        {
+          "name": "Сдать тестирование",
+          "type": "TEXT",
+          "path": "страница теста / Group 659 / Frame 9"
+        },
+        {
+          "name": "Показать результат",
+          "type": "TEXT",
+          "path": "страница теста / Group 659 / Frame 351"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 14/22.4 w600 ls-0.42",
+      "count": 3,
+      "fontFamily": "Manrope",
+      "fontSize": 14,
+      "fontWeight": 600,
+      "lineHeightPx": 22.4,
+      "letterSpacing": -0.42,
+      "samples": [
+        {
+          "name": "Специализация",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Сложность",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Тип кредитования",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 16/25.6 w500 ls-0.48",
+      "count": 3,
+      "fontFamily": "Manrope",
+      "fontSize": 16,
+      "fontWeight": 500,
+      "lineHeightPx": 25.6,
+      "letterSpacing": -0.48,
+      "samples": [
+        {
+          "name": "Платформа НМО предлагает медицинским профессионалам доступ к современным и актуальным образовательным ресурсам.",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Наши курсы разработаны ведущими экспертами в различных медицинских областях и обеспечивают повышение квалификации, развитие навыков и углубление знаний.",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Мы стремимся поддерживать высокий уровень медицинской практики, предоставляя качественное обучение, удобное и доступное в любое время.",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 16/28.8 w700 ls-0.48",
+      "count": 3,
+      "fontFamily": "Manrope",
+      "fontSize": 16,
+      "fontWeight": 700,
+      "lineHeightPx": 28.8,
+      "letterSpacing": -0.48,
+      "samples": [
+        {
+          "name": "Методы Клинического Обследования: Теория и Практика",
+          "type": "TEXT",
+          "path": "Group 445 / Group 444 / Group 442"
+        },
+        {
+          "name": "Этические и Юридические Аспекты Медицинской Практики",
+          "type": "TEXT",
+          "path": "Group 445 / Group 444 / Group 441"
+        },
+        {
+          "name": "Коммуникация с Пациентами и Коллегами: Эффективные Стратегии",
+          "type": "TEXT",
+          "path": "Group 445 / Group 444 / Group 440"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 16/28.8 w700 ls-0.96",
+      "count": 3,
+      "fontFamily": "Manrope",
+      "fontSize": 16,
+      "fontWeight": 700,
+      "lineHeightPx": 28.8,
+      "letterSpacing": -0.96,
+      "samples": [
+        {
+          "name": "AK",
+          "type": "TEXT",
+          "path": "Group 328 / Group 327 / Group 326"
+        },
+        {
+          "name": "TO",
+          "type": "TEXT",
+          "path": "Group 336 / Group 334 / Group 326"
+        },
+        {
+          "name": "SC",
+          "type": "TEXT",
+          "path": "Group 336 / Group 335 / Group 326"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 18/32.4 w600 ls-0.54",
+      "count": 3,
+      "fontFamily": "Manrope",
+      "fontSize": 18,
+      "fontWeight": 600,
+      "lineHeightPx": 32.4,
+      "letterSpacing": -0.54,
+      "samples": [
+        {
+          "name": "0%",
+          "type": "TEXT",
+          "path": "страница курса / Group 303 / Group 302"
+        },
+        {
+          "name": "100%",
+          "type": "TEXT",
+          "path": "страница курса / Group 303 / Group 302"
+        },
+        {
+          "name": "69%",
+          "type": "TEXT",
+          "path": "страница курса / Group 303 / Group 302"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 18/32.4 w800 ls-0.54",
+      "count": 3,
+      "fontFamily": "Manrope",
+      "fontSize": 18,
+      "fontWeight": 800,
+      "lineHeightPx": 32.4,
+      "letterSpacing": -0.54,
+      "samples": [
+        {
+          "name": "Вопрос для второго пункта",
+          "type": "TEXT",
+          "path": "profile / страница теста"
+        },
+        {
+          "name": "Вопрос для третьего пункта",
+          "type": "TEXT",
+          "path": "profile / страница теста"
+        },
+        {
+          "name": "Вопрос для первого пункта",
+          "type": "TEXT",
+          "path": "profile / страница теста"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 24/38.4 w700 ls-0.72",
+      "count": 3,
+      "fontFamily": "Manrope",
+      "fontSize": 24,
+      "fontWeight": 700,
+      "lineHeightPx": 38.4,
+      "letterSpacing": -0.72,
+      "samples": [
+        {
+          "name": "69%",
+          "type": "TEXT",
+          "path": "Group 390 / Group 389 / Group 388"
+        },
+        {
+          "name": "13%",
+          "type": "TEXT",
+          "path": "Group 390 / Group 389 / Group 388"
+        },
+        {
+          "name": "96%",
+          "type": "TEXT",
+          "path": "Group 390 / Group 389 / Group 388"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 38/53.2 w700 ls-1.14",
+      "count": 3,
+      "fontFamily": "Manrope",
+      "fontSize": 38,
+      "fontWeight": 700,
+      "lineHeightPx": 53.2,
+      "letterSpacing": -1.14,
+      "samples": [
+        {
+          "name": "Платформу Непрерывного Медицинского Образования",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "О нашей платформе",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Список курсов",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 14/25.2 w700 ls-0.42",
+      "count": 2,
+      "fontFamily": "Manrope",
+      "fontSize": 14,
+      "fontWeight": 700,
+      "lineHeightPx": 25.2,
+      "letterSpacing": -0.42,
+      "samples": [
+        {
+          "name": "Методы Клинического Обследования: Теория и Практика",
+          "type": "TEXT",
+          "path": "Group 460 / Group 459 / Group 458"
+        },
+        {
+          "name": "Методы Клинического Обследования: Теория и Практика",
+          "type": "TEXT",
+          "path": "Group 460 / Group 459 / Group 458"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 16/28.8 w500 ls-0.32",
+      "count": 2,
+      "fontFamily": "Manrope",
+      "fontSize": 16,
+      "fontWeight": 500,
+      "lineHeightPx": 28.8,
+      "letterSpacing": -0.32,
+      "samples": [
+        {
+          "name": "Управление вашим профилем и курсами. Просмотрите и редактируйте свои личные данные, отслеживайте прогресс обучения и получайте сертификаты",
+          "type": "TEXT",
+          "path": "profile / профиль"
+        },
+        {
+          "name": "Независимо от вашего академического прошлого, программа \"Магистр наук в области данных\" (MS-DS) является идеальным выбором, если вы заинтересованы в карьере в сфере анализа данных. Приём на программу основан на вашей успеваемости в первых трёх курсах. Вы изучите теорию, методы, инструменты и языки программирования — навыки, которые квалифицируют вас для различных должностей аналитика данных. Согласно данным Бюро трудовой статистики США, количество таких вакансий ожидается увеличится на 36% в период с 2021 по 2031 год, что более чем в семь раз превышает средний темп роста всех рабочих мест.",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 295"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 18/28.8 w500 ls-0.54",
+      "count": 2,
+      "fontFamily": "Manrope",
+      "fontSize": 18,
+      "fontWeight": 500,
+      "lineHeightPx": 28.8,
+      "letterSpacing": -0.54,
+      "samples": [
+        {
+          "name": "Платформа НМО — ваш надежный помощник в обучении и повышении квалификации. Зарегистрируйтесь или войдите, чтобы начать обучение, которое поможет вам расти профессионально и расширять вашу карьеру.",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Изучите наш широкий каталог курсов, специально разработанных для медицинских специалистов. Вы можете фильтровать курсы по специализации, сложности и типу кредитования, чтобы найти именно то, что вам нужно.",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 24/24 w700 ls-0.72",
+      "count": 2,
+      "fontFamily": "Manrope",
+      "fontSize": 24,
+      "fontWeight": 700,
+      "lineHeightPx": 24,
+      "letterSpacing": -0.72,
+      "samples": [
+        {
+          "name": "Войти",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Изучить курсы",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 28/50.4 w700 ls-0.84",
+      "count": 2,
+      "fontFamily": "Manrope",
+      "fontSize": 28,
+      "fontWeight": 700,
+      "lineHeightPx": 50.4,
+      "letterSpacing": -0.84,
+      "samples": [
+        {
+          "name": "Мои курсы",
+          "type": "TEXT",
+          "path": "профиль / Group 396 / Group 395"
+        },
+        {
+          "name": "Мой профиль",
+          "type": "TEXT",
+          "path": "profile / профиль"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 10/18 w600 ls0.4",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 10,
+      "fontWeight": 600,
+      "lineHeightPx": 18,
+      "letterSpacing": 0.4,
+      "samples": [
+        {
+          "name": "ТЕСТИРОВАНИЕ",
+          "type": "TEXT",
+          "path": "profile / страница теста / Frame 350"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 12/18 w600 ls-0.36",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 12,
+      "fontWeight": 600,
+      "lineHeightPx": 18,
+      "letterSpacing": -0.36,
+      "samples": [
+        {
+          "name": "Продолжая, я принимаю Политику конфиденциальности и Условия использования ПНМО",
+          "type": "TEXT",
+          "path": "регистрация - почта / Group 238 / Group 235"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 14/25.2 w600 ls-0.28",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 14,
+      "fontWeight": 600,
+      "lineHeightPx": 25.2,
+      "letterSpacing": -0.28,
+      "samples": [
+        {
+          "name": "Задайте свой вопрос",
+          "type": "TEXT",
+          "path": "Group 343 / Group 341 / Group 340"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 15/24 w700 ls-0.45",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 15,
+      "fontWeight": 700,
+      "lineHeightPx": 24,
+      "letterSpacing": -0.45,
+      "samples": [
+        {
+          "name": "Узнать подробнее",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал / Group 191"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 16/20.8 w500 ls-0.48",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 16,
+      "fontWeight": 500,
+      "lineHeightPx": 20.8,
+      "letterSpacing": -0.48,
+      "samples": [
+        {
+          "name": "Издатель: КГТУ им. Раззакова",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 213"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 16/22.4 w700 ls-0.48",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 16,
+      "fontWeight": 700,
+      "lineHeightPx": 22.4,
+      "letterSpacing": -0.48,
+      "samples": [
+        {
+          "name": "Отлично, ваш пароль изменен!",
+          "type": "TEXT",
+          "path": "profile / успешная смена пароля"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 16/25.6 w700 ls-0.48",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 16,
+      "fontWeight": 700,
+      "lineHeightPx": 25.6,
+      "letterSpacing": -0.48,
+      "samples": [
+        {
+          "name": "Выйти",
+          "type": "TEXT",
+          "path": "profile / профиль / Frame 338"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 18/28.8 w600 ls-0.54",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 18,
+      "fontWeight": 600,
+      "lineHeightPx": 28.8,
+      "letterSpacing": -0.54,
+      "samples": [
+        {
+          "name": "Посмотреть больше курсов",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 18/32.4 w700 ls-0.54",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 18,
+      "fontWeight": 700,
+      "lineHeightPx": 32.4,
+      "letterSpacing": -0.54,
+      "samples": [
+        {
+          "name": "Остались еще вопросы?",
+          "type": "TEXT",
+          "path": "Group 343 / Group 341 / Group 340"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 20/36 w700 ls-0.6",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 20,
+      "fontWeight": 700,
+      "lineHeightPx": 36,
+      "letterSpacing": -0.6,
+      "samples": [
+        {
+          "name": "Личные данные",
+          "type": "TEXT",
+          "path": "Group 371 / Group 370 / Group 369"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 26/46.8 w700 ls-0.78",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 26,
+      "fontWeight": 700,
+      "lineHeightPx": 46.8,
+      "letterSpacing": -0.78,
+      "samples": [
+        {
+          "name": "Raddan Yatoro",
+          "type": "TEXT",
+          "path": "Group 371 / Group 370 / Group 369"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 32/43.71 w500 ls-0.96",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 32,
+      "fontWeight": 500,
+      "lineHeightPx": 43.71,
+      "letterSpacing": -0.96,
+      "samples": [
+        {
+          "name": "Добро пожаловать на",
+          "type": "TEXT",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 36/64.8 w700 ls-1.08",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 36,
+      "fontWeight": 700,
+      "lineHeightPx": 64.8,
+      "letterSpacing": -1.08,
+      "samples": [
+        {
+          "name": "RY",
+          "type": "TEXT",
+          "path": "Group 370 / Group 369 / Group 368"
+        }
+      ]
+    },
+    {
+      "value": "Manrope 38/49.4 w700 ls-1.14",
+      "count": 1,
+      "fontFamily": "Manrope",
+      "fontSize": 38,
+      "fontWeight": 700,
+      "lineHeightPx": 49.4,
+      "letterSpacing": -1.14,
+      "samples": [
+        {
+          "name": "Продвинутая клиническая диагностика и терапевтические методы",
+          "type": "TEXT",
+          "path": "profile / страница курса / Group 213"
+        }
+      ]
+    }
+  ],
+  "spacing": {
+    "padding": [
+      {
+        "value": 14,
+        "count": 20,
+        "tags": {
+          "top": 10,
+          "bottom": 10
+        },
+        "samples": [
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 391 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 391 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 392 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 392 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 393 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 393 / Group 390 / Group 389"
+          }
+        ]
+      },
+      {
+        "value": 24,
+        "count": 20,
+        "tags": {
+          "right": 10,
+          "left": 10
+        },
+        "samples": [
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 391 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 391 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 392 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 392 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 393 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 393 / Group 390 / Group 389"
+          }
+        ]
+      },
+      {
+        "value": 12,
+        "count": 8,
+        "tags": {
+          "top": 4,
+          "bottom": 4
+        },
+        "samples": [
+          {
+            "name": "Frame 350",
+            "type": "FRAME",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Frame 350",
+            "type": "FRAME",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Frame 351",
+            "type": "FRAME",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Frame 351",
+            "type": "FRAME",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Frame 352",
+            "type": "FRAME",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Frame 352",
+            "type": "FRAME",
+            "path": "profile / страница теста"
+          }
+        ]
+      },
+      {
+        "value": 17,
+        "count": 8,
+        "tags": {
+          "right": 4,
+          "left": 4
+        },
+        "samples": [
+          {
+            "name": "Frame 350",
+            "type": "FRAME",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Frame 350",
+            "type": "FRAME",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Frame 351",
+            "type": "FRAME",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Frame 351",
+            "type": "FRAME",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Frame 352",
+            "type": "FRAME",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Frame 352",
+            "type": "FRAME",
+            "path": "profile / страница теста"
+          }
+        ]
+      },
+      {
+        "value": 30,
+        "count": 6,
+        "tags": {
+          "right": 3,
+          "left": 3
+        },
+        "samples": [
+          {
+            "name": "Frame 9",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          },
+          {
+            "name": "Frame 9",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          },
+          {
+            "name": "Frame 10",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          },
+          {
+            "name": "Frame 10",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          },
+          {
+            "name": "Frame 11",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          },
+          {
+            "name": "Frame 11",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          }
+        ]
+      },
+      {
+        "value": 40,
+        "count": 6,
+        "tags": {
+          "top": 3,
+          "bottom": 3
+        },
+        "samples": [
+          {
+            "name": "Frame 9",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          },
+          {
+            "name": "Frame 9",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          },
+          {
+            "name": "Frame 10",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          },
+          {
+            "name": "Frame 10",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          },
+          {
+            "name": "Frame 11",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          },
+          {
+            "name": "Frame 11",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          }
+        ]
+      },
+      {
+        "value": 16,
+        "count": 2,
+        "tags": {
+          "top": 1,
+          "bottom": 1
+        },
+        "samples": [
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "profile / профиль"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "profile / профиль"
+          }
+        ]
+      },
+      {
+        "value": 48,
+        "count": 2,
+        "tags": {
+          "right": 1,
+          "left": 1
+        },
+        "samples": [
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "profile / профиль"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "profile / профиль"
+          }
+        ]
+      }
+    ],
+    "gap": [
+      {
+        "value": 10,
+        "count": 15,
+        "tags": {
+          "horizontal": 15
+        },
+        "samples": [
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 391 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 392 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "Group 393 / Group 390 / Group 389"
+          },
+          {
+            "name": "Frame 338",
+            "type": "FRAME",
+            "path": "profile / профиль"
+          },
+          {
+            "name": "Frame 9",
+            "type": "FRAME",
+            "path": "Group 453 / Group 452 / Group 451"
+          },
+          {
+            "name": "Frame 9",
+            "type": "FRAME",
+            "path": "Group 461 / Group 460 / Group 457"
+          }
+        ]
+      },
+      {
+        "value": 217,
+        "count": 3,
+        "tags": {
+          "horizontal": 3
+        },
+        "samples": [
+          {
+            "name": "Frame 9",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          },
+          {
+            "name": "Frame 10",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          },
+          {
+            "name": "Frame 11",
+            "type": "FRAME",
+            "path": "страница курса / Group 362 / Frame 337"
+          }
+        ]
+      }
+    ],
+    "gapVertical": [
+      {
+        "value": 24,
+        "count": 32,
+        "samples": [
+          {
+            "name": "Group 386",
+            "type": "GROUP",
+            "path": "Group 391 / Group 390 / Group 387"
+          },
+          {
+            "name": "Group 386",
+            "type": "GROUP",
+            "path": "Group 392 / Group 390 / Group 387"
+          },
+          {
+            "name": "Group 386",
+            "type": "GROUP",
+            "path": "Group 393 / Group 390 / Group 387"
+          },
+          {
+            "name": "Group 285",
+            "type": "GROUP",
+            "path": "Group 399 / Group 398 / Group 397"
+          },
+          {
+            "name": "Group 254",
+            "type": "GROUP",
+            "path": "Group 399 / Group 398 / Group 263"
+          },
+          {
+            "name": "Group 255",
+            "type": "GROUP",
+            "path": "Group 399 / Group 398 / Group 264"
+          }
+        ]
+      },
+      {
+        "value": 40,
+        "count": 13,
+        "samples": [
+          {
+            "name": "профиль",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "Group 395",
+            "type": "GROUP",
+            "path": "profile / профиль / Group 396"
+          },
+          {
+            "name": "Group 295",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          },
+          {
+            "name": "Group 303",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          },
+          {
+            "name": "Group 445",
+            "type": "GROUP",
+            "path": "Group 448 / Group 447 / Group 446"
+          },
+          {
+            "name": "регистрация - пароль не видно",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 100,
+        "count": 10,
+        "samples": [
+          {
+            "name": "регистрация - пароль не видно",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "регистрация - пароль видно",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "регистрация - почта",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "8-код",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "профиль создан",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "вход пароль не видно",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 140,
+        "count": 10,
+        "samples": [
+          {
+            "name": "профиль",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "профиль",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "Group 455",
+            "type": "GROUP",
+            "path": "profile / страница видео-лекции"
+          }
+        ]
+      },
+      {
+        "value": 16,
+        "count": 10,
+        "samples": [
+          {
+            "name": "Group 388",
+            "type": "GROUP",
+            "path": "Group 391 / Group 390 / Group 389"
+          },
+          {
+            "name": "Group 388",
+            "type": "GROUP",
+            "path": "Group 392 / Group 390 / Group 389"
+          },
+          {
+            "name": "Group 388",
+            "type": "GROUP",
+            "path": "Group 393 / Group 390 / Group 389"
+          },
+          {
+            "name": "страница теста",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "страница теста",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "страница теста",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 56,
+        "count": 8,
+        "samples": [
+          {
+            "name": "профиль",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "MP desktop — финал",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "MP desktop — финал",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "Group 362",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          },
+          {
+            "name": "Group 449",
+            "type": "GROUP",
+            "path": "Group 454 / Group 453 / Group 452"
+          },
+          {
+            "name": "Group 449",
+            "type": "GROUP",
+            "path": "Group 464 / Group 463 / Group 462"
+          }
+        ]
+      },
+      {
+        "value": 96,
+        "count": 8,
+        "samples": [
+          {
+            "name": "Group 398",
+            "type": "GROUP",
+            "path": "profile / профиль / Group 399"
+          },
+          {
+            "name": "Group 398",
+            "type": "GROUP",
+            "path": "profile / профиль / Group 399"
+          },
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 20,
+        "count": 7,
+        "samples": [
+          {
+            "name": "Group 394",
+            "type": "GROUP",
+            "path": "профиль / Group 396 / Group 395"
+          },
+          {
+            "name": "Group 394",
+            "type": "GROUP",
+            "path": "профиль / Group 396 / Group 395"
+          },
+          {
+            "name": "Group 336",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          },
+          {
+            "name": "Group 336",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          },
+          {
+            "name": "Group 238",
+            "type": "GROUP",
+            "path": "profile / регистрация - почта"
+          },
+          {
+            "name": "Group 250",
+            "type": "GROUP",
+            "path": "profile / смена пароля"
+          }
+        ]
+      },
+      {
+        "value": 60,
+        "count": 6,
+        "samples": [
+          {
+            "name": "Group 370",
+            "type": "GROUP",
+            "path": "profile / профиль / Group 371"
+          },
+          {
+            "name": "Group 454",
+            "type": "GROUP",
+            "path": "profile / страница видео-лекции / Group 455"
+          },
+          {
+            "name": "Group 464",
+            "type": "GROUP",
+            "path": "profile / страница пдф-лекции"
+          },
+          {
+            "name": "Group 464",
+            "type": "GROUP",
+            "path": "profile / страница пдф-лекции"
+          },
+          {
+            "name": "страница теста",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "Group 448",
+            "type": "GROUP",
+            "path": "profile / страница модуля"
+          }
+        ]
+      },
+      {
+        "value": 12,
+        "count": 4,
+        "samples": [
+          {
+            "name": "Group 214",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          },
+          {
+            "name": "Group 222",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          },
+          {
+            "name": "Group 215",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          },
+          {
+            "name": "Group 215",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          }
+        ]
+      },
+      {
+        "value": 112,
+        "count": 3,
+        "samples": [
+          {
+            "name": "Group 444",
+            "type": "GROUP",
+            "path": "Group 447 / Group 446 / Group 445"
+          },
+          {
+            "name": "Group 444",
+            "type": "GROUP",
+            "path": "Group 447 / Group 446 / Group 445"
+          },
+          {
+            "name": "Group 444",
+            "type": "GROUP",
+            "path": "Group 447 / Group 446 / Group 445"
+          }
+        ]
+      },
+      {
+        "value": 18,
+        "count": 3,
+        "samples": [
+          {
+            "name": "Group 377",
+            "type": "GROUP",
+            "path": "Group 390 / Group 387 / Group 386"
+          },
+          {
+            "name": "Group 377",
+            "type": "GROUP",
+            "path": "Group 390 / Group 387 / Group 386"
+          },
+          {
+            "name": "Group 377",
+            "type": "GROUP",
+            "path": "Group 390 / Group 387 / Group 386"
+          }
+        ]
+      },
+      {
+        "value": 32,
+        "count": 3,
+        "samples": [
+          {
+            "name": "MP desktop — финал",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "Group 336",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          },
+          {
+            "name": "Group 434",
+            "type": "GROUP",
+            "path": "Group 447 / Group 446 / Group 435"
+          }
+        ]
+      },
+      {
+        "value": 48,
+        "count": 3,
+        "samples": [
+          {
+            "name": "Group 389",
+            "type": "GROUP",
+            "path": "Group 394 / Group 391 / Group 390"
+          },
+          {
+            "name": "Group 389",
+            "type": "GROUP",
+            "path": "Group 394 / Group 392 / Group 390"
+          },
+          {
+            "name": "Group 389",
+            "type": "GROUP",
+            "path": "Group 394 / Group 393 / Group 390"
+          }
+        ]
+      },
+      {
+        "value": 14,
+        "count": 2,
+        "samples": [
+          {
+            "name": "Group 458",
+            "type": "GROUP",
+            "path": "Group 461 / Group 460 / Group 459"
+          },
+          {
+            "name": "Group 458",
+            "type": "GROUP",
+            "path": "Group 461 / Group 460 / Group 459"
+          }
+        ]
+      },
+      {
+        "value": 160,
+        "count": 2,
+        "samples": [
+          {
+            "name": "Group 462",
+            "type": "GROUP",
+            "path": "страница пдф-лекции / Group 464 / Group 463"
+          },
+          {
+            "name": "Group 462",
+            "type": "GROUP",
+            "path": "страница пдф-лекции / Group 464 / Group 463"
+          }
+        ]
+      },
+      {
+        "value": 200,
+        "count": 2,
+        "samples": [
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "Group 446",
+            "type": "GROUP",
+            "path": "страница модуля / Group 448 / Group 447"
+          }
+        ]
+      },
+      {
+        "value": 28,
+        "count": 2,
+        "samples": [
+          {
+            "name": "Group 369",
+            "type": "GROUP",
+            "path": "профиль / Group 371 / Group 370"
+          },
+          {
+            "name": "Group 369",
+            "type": "GROUP",
+            "path": "профиль / Group 371 / Group 370"
+          }
+        ]
+      },
+      {
+        "value": 30,
+        "count": 2,
+        "samples": [
+          {
+            "name": "Group 213",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          },
+          {
+            "name": "профиль создан",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 148,
+        "count": 1,
+        "samples": [
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 156,
+        "count": 1,
+        "samples": [
+          {
+            "name": "профиль",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 164,
+        "count": 1,
+        "samples": [
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 17,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 340",
+            "type": "GROUP",
+            "path": "Group 362 / Group 343 / Group 341"
+          }
+        ]
+      },
+      {
+        "value": 190,
+        "count": 1,
+        "samples": [
+          {
+            "name": "MP desktop — финал",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 198,
+        "count": 1,
+        "samples": [
+          {
+            "name": "MP desktop — финал",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 21,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 302",
+            "type": "GROUP",
+            "path": "profile / страница курса / Group 303"
+          }
+        ]
+      },
+      {
+        "value": 210,
+        "count": 1,
+        "samples": [
+          {
+            "name": "страница теста",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 212,
+        "count": 1,
+        "samples": [
+          {
+            "name": "MP desktop — финал",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 244,
+        "count": 1,
+        "samples": [
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 34,
+        "count": 1,
+        "samples": [
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 38,
+        "count": 1,
+        "samples": [
+          {
+            "name": "успешная смена пароля",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 41,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 249",
+            "type": "GROUP",
+            "path": "profile / смена пароля / Group 250"
+          }
+        ]
+      },
+      {
+        "value": 45,
+        "count": 1,
+        "samples": [
+          {
+            "name": "MP desktop — финал",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 46,
+        "count": 1,
+        "samples": [
+          {
+            "name": "MP desktop — финал",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 50,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 333",
+            "type": "GROUP",
+            "path": "profile / страница курса / Group 336"
+          }
+        ]
+      },
+      {
+        "value": 52,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 362",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          }
+        ]
+      },
+      {
+        "value": 70,
+        "count": 1,
+        "samples": [
+          {
+            "name": "MP desktop — финал",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 94,
+        "count": 1,
+        "samples": [
+          {
+            "name": "страница теста",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      }
+    ],
+    "gapHorizontal": [
+      {
+        "value": 60,
+        "count": 20,
+        "samples": [
+          {
+            "name": "Group 1",
+            "type": "GROUP",
+            "path": "profile / профиль"
+          },
+          {
+            "name": "Group 1",
+            "type": "GROUP",
+            "path": "profile / MP desktop — финал / Group 210"
+          },
+          {
+            "name": "Group 1",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          },
+          {
+            "name": "Group 327",
+            "type": "GROUP",
+            "path": "страница курса / Group 336 / Group 328"
+          },
+          {
+            "name": "Group 334",
+            "type": "GROUP",
+            "path": "profile / страница курса / Group 336"
+          },
+          {
+            "name": "Group 244",
+            "type": "GROUP",
+            "path": "Group 455 / Group 454 / Group 245"
+          }
+        ]
+      },
+      {
+        "value": 161,
+        "count": 8,
+        "samples": [
+          {
+            "name": "Group 347",
+            "type": "GROUP",
+            "path": "profile / профиль"
+          },
+          {
+            "name": "Group 507",
+            "type": "GROUP",
+            "path": "profile / MP desktop — финал"
+          },
+          {
+            "name": "Group 347",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          },
+          {
+            "name": "Group 347",
+            "type": "GROUP",
+            "path": "profile / страница видео-лекции / Group 455"
+          },
+          {
+            "name": "Group 347",
+            "type": "GROUP",
+            "path": "profile / страница пдф-лекции / Group 464"
+          },
+          {
+            "name": "Group 347",
+            "type": "GROUP",
+            "path": "profile / страница пдф-лекции / Group 464"
+          }
+        ]
+      },
+      {
+        "value": 14,
+        "count": 6,
+        "samples": [
+          {
+            "name": "Group 642",
+            "type": "GROUP",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Group 647",
+            "type": "GROUP",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Group 654",
+            "type": "GROUP",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Group 656",
+            "type": "GROUP",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Group 655",
+            "type": "GROUP",
+            "path": "profile / страница теста"
+          },
+          {
+            "name": "Group 241",
+            "type": "GROUP",
+            "path": "profile / 8-код / Group 242"
+          }
+        ]
+      },
+      {
+        "value": 71,
+        "count": 6,
+        "samples": [
+          {
+            "name": "Group 443",
+            "type": "GROUP",
+            "path": "Group 446 / Group 445 / Group 444"
+          },
+          {
+            "name": "Group 443",
+            "type": "GROUP",
+            "path": "Group 446 / Group 445 / Group 444"
+          },
+          {
+            "name": "Group 442",
+            "type": "GROUP",
+            "path": "Group 446 / Group 445 / Group 444"
+          },
+          {
+            "name": "Group 442",
+            "type": "GROUP",
+            "path": "Group 446 / Group 445 / Group 444"
+          },
+          {
+            "name": "Group 441",
+            "type": "GROUP",
+            "path": "Group 446 / Group 445 / Group 444"
+          },
+          {
+            "name": "Group 440",
+            "type": "GROUP",
+            "path": "Group 446 / Group 445 / Group 444"
+          }
+        ]
+      },
+      {
+        "value": 239,
+        "count": 5,
+        "samples": [
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / вход пароль не видно"
+          },
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / смена пароля"
+          },
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / вход пароль видно"
+          },
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / вход почта"
+          },
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / успешная смена пароля"
+          }
+        ]
+      },
+      {
+        "value": 306,
+        "count": 5,
+        "samples": [
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "страница видео-лекции / Group 455 / Group 454"
+          },
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / страница пдф-лекции / Group 464"
+          },
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / страница пдф-лекции / Group 464"
+          },
+          {
+            "name": "страница теста",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / страница модуля / Group 448"
+          }
+        ]
+      },
+      {
+        "value": 324,
+        "count": 5,
+        "samples": [
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / регистрация - пароль не видно"
+          },
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / регистрация - пароль видно"
+          },
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / регистрация - почта"
+          },
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / 8-код"
+          },
+          {
+            "name": "Group 245",
+            "type": "GROUP",
+            "path": "profile / профиль создан"
+          }
+        ]
+      },
+      {
+        "value": 16,
+        "count": 3,
+        "samples": [
+          {
+            "name": "Group 324",
+            "type": "GROUP",
+            "path": "Group 328 / Group 327 / Group 325"
+          },
+          {
+            "name": "Group 324",
+            "type": "GROUP",
+            "path": "Group 336 / Group 334 / Group 325"
+          },
+          {
+            "name": "Group 324",
+            "type": "GROUP",
+            "path": "Group 336 / Group 335 / Group 325"
+          }
+        ]
+      },
+      {
+        "value": 26,
+        "count": 3,
+        "samples": [
+          {
+            "name": "Group 387",
+            "type": "GROUP",
+            "path": "Group 394 / Group 391 / Group 390"
+          },
+          {
+            "name": "Group 387",
+            "type": "GROUP",
+            "path": "Group 394 / Group 392 / Group 390"
+          },
+          {
+            "name": "Group 387",
+            "type": "GROUP",
+            "path": "Group 394 / Group 393 / Group 390"
+          }
+        ]
+      },
+      {
+        "value": 378,
+        "count": 3,
+        "samples": [
+          {
+            "name": "Group 390",
+            "type": "GROUP",
+            "path": "Group 395 / Group 394 / Group 391"
+          },
+          {
+            "name": "Group 390",
+            "type": "GROUP",
+            "path": "Group 395 / Group 394 / Group 392"
+          },
+          {
+            "name": "Group 390",
+            "type": "GROUP",
+            "path": "Group 395 / Group 394 / Group 393"
+          }
+        ]
+      },
+      {
+        "value": 8,
+        "count": 3,
+        "samples": [
+          {
+            "name": "Group 367",
+            "type": "GROUP",
+            "path": "профиль / Group 371 / Group 370"
+          },
+          {
+            "name": "Group 457",
+            "type": "GROUP",
+            "path": "Group 462 / Group 461 / Group 460"
+          },
+          {
+            "name": "Group 457",
+            "type": "GROUP",
+            "path": "Group 462 / Group 461 / Group 460"
+          }
+        ]
+      },
+      {
+        "value": 196,
+        "count": 2,
+        "samples": [
+          {
+            "name": "Group 460",
+            "type": "GROUP",
+            "path": "Group 463 / Group 462 / Group 461"
+          },
+          {
+            "name": "Group 460",
+            "type": "GROUP",
+            "path": "Group 463 / Group 462 / Group 461"
+          }
+        ]
+      },
+      {
+        "value": 326,
+        "count": 2,
+        "samples": [
+          {
+            "name": "профиль",
+            "type": "FRAME",
+            "path": "profile"
+          },
+          {
+            "name": "Group 210",
+            "type": "GROUP",
+            "path": "profile / MP desktop — финал"
+          }
+        ]
+      },
+      {
+        "value": 36,
+        "count": 2,
+        "samples": [
+          {
+            "name": "Group 326",
+            "type": "GROUP",
+            "path": "страница курса / Group 336 / Group 334"
+          },
+          {
+            "name": "Group 326",
+            "type": "GROUP",
+            "path": "страница курса / Group 336 / Group 335"
+          }
+        ]
+      },
+      {
+        "value": 57,
+        "count": 2,
+        "samples": [
+          {
+            "name": "Group 443",
+            "type": "GROUP",
+            "path": "Group 446 / Group 445 / Group 444"
+          },
+          {
+            "name": "Group 442",
+            "type": "GROUP",
+            "path": "Group 446 / Group 445 / Group 444"
+          }
+        ]
+      },
+      {
+        "value": 92,
+        "count": 2,
+        "samples": [
+          {
+            "name": "Group 441",
+            "type": "GROUP",
+            "path": "Group 446 / Group 445 / Group 444"
+          },
+          {
+            "name": "Group 440",
+            "type": "GROUP",
+            "path": "Group 446 / Group 445 / Group 444"
+          }
+        ]
+      },
+      {
+        "value": 93,
+        "count": 2,
+        "samples": [
+          {
+            "name": "Group 441",
+            "type": "GROUP",
+            "path": "Group 446 / Group 445 / Group 444"
+          },
+          {
+            "name": "Group 440",
+            "type": "GROUP",
+            "path": "Group 446 / Group 445 / Group 444"
+          }
+        ]
+      },
+      {
+        "value": 10,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 659",
+            "type": "GROUP",
+            "path": "profile / страница теста"
+          }
+        ]
+      },
+      {
+        "value": 100,
+        "count": 1,
+        "samples": [
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 104,
+        "count": 1,
+        "samples": [
+          {
+            "name": "страница курса",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      },
+      {
+        "value": 112,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 235",
+            "type": "GROUP",
+            "path": "profile / регистрация - почта / Group 238"
+          }
+        ]
+      },
+      {
+        "value": 12,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 248",
+            "type": "GROUP",
+            "path": "profile / смена пароля / Group 250"
+          }
+        ]
+      },
+      {
+        "value": 24,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 341",
+            "type": "GROUP",
+            "path": "страница курса / Group 362 / Group 343"
+          }
+        ]
+      },
+      {
+        "value": 282,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 302",
+            "type": "GROUP",
+            "path": "profile / страница курса / Group 303"
+          }
+        ]
+      },
+      {
+        "value": 35,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 326",
+            "type": "GROUP",
+            "path": "Group 336 / Group 328 / Group 327"
+          }
+        ]
+      },
+      {
+        "value": 59,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 335",
+            "type": "GROUP",
+            "path": "profile / страница курса / Group 336"
+          }
+        ]
+      },
+      {
+        "value": 70,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 362",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          }
+        ]
+      },
+      {
+        "value": 80,
+        "count": 1,
+        "samples": [
+          {
+            "name": "Group 336",
+            "type": "GROUP",
+            "path": "profile / страница курса"
+          }
+        ]
+      }
+    ],
+    "insets": [
+      {
+        "value": 374,
+        "count": 1,
+        "tags": {
+          "bottom": 1
+        },
+        "samples": [
+          {
+            "name": "смена пароля",
+            "type": "FRAME",
+            "path": "profile"
+          }
+        ]
+      }
+    ]
+  },
+  "radii": [
+    {
+      "value": 5,
+      "count": 42,
+      "samples": [
+        {
+          "name": "Group 386",
+          "type": "GROUP",
+          "path": "Group 391 / Group 390 / Group 387"
+        },
+        {
+          "name": "Group 381",
+          "type": "GROUP",
+          "path": "Group 390 / Group 387 / Group 386"
+        },
+        {
+          "name": "Group 373",
+          "type": "GROUP",
+          "path": "Group 387 / Group 386 / Group 381"
+        },
+        {
+          "name": "Rectangle 23",
+          "type": "RECTANGLE",
+          "path": "Group 386 / Group 381 / Group 373"
+        },
+        {
+          "name": "Group 374",
+          "type": "GROUP",
+          "path": "Group 387 / Group 386 / Group 381"
+        },
+        {
+          "name": "Rectangle 23",
+          "type": "RECTANGLE",
+          "path": "Group 386 / Group 381 / Group 374"
+        }
+      ]
+    },
+    {
+      "value": 2,
+      "count": 23,
+      "samples": [
+        {
+          "name": "Group 420",
+          "type": "GROUP",
+          "path": "profile / страница курса"
+        },
+        {
+          "name": "Group 421",
+          "type": "GROUP",
+          "path": "profile / страница курса"
+        },
+        {
+          "name": "Group 422",
+          "type": "GROUP",
+          "path": "profile / страница курса"
+        },
+        {
+          "name": "Group 423",
+          "type": "GROUP",
+          "path": "profile / страница курса"
+        },
+        {
+          "name": "Group 424",
+          "type": "GROUP",
+          "path": "profile / страница курса"
+        },
+        {
+          "name": "Group 425",
+          "type": "GROUP",
+          "path": "profile / страница курса"
+        }
+      ]
+    },
+    {
+      "value": 12,
+      "count": 21,
+      "samples": [
+        {
+          "name": "Rectangle 47",
+          "type": "RECTANGLE",
+          "path": "profile / профиль / Group 371"
+        },
+        {
+          "name": "Rectangle 48",
+          "type": "RECTANGLE",
+          "path": "profile / профиль / Group 396"
+        },
+        {
+          "name": "Rectangle 14",
+          "type": "RECTANGLE",
+          "path": "Group 395 / Group 394 / Group 391"
+        },
+        {
+          "name": "Rectangle 14",
+          "type": "RECTANGLE",
+          "path": "Group 395 / Group 394 / Group 392"
+        },
+        {
+          "name": "Rectangle 14",
+          "type": "RECTANGLE",
+          "path": "Group 395 / Group 394 / Group 393"
+        },
+        {
+          "name": "Rectangle 14",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": 6,
+      "count": 15,
+      "samples": [
+        {
+          "name": "Group 389",
+          "type": "GROUP",
+          "path": "Group 394 / Group 391 / Group 390"
+        },
+        {
+          "name": "Frame 338",
+          "type": "FRAME",
+          "path": "Group 391 / Group 390 / Group 389"
+        },
+        {
+          "name": "Group 389",
+          "type": "GROUP",
+          "path": "Group 394 / Group 392 / Group 390"
+        },
+        {
+          "name": "Frame 338",
+          "type": "FRAME",
+          "path": "Group 392 / Group 390 / Group 389"
+        },
+        {
+          "name": "Group 389",
+          "type": "GROUP",
+          "path": "Group 394 / Group 393 / Group 390"
+        },
+        {
+          "name": "Frame 338",
+          "type": "FRAME",
+          "path": "Group 393 / Group 390 / Group 389"
+        }
+      ]
+    },
+    {
+      "value": 4,
+      "count": 14,
+      "samples": [
+        {
+          "name": "Frame 9",
+          "type": "FRAME",
+          "path": "Group 453 / Group 452 / Group 451"
+        },
+        {
+          "name": "Group 457",
+          "type": "GROUP",
+          "path": "Group 462 / Group 461 / Group 460"
+        },
+        {
+          "name": "Frame 9",
+          "type": "FRAME",
+          "path": "Group 461 / Group 460 / Group 457"
+        },
+        {
+          "name": "Frame 10",
+          "type": "FRAME",
+          "path": "Group 461 / Group 460 / Group 457"
+        },
+        {
+          "name": "Group 457",
+          "type": "GROUP",
+          "path": "Group 462 / Group 461 / Group 460"
+        },
+        {
+          "name": "Frame 9",
+          "type": "FRAME",
+          "path": "Group 461 / Group 460 / Group 457"
+        }
+      ]
+    },
+    {
+      "value": 8,
+      "count": 12,
+      "samples": [
+        {
+          "name": "Group 385",
+          "type": "GROUP",
+          "path": "Group 391 / Group 390 / Group 387"
+        },
+        {
+          "name": "Rectangle 17",
+          "type": "RECTANGLE",
+          "path": "Group 390 / Group 387 / Group 385"
+        },
+        {
+          "name": "Group 385",
+          "type": "GROUP",
+          "path": "Group 392 / Group 390 / Group 387"
+        },
+        {
+          "name": "Rectangle 17",
+          "type": "RECTANGLE",
+          "path": "Group 390 / Group 387 / Group 385"
+        },
+        {
+          "name": "Group 385",
+          "type": "GROUP",
+          "path": "Group 393 / Group 390 / Group 387"
+        },
+        {
+          "name": "Rectangle 17",
+          "type": "RECTANGLE",
+          "path": "Group 390 / Group 387 / Group 385"
+        }
+      ]
+    },
+    {
+      "value": 24,
+      "count": 9,
+      "tags": {
+        "perCorner": 4
+      },
+      "samples": [
+        {
+          "name": "Rectangle 9",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Rectangle 7",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Rectangle 8",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Rectangle 10",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Rectangle 11",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Rectangle 12",
+          "type": "RECTANGLE",
+          "path": "profile / MP desktop — финал"
+        }
+      ]
+    },
+    {
+      "value": 18,
+      "count": 8,
+      "samples": [
+        {
+          "name": "Rectangle 36",
+          "type": "RECTANGLE",
+          "path": "profile / профиль / Group 399"
+        },
+        {
+          "name": "Rectangle 36",
+          "type": "RECTANGLE",
+          "path": "profile / страница курса"
+        },
+        {
+          "name": "Rectangle 37",
+          "type": "RECTANGLE",
+          "path": "profile / страница курса"
+        },
+        {
+          "name": "Rectangle 36",
+          "type": "RECTANGLE",
+          "path": "Group 455 / Group 454 / Group 453"
+        },
+        {
+          "name": "Rectangle 36",
+          "type": "RECTANGLE",
+          "path": "страница пдф-лекции / Group 464 / Group 463"
+        },
+        {
+          "name": "Rectangle 36",
+          "type": "RECTANGLE",
+          "path": "страница пдф-лекции / Group 464 / Group 463"
+        }
+      ]
+    },
+    {
+      "value": 10,
+      "count": 6,
+      "samples": [
+        {
+          "name": "Rectangle 34",
+          "type": "RECTANGLE",
+          "path": "profile / регистрация - пароль не видно / Group 239"
+        },
+        {
+          "name": "Rectangle 34",
+          "type": "RECTANGLE",
+          "path": "profile / регистрация - пароль видно"
+        },
+        {
+          "name": "Rectangle 34",
+          "type": "RECTANGLE",
+          "path": "profile / вход пароль не видно"
+        },
+        {
+          "name": "Rectangle 34",
+          "type": "RECTANGLE",
+          "path": "смена пароля / Group 250 / Group 249"
+        },
+        {
+          "name": "Rectangle 35",
+          "type": "RECTANGLE",
+          "path": "смена пароля / Group 250 / Group 249"
+        },
+        {
+          "name": "Rectangle 34",
+          "type": "RECTANGLE",
+          "path": "profile / вход пароль видно"
+        }
+      ]
+    },
+    {
+      "value": 20,
+      "count": 6,
+      "samples": [
+        {
+          "name": "Group 502",
+          "type": "GROUP",
+          "path": "profile / MP desktop — финал"
+        },
+        {
+          "name": "Star 1",
+          "type": "STAR",
+          "path": "profile / MP desktop — финал / Group 502"
+        },
+        {
+          "name": "Polygon 1",
+          "type": "VECTOR",
+          "path": "profile / MP desktop — финал / Group 502"
+        },
+        {
+          "name": "Mask group",
+          "type": "GROUP",
+          "path": "profile / MP desktop — финал / Group 502"
+        },
+        {
+          "name": "Polygon 3",
+          "type": "VECTOR",
+          "path": "MP desktop — финал / Group 502 / Mask group"
+        },
+        {
+          "name": "dastan 1",
+          "type": "RECTANGLE",
+          "path": "MP desktop — финал / Group 502 / Mask group"
+        }
+      ]
+    },
+    {
+      "value": 14,
+      "count": 2,
+      "samples": [
+        {
+          "name": "Rectangle 45",
+          "type": "RECTANGLE",
+          "path": "profile / страница курса / Group 362"
+        },
+        {
+          "name": "Rectangle 46",
+          "type": "RECTANGLE",
+          "path": "страница курса / Group 362 / Group 343"
+        }
+      ]
+    }
+  ],
+  "pillRadii": [
+    {
+      "value": 22,
+      "count": 26,
+      "samples": [
+        {
+          "name": "Group 229",
+          "type": "GROUP",
+          "path": "profile / регистрация - пароль не видно / Group 239"
+        },
+        {
+          "name": "Rectangle 35",
+          "type": "RECTANGLE",
+          "path": "регистрация - пароль не видно / Group 239 / Group 229"
+        },
+        {
+          "name": "Group 229",
+          "type": "GROUP",
+          "path": "profile / регистрация - пароль видно"
+        },
+        {
+          "name": "Rectangle 35",
+          "type": "RECTANGLE",
+          "path": "profile / регистрация - пароль видно / Group 229"
+        },
+        {
+          "name": "Group 235",
+          "type": "GROUP",
+          "path": "profile / регистрация - почта / Group 238"
+        },
+        {
+          "name": "Group 229",
+          "type": "GROUP",
+          "path": "регистрация - почта / Group 238 / Group 235"
+        }
+      ]
+    },
+    {
+      "value": 2,
+      "count": 17,
+      "samples": [
+        {
+          "name": "Vector 11",
+          "type": "VECTOR",
+          "path": "profile / страница курса / Group 420"
+        },
+        {
+          "name": "Vector 12",
+          "type": "VECTOR",
+          "path": "profile / страница курса / Group 421"
+        },
+        {
+          "name": "Vector 13",
+          "type": "VECTOR",
+          "path": "profile / страница курса / Group 422"
+        },
+        {
+          "name": "Vector 14",
+          "type": "VECTOR",
+          "path": "profile / страница курса / Group 423"
+        },
+        {
+          "name": "Vector 15",
+          "type": "VECTOR",
+          "path": "profile / страница курса / Group 424"
+        },
+        {
+          "name": "Vector 16",
+          "type": "VECTOR",
+          "path": "profile / страница курса / Group 425"
+        }
+      ]
+    },
+    {
+      "value": 3,
+      "count": 7,
+      "samples": [
+        {
+          "name": "Rectangle 40",
+          "type": "RECTANGLE",
+          "path": "Group 336 / Group 333 / Group 332"
+        },
+        {
+          "name": "Background",
+          "type": "RECTANGLE",
+          "path": "Group 336 / Group 333 / Group 332"
+        },
+        {
+          "name": "Background",
+          "type": "RECTANGLE",
+          "path": "Group 336 / Group 333 / Group 332"
+        },
+        {
+          "name": "Background",
+          "type": "RECTANGLE",
+          "path": "Group 336 / Group 333 / Group 332"
+        },
+        {
+          "name": "Rectangle 39",
+          "type": "RECTANGLE",
+          "path": "Group 336 / Group 333 / Group 332"
+        },
+        {
+          "name": "Rectangle 41",
+          "type": "RECTANGLE",
+          "path": "Group 336 / Group 333 / Group 332"
+        }
+      ]
+    },
+    {
+      "value": 4,
+      "count": 2,
+      "samples": [
+        {
+          "name": "Rectangle 37",
+          "type": "RECTANGLE",
+          "path": "страница курса / Group 303 / Group 302"
+        },
+        {
+          "name": "Rectangle 38",
+          "type": "RECTANGLE",
+          "path": "страница курса / Group 303 / Group 302"
+        }
+      ]
+    }
+  ],
+  "strokeWeights": [
+    {
+      "value": 1,
+      "count": 80,
+      "samples": [
+        {
+          "name": "Vector 1",
+          "type": "VECTOR",
+          "path": "profile / профиль / Group 1"
+        },
+        {
+          "name": "Rectangle 14",
+          "type": "RECTANGLE",
+          "path": "Group 395 / Group 394 / Group 391"
+        },
+        {
+          "name": "Rectangle 14",
+          "type": "RECTANGLE",
+          "path": "Group 395 / Group 394 / Group 392"
+        },
+        {
+          "name": "Rectangle 14",
+          "type": "RECTANGLE",
+          "path": "Group 395 / Group 394 / Group 393"
+        },
+        {
+          "name": "Line 1",
+          "type": "LINE",
+          "path": "профиль / Group 399 / Group 398"
+        },
+        {
+          "name": "Line 3",
+          "type": "LINE",
+          "path": "профиль / Group 399 / Group 398"
+        }
+      ]
+    },
+    {
+      "value": 2,
+      "count": 24,
+      "samples": [
+        {
+          "name": "Vector 4",
+          "type": "VECTOR",
+          "path": "Group 399 / Group 398 / Group 397"
+        },
+        {
+          "name": "Vector 5",
+          "type": "VECTOR",
+          "path": "Group 399 / Group 398 / Group 263"
+        },
+        {
+          "name": "Vector 6",
+          "type": "VECTOR",
+          "path": "Group 399 / Group 398 / Group 264"
+        },
+        {
+          "name": "Star 1",
+          "type": "STAR",
+          "path": "profile / MP desktop — финал / Group 502"
+        },
+        {
+          "name": "Vector 9",
+          "type": "VECTOR",
+          "path": "Group 362 / Frame 337 / Frame 9"
+        },
+        {
+          "name": "Vector 9",
+          "type": "VECTOR",
+          "path": "Group 362 / Frame 337 / Frame 10"
+        }
+      ]
+    }
+  ],
+  "shadows": [],
+  "frameWidths": [
+    {
+      "value": 1440,
+      "count": 18,
+      "samples": [
+        {
+          "name": "профиль",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "MP desktop — финал",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "страница курса",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "страница видео-лекции",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "страница пдф-лекции",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "страница пдф-лекции",
+          "type": "FRAME",
+          "path": "profile"
+        }
+      ]
+    }
+  ],
+  "frameHeights": [
+    {
+      "value": 910,
+      "count": 10,
+      "samples": [
+        {
+          "name": "регистрация - пароль не видно",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "регистрация - пароль видно",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "регистрация - почта",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "8-код",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "профиль создан",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "вход пароль не видно",
+          "type": "FRAME",
+          "path": "profile"
+        }
+      ]
+    },
+    {
+      "value": 1258,
+      "count": 2,
+      "samples": [
+        {
+          "name": "страница пдф-лекции",
+          "type": "FRAME",
+          "path": "profile"
+        },
+        {
+          "name": "страница пдф-лекции",
+          "type": "FRAME",
+          "path": "profile"
+        }
+      ]
+    },
+    {
+      "value": 1615,
+      "count": 1,
+      "samples": [
+        {
+          "name": "страница видео-лекции",
+          "type": "FRAME",
+          "path": "profile"
+        }
+      ]
+    },
+    {
+      "value": 1670,
+      "count": 1,
+      "samples": [
+        {
+          "name": "страница модуля",
+          "type": "FRAME",
+          "path": "profile"
+        }
+      ]
+    },
+    {
+      "value": 1700,
+      "count": 1,
+      "samples": [
+        {
+          "name": "страница теста",
+          "type": "FRAME",
+          "path": "profile"
+        }
+      ]
+    },
+    {
+      "value": 2625,
+      "count": 1,
+      "samples": [
+        {
+          "name": "профиль",
+          "type": "FRAME",
+          "path": "profile"
+        }
+      ]
+    },
+    {
+      "value": 3654,
+      "count": 1,
+      "samples": [
+        {
+          "name": "MP desktop — финал",
+          "type": "FRAME",
+          "path": "profile"
+        }
+      ]
+    },
+    {
+      "value": 5780,
+      "count": 1,
+      "samples": [
+        {
+          "name": "страница курса",
+          "type": "FRAME",
+          "path": "profile"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}
