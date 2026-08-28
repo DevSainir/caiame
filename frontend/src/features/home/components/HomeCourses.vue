@@ -12,12 +12,14 @@ const props = defineProps({
   error: { type: Object, default: null },
 })
 
-const emit = defineEmits(['update:selected', 'retry'])
+const emit = defineEmits(['change', 'retry'])
 
 const options = (items, toOption) => (items ?? []).map(toOption)
 
+// One field, one event. Emitting a merged object instead would carry a snapshot of the
+// other filters, and two changes in the same tick would silently drop one of them.
 function select(field, value) {
-  emit('update:selected', { ...props.selected, [field]: value })
+  emit('change', field, value)
 }
 </script>
 

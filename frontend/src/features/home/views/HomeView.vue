@@ -20,6 +20,10 @@ function activeParams() {
   )
 }
 
+function applyFilter(field, value) {
+  selected.value = { ...selected.value, [field]: value }
+}
+
 async function loadCourses() {
   isLoading.value = true
   error.value = null
@@ -60,8 +64,8 @@ watch(selected, loadCourses, { deep: true })
       :filters="filters"
       :is-loading="isLoading"
       :selected="selected"
+      @change="applyFilter"
       @retry="loadCourses"
-      @update:selected="selected = $event"
     />
     <HomeAbout />
   </div>
