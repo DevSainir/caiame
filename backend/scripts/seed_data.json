@@ -64,8 +64,7 @@
       "difficulty": "intermediate",
       "price_minor": 750000,
       "credit_hours": 36,
-      "duration_hours": 40,
-      "cover": "cardiology"
+      "duration_hours": 40
     },
     {
       "slug": "ischemic-stroke-thrombolysis",
@@ -76,8 +75,7 @@
       "difficulty": "advanced",
       "price_minor": 980000,
       "credit_hours": 36,
-      "duration_hours": 44,
-      "cover": "neurology"
+      "duration_hours": 44
     },
     {
       "slug": "infant-immunization",
@@ -88,8 +86,7 @@
       "difficulty": "beginner",
       "price_minor": 420000,
       "credit_hours": 18,
-      "duration_hours": 20,
-      "cover": "pediatrics"
+      "duration_hours": 20
     },
     {
       "slug": "laparoscopy-basics",
@@ -100,8 +97,7 @@
       "difficulty": "intermediate",
       "price_minor": 1450000,
       "credit_hours": 144,
-      "duration_hours": 150,
-      "cover": "surgery"
+      "duration_hours": 150
     },
     {
       "slug": "respiratory-failure-icu",
@@ -112,8 +108,7 @@
       "difficulty": "advanced",
       "price_minor": 1100000,
       "credit_hours": 36,
-      "duration_hours": 48,
-      "cover": "intensive-care"
+      "duration_hours": 48
     },
     {
       "slug": "chest-ct-protocols",
@@ -124,8 +119,7 @@
       "difficulty": "intermediate",
       "price_minor": 890000,
       "credit_hours": 36,
-      "duration_hours": 38,
-      "cover": "radiology"
+      "duration_hours": 38
     },
     {
       "slug": "type-2-diabetes-therapy",
@@ -136,8 +130,7 @@
       "difficulty": "beginner",
       "price_minor": 480000,
       "credit_hours": 18,
-      "duration_hours": 22,
-      "cover": "endocrinology"
+      "duration_hours": 22
     },
     {
       "slug": "hospital-infection-control",
@@ -148,8 +141,7 @@
       "difficulty": "beginner",
       "price_minor": 350000,
       "credit_hours": 18,
-      "duration_hours": 18,
-      "cover": "infectious"
+      "duration_hours": 18
     },
     {
       "slug": "obstetric-ultrasound-screening",
@@ -160,8 +152,106 @@
       "difficulty": "intermediate",
       "price_minor": 1250000,
       "credit_hours": 144,
-      "duration_hours": 152,
-      "cover": "ultrasound"
+      "duration_hours": 152
+    },
+    {
+      "slug": "arterial-hypertension",
+      "title": "Артериальная гипертензия: подбор терапии",
+      "summary": "Целевые уровни давления, комбинации препаратов и резистентная гипертензия.",
+      "specialization": "cardiology",
+      "accreditation": "nmo-18",
+      "difficulty": "beginner",
+      "price_minor": 430000,
+      "credit_hours": 18,
+      "duration_hours": 20
+    },
+    {
+      "slug": "headache-differential",
+      "title": "Головная боль: дифференциальный диагноз",
+      "summary": "Красные флаги, мигрень и вторичные головные боли на приёме терапевта.",
+      "specialization": "neurology",
+      "accreditation": "nmo-18",
+      "difficulty": "beginner",
+      "price_minor": 390000,
+      "credit_hours": 18,
+      "duration_hours": 18
+    },
+    {
+      "slug": "pediatric-respiratory-infections",
+      "title": "Острые респираторные инфекции у детей",
+      "summary": "Когда антибиотик не нужен, признаки осложнений и работа с тревогой родителей.",
+      "specialization": "pediatrics",
+      "accreditation": "nmo-36",
+      "difficulty": "intermediate",
+      "price_minor": 620000,
+      "credit_hours": 36,
+      "duration_hours": 38
+    },
+    {
+      "slug": "surgical-infection-prophylaxis",
+      "title": "Хирургическая инфекция и антибиотикопрофилактика",
+      "summary": "Выбор препарата, время введения и типичные ошибки периоперационной защиты.",
+      "specialization": "surgery",
+      "accreditation": "nmo-36",
+      "difficulty": "intermediate",
+      "price_minor": 710000,
+      "credit_hours": 36,
+      "duration_hours": 40
+    },
+    {
+      "slug": "advanced-life-support",
+      "title": "Сердечно-лёгочная реанимация: протокол ALS",
+      "summary": "Алгоритм расширенных реанимационных мероприятий и работа команды.",
+      "specialization": "intensive-care",
+      "accreditation": "certification-144",
+      "difficulty": "advanced",
+      "price_minor": 1380000,
+      "credit_hours": 144,
+      "duration_hours": 148
+    },
+    {
+      "slug": "mammography-screening",
+      "title": "Маммография: скрининг и интерпретация",
+      "summary": "Категории BI-RADS, плотность железы и маршрутизация после находки.",
+      "specialization": "radiology",
+      "accreditation": "nmo-36",
+      "difficulty": "advanced",
+      "price_minor": 940000,
+      "credit_hours": 36,
+      "duration_hours": 42
+    },
+    {
+      "slug": "thyroid-disorders",
+      "title": "Заболевания щитовидной железы",
+      "summary": "Гипотиреоз, тиреотоксикоз и узловой зоб: обследование и тактика.",
+      "specialization": "endocrinology",
+      "accreditation": "nmo-36",
+      "difficulty": "intermediate",
+      "price_minor": 680000,
+      "credit_hours": 36,
+      "duration_hours": 36
+    },
+    {
+      "slug": "viral-hepatitis",
+      "title": "Вирусные гепатиты: диагностика и ведение",
+      "summary": "Серологические профили, показания к терапии и наблюдение за пациентом.",
+      "specialization": "infectious-diseases",
+      "accreditation": "certification-144",
+      "difficulty": "advanced",
+      "price_minor": 1290000,
+      "credit_hours": 144,
+      "duration_hours": 150
+    },
+    {
+      "slug": "physiological-pregnancy",
+      "title": "Ведение физиологической беременности",
+      "summary": "Календарь наблюдения, скрининги и границы нормы по триместрам.",
+      "specialization": "obstetrics",
+      "accreditation": "nmo-18",
+      "difficulty": "beginner",
+      "price_minor": 460000,
+      "credit_hours": 18,
+      "duration_hours": 22
     }
   ],
   "users": [

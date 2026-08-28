@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450" role="img">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1" gradientTransform="rotate(21 0.5 0.5)">
+      <stop offset="0" stop-color="#5495fe"/>
+      <stop offset="1" stop-color="#0362e4"/>
+    </linearGradient>
+    <clipPath id="frame"><rect width="800" height="450"/></clipPath>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <g clip-path="url(#frame)">
+  <circle cx="660" cy="197" r="70" fill="none" stroke="#ffffff" stroke-opacity="0.200" stroke-width="18"/>
+  <circle cx="660" cy="197" r="132" fill="none" stroke="#ffffff" stroke-opacity="0.174" stroke-width="16"/>
+  <circle cx="660" cy="197" r="194" fill="none" stroke="#ffffff" stroke-opacity="0.148" stroke-width="14"/>
+  <circle cx="660" cy="197" r="256" fill="none" stroke="#ffffff" stroke-opacity="0.122" stroke-width="12"/>
+  <circle cx="660" cy="197" r="318" fill="none" stroke="#ffffff" stroke-opacity="0.096" stroke-width="10"/>
+  <g transform="translate(676 301) scale(1.21)" opacity="0.32"><path d="M9 0L10.0182 7.98177L18 9L10.0182 10.0182L9 18L7.98177 10.0182L0 9L7.98177 7.98177L9 0Z" fill="#ffffff"/></g>
+  <g transform="translate(548 124) scale(1.28)" opacity="0.32"><path d="M9 0L10.0182 7.98177L18 9L10.0182 10.0182L9 18L7.98177 10.0182L0 9L7.98177 7.98177L9 0Z" fill="#ffffff"/></g>
+  <g transform="translate(46 115) scale(1.08)" opacity="0.32"><path d="M9 0L10.0182 7.98177L18 9L10.0182 10.0182L9 18L7.98177 10.0182L0 9L7.98177 7.98177L9 0Z" fill="#ffffff"/></g>
+  <g transform="translate(672 185) scale(1.83)" opacity="0.32"><path d="M9 0L10.0182 7.98177L18 9L10.0182 10.0182L9 18L7.98177 10.0182L0 9L7.98177 7.98177L9 0Z" fill="#ffffff"/></g>
+  </g>
+</svg>

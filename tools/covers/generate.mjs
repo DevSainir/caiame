@@ -14,6 +14,7 @@ import { resolve } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '../..')
 const TOKENS = JSON.parse(readFileSync(resolve(ROOT, 'tokens.json'), 'utf8'))
+const SEED = JSON.parse(readFileSync(resolve(ROOT, 'backend/scripts/seed_data.json'), 'utf8'))
 const OUT = resolve(ROOT, 'frontend/public/covers')
 
 const W = 800
@@ -32,18 +33,15 @@ const SCHEMES = [
 const SPARKLE =
   'M9 0L10.0182 7.98177L18 9L10.0182 10.0182L9 18L7.98177 10.0182L0 9L7.98177 7.98177L9 0Z'
 
-const COVERS = [
-  { slug: 'cardiology', motif: 'rings', scheme: 1 },
-  { slug: 'neurology', motif: 'hexes', scheme: 2 },
-  { slug: 'pediatrics', motif: 'dots', scheme: 0 },
-  { slug: 'surgery', motif: 'stripes', scheme: 3 },
-  { slug: 'intensive-care', motif: 'triangle', scheme: 3 },
-  { slug: 'radiology', motif: 'rings', scheme: 4 },
-  { slug: 'endocrinology', motif: 'dots', scheme: 3 },
-  { slug: 'infectious', motif: 'stripes', scheme: 0 },
-  { slug: 'ultrasound', motif: 'hexes', scheme: 1 },
-]
+const MOTIF_NAMES = ['rings', 'hexes', 'dots', 'stripes', 'triangle']
 
+// One cover per course, not per specialization: two cardiology courses standing side by
+// side with the same picture read as a rendering bug.
+const COVERS = SEED.courses.map((course, index) => ({
+  slug: course.slug,
+  motif: MOTIF_NAMES[index % MOTIF_NAMES.length],
+  scheme: (index * 2 + Math.floor(index / MOTIF_NAMES.length)) % 5,
+}))
 /** Deterministic pseudo-random, so a slug always produces the same cover. */
 function seeded(slug) {
   let hash = 2166136261
