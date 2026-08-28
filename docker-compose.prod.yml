@@ -61,6 +61,12 @@ services:
     build: ./frontend
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      # Certificates and ACME challenges live on the host: certbot renews them there, and
+      # the container only ever reads them.
+      - ./acme-webroot:/var/www/certbot:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       api:
         condition: service_started
