@@ -1,0 +1,148 @@
+"""
+Fill an empty database with a catalogue that looks like the real thing.
+
+Development tool, not application code: it talks to models directly instead of going
+through the layers, because there is no request and no user here. Running it twice is
+safe — every row is matched by its natural key first.
+
+The catalogue text lives in `seed_data.json` rather than in this module. It is content,
+not code, and keeping it out of the source keeps every Cyrillic-confusable lint rule on.
+"""
+
+import asyncio
+import json
+import sys
+from pathlib import Path
+from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from core.db import session_factory
+from core.security import hash_password
+from models.accreditation import Accreditation
+from models.course import Course
+from models.enums import CourseStatus, DifficultyLevel, UserRole
+from models.specialization import Specialization
+from models.user import User
+
+DATA_PATH = Path(__file__).with_name("seed_data.json")
+# Development credentials, for a local database only.
+DEV_PASSWORD = "caiame-dev-2026"  # noqa: S105  # seed account password, local use only
+
+
+def load_data() -> dict[str, list[dict[str, Any]]]:
+    """Read the catalogue content that ships with the repository."""
+    return json.loads(DATA_PATH.read_text(encoding="utf-8"))  # type: ignore[no-any-return]
+
+
+async def seed_specializations(
+    session: AsyncSession, items: list[dict[str, Any]]
+) -> dict[str, Specialization]:
+    """Insert the medical fields, keeping the order they are shown in."""
+    result: dict[str, Specialization] = {}
+    for position, item in enumerate(items):
+        slug = str(item["slug"])
+        existing = await session.scalar(select(Specialization).where(Specialization.slug == slug))
+        if existing is None:
+            existing = Specialization(slug=slug, name=str(item["name"]), position=position)
+            session.add(existing)
+        result[slug] = existing
+    await session.flush()
+    return result
+
+
+async def seed_accreditations(
+    session: AsyncSession, items: list[dict[str, Any]]
+) -> dict[str, Accreditation]:
+    """Insert the credit schemes a course can be accredited under."""
+    result: dict[str, Accreditation] = {}
+    for position, item in enumerate(items):
+        slug = str(item["slug"])
+        existing = await session.scalar(select(Accreditation).where(Accreditation.slug == slug))
+        if existing is None:
+            existing = Accreditation(
+                slug=slug,
+                name=str(item["name"]),
+                short_code=str(item["short_code"]),
+                position=position,
+            )
+            session.add(existing)
+        result[slug] = existing
+    await session.flush()
+    return result
+
+
+async def seed_courses(
+    session: AsyncSession,
+    items: list[dict[str, Any]],
+    specializations: dict[str, Specialization],
+    accreditations: dict[str, Accreditation],
+) -> int:
+    """Insert the published catalogue."""
+    created = 0
+    for item in items:
+        slug = str(item["slug"])
+        if await session.scalar(select(Course).where(Course.slug == slug)) is not None:
+            continue
+        summary = str(item["summary"])
+        session.add(
+            Course(
+                slug=slug,
+                title=str(item["title"]),
+                summary=summary,
+                description=summary,
+                cover_url=f"/covers/{item['cover']}.svg",
+                status=CourseStatus.PUBLISHED,
+                difficulty=DifficultyLevel(item["difficulty"]),
+                specialization_id=specializations[str(item["specialization"])].id,
+                accreditation_id=accreditations[str(item["accreditation"])].id,
+                price_minor=int(item["price_minor"]),
+                currency="KGS",
+                credit_hours=int(item["credit_hours"]),
+                duration_hours=int(item["duration_hours"]),
+            )
+        )
+        created += 1
+    return created
+
+
+async def seed_users(session: AsyncSession, items: list[dict[str, Any]]) -> int:
+    """Insert one account per role, so the access ladder can be exercised locally."""
+    created = 0
+    password_hash = hash_password(DEV_PASSWORD)
+    for item in items:
+        email = str(item["email"])
+        if await session.scalar(select(User).where(User.email == email)) is not None:
+            continue
+        session.add(
+            User(
+                email=email,
+                password_hash=password_hash,
+                full_name=str(item["full_name"]),
+                role=UserRole(item["role"]),
+            )
+        )
+        created += 1
+    return created
+
+
+async def main() -> None:
+    """Seed every table the catalogue page reads."""
+    data = load_data()
+    async with session_factory() as session:
+        specializations = await seed_specializations(session, data["specializations"])
+        accreditations = await seed_accreditations(session, data["accreditations"])
+        courses = await seed_courses(session, data["courses"], specializations, accreditations)
+        users = await seed_users(session, data["users"])
+        await session.commit()
+    print(
+        f"seeded: {len(specializations)} specializations, {len(accreditations)} accreditations, "
+        f"{courses} new courses, {users} new users"
+    )
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

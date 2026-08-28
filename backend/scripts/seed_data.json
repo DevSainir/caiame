@@ -1,0 +1,184 @@
+{
+  "specializations": [
+    {
+      "slug": "cardiology",
+      "name": "Кардиология"
+    },
+    {
+      "slug": "neurology",
+      "name": "Неврология"
+    },
+    {
+      "slug": "pediatrics",
+      "name": "Педиатрия"
+    },
+    {
+      "slug": "surgery",
+      "name": "Хирургия"
+    },
+    {
+      "slug": "intensive-care",
+      "name": "Анестезиология и реаниматология"
+    },
+    {
+      "slug": "radiology",
+      "name": "Лучевая диагностика"
+    },
+    {
+      "slug": "endocrinology",
+      "name": "Эндокринология"
+    },
+    {
+      "slug": "infectious-diseases",
+      "name": "Инфекционные болезни"
+    },
+    {
+      "slug": "obstetrics",
+      "name": "Акушерство и гинекология"
+    }
+  ],
+  "accreditations": [
+    {
+      "slug": "nmo-18",
+      "name": "НМО, 18 ЗЕТ",
+      "short_code": "18 ЗЕТ"
+    },
+    {
+      "slug": "nmo-36",
+      "name": "НМО, 36 ЗЕТ",
+      "short_code": "36 ЗЕТ"
+    },
+    {
+      "slug": "certification-144",
+      "name": "Сертификационный цикл, 144 часа",
+      "short_code": "144 ч"
+    }
+  ],
+  "courses": [
+    {
+      "slug": "acute-coronary-syndrome",
+      "title": "Неотложная кардиология: ОКС на догоспитальном этапе",
+      "summary": "Распознавание, маршрутизация и первая помощь при остром коронарном синдроме.",
+      "specialization": "cardiology",
+      "accreditation": "nmo-36",
+      "difficulty": "intermediate",
+      "price_minor": 750000,
+      "credit_hours": 36,
+      "duration_hours": 40,
+      "cover": "cardiology"
+    },
+    {
+      "slug": "ischemic-stroke-thrombolysis",
+      "title": "Ишемический инсульт: терапевтическое окно и тромболизис",
+      "summary": "Отбор пациентов, противопоказания и ведение первых суток после тромболизиса.",
+      "specialization": "neurology",
+      "accreditation": "nmo-36",
+      "difficulty": "advanced",
+      "price_minor": 980000,
+      "credit_hours": 36,
+      "duration_hours": 44,
+      "cover": "neurology"
+    },
+    {
+      "slug": "infant-immunization",
+      "title": "Вакцинопрофилактика детей первого года жизни",
+      "summary": "Национальный календарь прививок, ложные отводы и работа с отказами родителей.",
+      "specialization": "pediatrics",
+      "accreditation": "nmo-18",
+      "difficulty": "beginner",
+      "price_minor": 420000,
+      "credit_hours": 18,
+      "duration_hours": 20,
+      "cover": "pediatrics"
+    },
+    {
+      "slug": "laparoscopy-basics",
+      "title": "Лапароскопическая хирургия: базовый курс",
+      "summary": "Оборудование, доступы и типичные осложнения малоинвазивных вмешательств.",
+      "specialization": "surgery",
+      "accreditation": "certification-144",
+      "difficulty": "intermediate",
+      "price_minor": 1450000,
+      "credit_hours": 144,
+      "duration_hours": 150,
+      "cover": "surgery"
+    },
+    {
+      "slug": "respiratory-failure-icu",
+      "title": "Интенсивная терапия дыхательной недостаточности",
+      "summary": "Режимы вентиляции, подбор параметров и отлучение пациента от аппарата.",
+      "specialization": "intensive-care",
+      "accreditation": "nmo-36",
+      "difficulty": "advanced",
+      "price_minor": 1100000,
+      "credit_hours": 36,
+      "duration_hours": 48,
+      "cover": "intensive-care"
+    },
+    {
+      "slug": "chest-ct-protocols",
+      "title": "КТ органов грудной клетки: протоколы и интерпретация",
+      "summary": "Выбор протокола, дозовая нагрузка и разбор находок на реальных исследованиях.",
+      "specialization": "radiology",
+      "accreditation": "nmo-36",
+      "difficulty": "intermediate",
+      "price_minor": 890000,
+      "credit_hours": 36,
+      "duration_hours": 38,
+      "cover": "radiology"
+    },
+    {
+      "slug": "type-2-diabetes-therapy",
+      "title": "Сахарный диабет 2 типа: современные схемы терапии",
+      "summary": "Стартовая терапия, интенсификация лечения и контроль осложнений.",
+      "specialization": "endocrinology",
+      "accreditation": "nmo-18",
+      "difficulty": "beginner",
+      "price_minor": 480000,
+      "credit_hours": 18,
+      "duration_hours": 22,
+      "cover": "endocrinology"
+    },
+    {
+      "slug": "hospital-infection-control",
+      "title": "Инфекционный контроль в стационаре",
+      "summary": "Гигиена рук, изоляция пациентов и профилактика катетер-ассоциированных инфекций.",
+      "specialization": "infectious-diseases",
+      "accreditation": "nmo-18",
+      "difficulty": "beginner",
+      "price_minor": 350000,
+      "credit_hours": 18,
+      "duration_hours": 18,
+      "cover": "infectious"
+    },
+    {
+      "slug": "obstetric-ultrasound-screening",
+      "title": "УЗИ в акушерстве: скрининг I и II триместра",
+      "summary": "Протокол измерений, маркеры хромосомных аномалий и оформление заключения.",
+      "specialization": "obstetrics",
+      "accreditation": "certification-144",
+      "difficulty": "intermediate",
+      "price_minor": 1250000,
+      "credit_hours": 144,
+      "duration_hours": 152,
+      "cover": "ultrasound"
+    }
+  ],
+  "users": [
+    {
+      "email": "admin@caiame.kg",
+      "full_name": "Асель Турганбаева",
+      "role": "admin"
+    },
+    {
+      "email": "instructor@caiame.kg",
+      "full_name": "Марат Осмонов",
+      "role": "instructor"
+    },
+    {
+      "email": "student@caiame.kg",
+      "full_name": "Айгуль Садыкова",
+      "role": "student"
+    }
+  ]
+}
