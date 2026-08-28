@@ -10,36 +10,40 @@ const ACTIONS = [
 </script>
 
 <template>
-  <section class="pb-35 pt-18">
+  <section class="pb-14 pt-8 lg:pb-35 lg:pt-18">
     <BaseContainer>
-      <p class="text-4xl font-medium text-subtle">Добро пожаловать на</p>
-      <h1 class="max-w-xl pt-8 text-5xl font-bold text-primary-500">
+      <p class="text-lg font-medium text-subtle lg:text-4xl">Добро пожаловать на</p>
+      <h1 class="max-w-xl pt-3 text-2xl font-bold text-primary-500 lg:pt-8 lg:text-5xl">
         Платформу Непрерывного Медицинского Образования
       </h1>
 
-      <div class="flex gap-8 pt-14">
-        <div class="relative basis-4/5 overflow-hidden rounded-xl">
+      <!-- На телефоне картинка во всю ширину, кнопки под ней в две колонки;
+           на десктопе кнопки становятся узкой колонкой справа. -->
+      <div class="flex flex-col gap-5 pt-8 lg:flex-row lg:gap-8 lg:pt-14">
+        <div class="relative aspect-square overflow-hidden rounded-xl lg:aspect-auto lg:basis-4/5">
           <img :src="heroUrl" alt="" class="h-full w-full object-cover" />
           <div
             class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent"
           />
-          <p class="absolute inset-x-0 bottom-0 max-w-xl p-12 text-lg font-medium text-inverse">
+          <p
+            class="absolute inset-x-0 bottom-0 max-w-xl p-5 text-sm font-medium text-inverse lg:p-12 lg:text-lg"
+          >
             Платформа НМО — ваш надежный помощник в обучении и повышении квалификации.
             Зарегистрируйтесь или войдите, чтобы начать обучение, которое поможет вам расти
             профессионально и расширять вашу карьеру.
           </p>
         </div>
 
-        <div class="flex basis-1/5 flex-col gap-8">
+        <div class="grid grid-cols-2 gap-2 lg:flex lg:basis-1/5 lg:flex-col lg:gap-8">
           <RouterLink
             v-for="action in ACTIONS"
             :key="action.label"
             :to="action.to"
-            class="flex aspect-square flex-col justify-between rounded-xl p-10 text-inverse transition-colors"
+            class="flex aspect-video flex-col justify-between rounded-xl p-5 text-inverse transition-colors lg:aspect-square lg:p-10"
             :class="action.surface"
           >
-            <span class="text-2xl font-bold">{{ action.label }}</span>
-            <IconArrowUpRight class="w-6 self-end" />
+            <span class="text-lg font-bold lg:text-2xl">{{ action.label }}</span>
+            <IconArrowUpRight class="w-5 self-end lg:w-6" />
           </RouterLink>
         </div>
       </div>

@@ -25,39 +25,40 @@ function select(field, value) {
 
 <template>
   <section>
-    <div class="bg-accent pb-35 pt-20">
+    <div class="bg-accent pb-28 pt-10 lg:pb-35 lg:pt-20">
       <BaseContainer>
-        <div class="flex gap-8">
-          <h2 class="basis-1/4 text-5xl font-bold text-inverse">Список курсов</h2>
-          <p class="basis-2/5 text-lg font-medium text-inverse">
+        <div class="flex flex-col items-center gap-3 text-center lg:flex-row lg:items-start lg:gap-8 lg:text-left">
+          <h2 class="text-2xl font-bold text-inverse lg:basis-1/4 lg:text-5xl">Список курсов</h2>
+          <p class="text-sm font-medium text-inverse lg:basis-2/5 lg:text-lg">
             Изучите наш широкий каталог курсов, специально разработанных для медицинских
             специалистов. Вы можете фильтровать курсы по специализации, сложности и типу
             кредитования, чтобы найти именно то, что вам нужно.
           </p>
         </div>
 
-        <div class="flex gap-2 pt-14">
+        <!-- Четыре ячейки в сетку 2×2 на телефоне и в один ряд на десктопе. -->
+        <div class="grid grid-cols-2 gap-2 pt-8 lg:flex lg:pt-14">
           <div
-            class="flex flex-1 items-center rounded-l-xl bg-page px-8 py-7 text-xl font-bold text-ink"
+            class="flex flex-1 items-center rounded-lg bg-page px-5 py-4 text-sm font-bold text-ink lg:rounded-none lg:rounded-l-xl lg:px-8 lg:py-7 lg:text-xl"
           >
             Фильтры:
           </div>
           <BaseSelect
-            class="flex-1"
+            class="flex-1 rounded-lg lg:rounded-none"
             :model-value="props.selected.specialization"
             :options="options(props.filters.specializations, (i) => ({ value: i.slug, label: i.name }))"
             placeholder="Специализация"
             @update:model-value="select('specialization', $event)"
           />
           <BaseSelect
-            class="flex-1"
+            class="flex-1 rounded-lg lg:rounded-none"
             :model-value="props.selected.difficulty"
             :options="options(props.filters.difficulties, (i) => ({ value: i, label: difficultyLabel(i) }))"
             placeholder="Сложность"
             @update:model-value="select('difficulty', $event)"
           />
           <BaseSelect
-            class="flex-1 rounded-r-xl"
+            class="flex-1 rounded-lg lg:rounded-none lg:rounded-r-xl"
             :model-value="props.selected.accreditation"
             :options="options(props.filters.accreditations, (i) => ({ value: i.slug, label: i.name }))"
             placeholder="Тип кредитования"
@@ -68,13 +69,15 @@ function select(field, value) {
     </div>
 
     <BaseContainer>
-      <div class="-mt-28 rounded-xl bg-page p-8">
-        <p v-if="props.isLoading" class="py-35 text-center text-lg font-semibold text-subtle">
+      <div class="-mt-24 rounded-xl bg-page p-5 lg:-mt-28 lg:p-8">
+        <p v-if="props.isLoading" class="py-24 text-center text-sm font-semibold text-subtle lg:py-35 lg:text-lg">
           Загружаем курсы…
         </p>
 
-        <div v-else-if="props.error" class="flex flex-col items-center gap-5 py-35">
-          <p class="text-lg font-semibold text-subtle">Не удалось загрузить каталог курсов</p>
+        <div v-else-if="props.error" class="flex flex-col items-center gap-5 py-24 lg:py-35">
+          <p class="text-center text-sm font-semibold text-subtle lg:text-lg">
+            Не удалось загрузить каталог курсов
+          </p>
           <button class="text-base font-bold text-accent" type="button" @click="emit('retry')">
             Попробовать ещё раз
           </button>
@@ -82,18 +85,18 @@ function select(field, value) {
 
         <p
           v-else-if="props.courses.length === 0"
-          class="py-35 text-center text-lg font-semibold text-subtle"
+          class="py-24 text-center text-sm font-semibold text-subtle lg:py-35 lg:text-lg"
         >
           По выбранным фильтрам курсов пока нет
         </p>
 
-        <div v-else class="grid grid-cols-3 gap-8">
+        <div v-else class="grid grid-cols-1 gap-5 lg:grid-cols-3 lg:gap-8">
           <CourseCard v-for="course in props.courses" :key="course.id" :course="course" />
         </div>
 
         <p
           v-if="!props.isLoading && !props.error && props.courses.length > 0"
-          class="pt-14 text-center text-lg font-semibold text-subtle"
+          class="pt-8 text-center text-sm font-semibold text-subtle lg:pt-14 lg:text-lg"
         >
           Посмотреть больше курсов
         </p>

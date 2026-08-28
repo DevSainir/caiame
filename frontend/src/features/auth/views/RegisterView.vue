@@ -43,9 +43,9 @@ async function submit() {
 </script>
 
 <template>
-  <section class="flex justify-center px-6 pb-35 pt-25">
-    <form class="flex w-full max-w-card flex-col gap-8" novalidate @submit.prevent="submit">
-      <h1 class="text-3xl font-semibold text-ink">Укажите почту и придумайте пароль</h1>
+  <section class="flex justify-center px-5 pb-20 pt-10 lg:px-6 lg:pb-35 lg:pt-25">
+    <form class="flex w-full max-w-card flex-col gap-6 lg:gap-8" novalidate @submit.prevent="submit">
+      <h1 class="text-2xl font-semibold text-ink lg:text-3xl">Укажите почту и придумайте пароль</h1>
 
       <div class="flex flex-col gap-5">
         <BaseInput
@@ -68,7 +68,7 @@ async function submit() {
 
       <p v-if="errors.form" class="text-sm font-semibold text-danger-600">{{ errors.form }}</p>
 
-      <div class="flex items-start justify-between gap-8">
+      <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
         <p class="max-w-card text-xs font-semibold text-subtle">
           Продолжая, я принимаю Политику конфиденциальности и Условия использования ПНМО
         </p>

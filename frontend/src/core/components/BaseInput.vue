@@ -20,7 +20,7 @@ const inputType = computed(() => (isPassword.value && isRevealed.value ? 'text' 
 <template>
   <div class="flex flex-col gap-2">
     <div
-      class="flex items-center gap-4 rounded-lg border bg-page px-5 py-6"
+      class="flex items-center gap-4 rounded-lg border bg-page px-5 py-5 lg:py-6"
       :class="props.error ? 'border-danger-500' : 'border-neutral-900'"
     >
       <input

@@ -23,18 +23,25 @@ const COLUMNS = [
 <template>
   <footer class="bg-inverse text-inverse">
     <BaseContainer>
-      <div class="pb-24 pt-25">
-        <div class="grid grid-cols-4">
-          <p class="text-xl font-bold">Платформа Непрерывного Медицинского Образования</p>
+      <div class="pb-10 pt-10 lg:pb-24 lg:pt-25">
+        <!-- Название над колонками на телефоне, слева от них на десктопе. -->
+        <p class="text-lg font-bold lg:hidden">Платформа Непрерывного Медицинского Образования</p>
 
-          <ul v-for="(column, index) in COLUMNS" :key="index" class="flex flex-col gap-6">
+        <!-- Две колонки, а не три: на 360px в треть ширины не помещается
+             «Администрирование», и оно наезжает на соседнюю колонку. -->
+        <div class="grid grid-cols-2 gap-x-5 gap-y-6 pt-8 lg:grid-cols-4 lg:gap-0 lg:pt-0">
+          <p class="hidden text-xl font-bold lg:block">
+            Платформа Непрерывного Медицинского Образования
+          </p>
+
+          <ul v-for="(column, index) in COLUMNS" :key="index" class="flex flex-col gap-3 lg:gap-6">
             <li v-for="link in column" :key="link.label">
-              <RouterLink class="text-base" :to="link.to">{{ link.label }}</RouterLink>
+              <RouterLink class="text-xs lg:text-base" :to="link.to">{{ link.label }}</RouterLink>
             </li>
           </ul>
         </div>
 
-        <p class="pt-25 text-xs font-medium">
+        <p class="pt-10 text-2xs font-medium lg:pt-25 lg:text-xs">
           © 2026 Центрально азиатский институт дополнительного медицинского образования
         </p>
       </div>
