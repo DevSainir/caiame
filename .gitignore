@@ -1,0 +1,38 @@
+# Секреты. Ключ, попавший в историю, считается скомпрометированным навсегда —
+# его отзывают, а не «удаляют следующим коммитом».
+.env
+.env.local
+*.pem
+*.key
+
+# Локальные настройки инструментов, привязанные к конкретной машине
+.claude/settings.local.json
+.idea/
+.vscode/
+.DS_Store
+
+# Продакшен-руководства держим вне репозитория: там адреса, доступы и порядок выката
+.claude/skills/production/
+
+# Зависимости
+node_modules/
+.venv/
+venv/
+
+# Сборка и кэши
+dist/
+.cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage/
+.coverage
+htmlcov/
+
+# Загруженные пользователями файлы
+uploads/
+
+# Артефакт editable-установки пакета
+*.egg-info/

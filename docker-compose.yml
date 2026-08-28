@@ -1,0 +1,48 @@
+# Development stack only. The credentials below are local defaults and must not be reused
+# in a deployment: production gets its own compose file and its secrets from the environment.
+#
+# Host ports are shifted: 5432 and 8000 are often taken by unrelated projects.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: caiame
+      POSTGRES_PASSWORD: caiame
+      POSTGRES_DB: caiame
+    ports:
+      - "5433:5432"
+    volumes:
+      - caiame-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U caiame"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://caiame:caiame@db:5432/caiame
+      CORS_ORIGINS: '["http://localhost:5173"]'
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8001:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  caiame-pgdata:
