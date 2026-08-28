@@ -33,8 +33,12 @@ export function configureAuth({ refresh, sessionLost }) {
  * A page that fires three requests at once gets three 401s at once. Without this queue all
  * three would refresh in parallel, two of them presenting an already-rotated token — and
  * the backend, by its own replay rule, would kill the whole family and sign the user out.
+ *
+ * Exported because session restore has to share the same queue. It lives here rather than
+ * in the store on purpose: a module-level singleton survives the store being created twice,
+ * which is exactly what a duplicated route guard managed to do.
  */
-function refreshOnce() {
+export function refreshOnce() {
   refreshInFlight ??= Promise.resolve()
     .then(() => refreshSession?.())
     .finally(() => {

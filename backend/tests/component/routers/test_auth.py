@@ -4,10 +4,11 @@ from collections.abc import Iterator
 
 import pytest
 from fastapi.testclient import TestClient
+from httpx import Response
 
 from core import deps
 from main import app
-from routers.auth import REFRESH_COOKIE
+from routers.auth import REFRESH_COOKIE, SESSION_HINT_COOKIE
 from services.rate_limit import RateLimitService
 from tests.support.factories import make_user
 from tests.support.fakes import FakeCounterStore, FakeRefreshTokenRepo, FakeUserRepo
@@ -292,3 +293,48 @@ async def test_registration_is_rate_limited_too(client: TestClient) -> None:
     )
 
     assert refused.status_code == 429
+
+
+async def test_a_readable_session_hint_is_left_beside_the_cookie(client: TestClient) -> None:
+    """
+    The page cannot see the HttpOnly refresh cookie, so it needs a hint that one exists.
+
+    Without it the SPA has to try a refresh on every single load just to find out that the
+    visitor was never signed in — a wasted round-trip and a 401 in everyone's console.
+    """
+    response = client.post(
+        "/api/v1/auth/register", json={"email": "hint@example.org", "password": PASSWORD}
+    )
+
+    assert client.cookies[SESSION_HINT_COOKIE] == "1"
+    assert "httponly" not in _cookie_attributes(response, SESSION_HINT_COOKIE)
+
+
+async def test_the_hint_carries_no_authority(client: TestClient) -> None:
+    """It says a session exists, nothing more: forging it must not authenticate anybody."""
+    client.post("/api/v1/auth/register", json={"email": "hint2@example.org", "password": PASSWORD})
+    token = client.cookies[REFRESH_COOKIE]
+    client.cookies.clear()
+    client.cookies.set(SESSION_HINT_COOKIE, "1")
+
+    assert client.post("/api/v1/auth/refresh").status_code == 401
+    assert client.get("/api/v1/auth/me").status_code == 401
+    assert token  # the real credential was the one we threw away
+
+
+async def test_logging_out_clears_the_hint(client: TestClient) -> None:
+    """A stale hint would make every later page load try a refresh that cannot succeed."""
+    client.post("/api/v1/auth/login", json={"email": "student@example.org", "password": PASSWORD})
+
+    response = client.post("/api/v1/auth/logout")
+
+    assert response.status_code == 204
+    assert client.cookies.get(SESSION_HINT_COOKIE) is None
+
+
+def _cookie_attributes(response: Response, name: str) -> str:
+    """The Set-Cookie line for one cookie, lower-cased, for attribute assertions."""
+    for header in response.headers.get_list("set-cookie"):
+        if header.startswith(f"{name}="):
+            return str(header).lower()
+    raise AssertionError(f"no Set-Cookie for {name}")

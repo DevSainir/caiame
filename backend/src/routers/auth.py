@@ -17,6 +17,9 @@ from services.rate_limit import RateLimitExceededError
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 REFRESH_COOKIE = "refresh_token"
+# A readable hint, never a credential: it only says "a session cookie exists", so the SPA
+# can skip the refresh call entirely for a visitor who has never signed in.
+SESSION_HINT_COOKIE = "has_session"
 _settings = get_settings()
 
 
@@ -33,6 +36,7 @@ def _refusal(code: str) -> JSONResponse:
     """Refuse with 401 and clear the cookie without aborting the transaction."""
     refusal = JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content={"detail": code})
     refusal.delete_cookie(REFRESH_COOKIE, path=_settings.refresh_cookie_path)
+    refusal.delete_cookie(SESSION_HINT_COOKIE, path="/")
     return refusal
 
 
@@ -50,6 +54,15 @@ def _attach_session(response: Response, issued: IssuedSession) -> SessionOut:
         secure=_settings.cookie_secure,
         samesite="lax",
         path=_settings.refresh_cookie_path,
+        expires=issued.refresh_expires_at,
+    )
+    response.set_cookie(
+        key=SESSION_HINT_COOKIE,
+        value="1",
+        httponly=False,
+        secure=_settings.cookie_secure,
+        samesite="lax",
+        path="/",
         expires=issued.refresh_expires_at,
     )
     return issued.session
@@ -147,6 +160,7 @@ async def logout(request: Request, response: Response, svc: AuthSvc) -> None:
     """End the session this cookie belongs to."""
     await svc.logout(request.cookies.get(REFRESH_COOKIE))
     response.delete_cookie(REFRESH_COOKIE, path=_settings.refresh_cookie_path)
+    response.delete_cookie(SESSION_HINT_COOKIE, path="/")
 
 
 @router.get(

@@ -1,12 +1,12 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import * as authApi from '@/features/auth/api'
-import { configureAuth, setAccessToken } from '@/core/api/client'
+import { configureAuth, refreshOnce, setAccessToken } from '@/core/api/client'
+import { hasSessionHint } from '@/features/auth/session-hint'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
   const isReady = ref(false)
-  let restoring = null
   const isAuthenticated = computed(() => user.value !== null)
 
   /** Hold the token in memory only; a reload restores the session from the cookie instead. */
@@ -40,21 +40,19 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Restore a session on page load.
    *
-   * A failure here is the normal case for a visitor who is not signed in, so it is not an
-   * error state — it just means the app starts anonymous.
+   * Two things guard this call, and both matter. A visitor without the session hint never
+   * asks at all — no wasted round-trip and no 401 in everyone's console. And the request
+   * itself goes through the shared queue, because two simultaneous refreshes would send the
+   * same cookie twice, the second one already rotated, and the backend would read that as a
+   * stolen token and end the session.
    */
   async function restore() {
-    // Cached, so a route guard and a component asking at the same time produce one request.
-    restoring ??= (async () => {
-      try {
-        adopt(await authApi.refresh())
-      } catch {
-        forget()
-      } finally {
-        isReady.value = true
-      }
-    })()
-    return restoring
+    if (!hasSessionHint()) {
+      isReady.value = true
+      return
+    }
+    await refreshOnce()
+    isReady.value = true
   }
 
   configureAuth({

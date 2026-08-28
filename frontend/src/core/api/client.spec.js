@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import client, { configureAuth, setAccessToken } from '@/core/api/client'
+import client, { configureAuth, refreshOnce, setAccessToken } from '@/core/api/client'
 
 /**
  * The queue in front of the refresh call.
@@ -74,5 +74,48 @@ describe('the axios client', () => {
     await expect(client.post('/auth/login')).rejects.toMatchObject({ status: 401 })
 
     expect(refreshCalls).toBe(0)
+  })
+})
+
+
+/**
+ * The same queue also serves session restore.
+ *
+ * A duplicated route guard once called restore twice on page load. Both calls sent the same
+ * refresh cookie; the first rotated it, the second presented a token that was already spent,
+ * and the backend correctly read that as theft and ended the session. Reloading the page
+ * signed the user out.
+ */
+describe('the refresh queue', () => {
+  it('collapses simultaneous callers into one refresh', async () => {
+    let calls = 0
+    configureAuth({
+      refresh: async () => {
+        calls += 1
+        await new Promise((resolve) => setTimeout(resolve, 10))
+        return 'fresh'
+      },
+      sessionLost: () => {},
+    })
+
+    await Promise.all([refreshOnce(), refreshOnce(), refreshOnce()])
+
+    expect(calls).toBe(1)
+  })
+
+  it('allows a later refresh once the first one has finished', async () => {
+    let calls = 0
+    configureAuth({
+      refresh: async () => {
+        calls += 1
+        return 'fresh'
+      },
+      sessionLost: () => {},
+    })
+
+    await refreshOnce()
+    await refreshOnce()
+
+    expect(calls).toBe(2)
   })
 })
