@@ -24,6 +24,8 @@ const badges = () =>
     <div class="flex aspect-video items-center justify-center overflow-hidden rounded-md bg-neutral-100">
       <img
         v-if="props.course.cover_url"
+        decoding="async"
+        loading="lazy"
         :alt="props.course.title"
         class="h-full w-full object-cover"
         :src="props.course.cover_url"

@@ -4,7 +4,7 @@ import BaseButton from '@/core/components/BaseButton.vue'
 import IconBook from '@/core/components/icons/IconBook.vue'
 import IconMedicalBag from '@/core/components/icons/IconMedicalBag.vue'
 import IconSparkle from '@/core/components/icons/IconSparkle.vue'
-import illustrationUrl from '@/assets/images/about-illustration.png'
+import illustrationUrl from '@/assets/images/about-illustration.webp'
 
 const PARAGRAPHS = [
   'Платформа НМО предлагает медицинским профессионалам доступ к современным и актуальным образовательным ресурсам.',
@@ -31,7 +31,13 @@ const PARAGRAPHS = [
           <IconSparkle class="absolute left-12 top-1/2 w-5 text-primary-500" />
           <IconSparkle class="absolute bottom-1/3 left-0 w-8 text-primary-500" />
           <IconSparkle class="absolute right-1/4 top-6 w-4 text-neutral-100" />
-          <img :src="illustrationUrl" alt="" class="ml-auto w-full" />
+          <img
+            :src="illustrationUrl"
+            alt=""
+            class="ml-auto w-full"
+            decoding="async"
+            loading="lazy"
+          />
         </div>
       </div>
     </BaseContainer>

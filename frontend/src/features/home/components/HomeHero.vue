@@ -1,7 +1,7 @@
 <script setup>
 import BaseContainer from '@/core/components/BaseContainer.vue'
 import IconArrowUpRight from '@/core/components/icons/IconArrowUpRight.vue'
-import heroUrl from '@/assets/images/hero-laboratory.jpg'
+import heroUrl from '@/assets/images/hero-laboratory.webp'
 
 const ACTIONS = [
   { label: 'Войти', to: '/login', surface: 'bg-accent hover:bg-primary-600' },
