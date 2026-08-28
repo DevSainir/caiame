@@ -70,7 +70,7 @@ async function submit() {
 
       <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
         <p class="max-w-card text-xs font-semibold text-subtle">
-          Продолжая, я принимаю Политику конфиденциальности и Условия использования ПНМО
+          Продолжая, я принимаю Политику конфиденциальности и Условия использования ЦАИДМО
         </p>
         <BaseButton
           class="shrink-0"

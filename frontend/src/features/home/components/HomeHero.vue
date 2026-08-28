@@ -12,9 +12,9 @@ const ACTIONS = [
 <template>
   <section class="pb-14 pt-8 lg:pb-35 lg:pt-18">
     <BaseContainer>
-      <p class="text-lg font-medium text-subtle lg:text-4xl">Добро пожаловать на</p>
+      <p class="text-lg font-medium text-subtle lg:text-4xl">Добро пожаловать в</p>
       <h1 class="max-w-xl pt-3 text-2xl font-bold text-primary-500 lg:pt-8 lg:text-5xl">
-        Платформу Непрерывного Медицинского Образования
+        Центрально-Азиатский Институт Дополнительного Медицинского Образования
       </h1>
 
       <!-- На телефоне картинка во всю ширину, кнопки под ней в две колонки;
@@ -28,7 +28,7 @@ const ACTIONS = [
           <p
             class="absolute inset-x-0 bottom-0 max-w-xl p-5 text-sm font-medium text-inverse lg:p-12 lg:text-lg"
           >
-            Платформа НМО — ваш надежный помощник в обучении и повышении квалификации.
+            ЦАИДМО — ваш надежный помощник в обучении и повышении квалификации.
             Зарегистрируйтесь или войдите, чтобы начать обучение, которое поможет вам расти
             профессионально и расширять вашу карьеру.
           </p>
