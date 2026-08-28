@@ -20,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.config import get_settings
 from core.db import session_factory
 from core.security import hash_password
 from models.accreditation import Accreditation
@@ -130,17 +131,25 @@ async def seed_users(session: AsyncSession, items: list[dict[str, Any]]) -> int:
 
 
 async def main() -> None:
-    """Seed every table the catalogue page reads."""
+    """
+    Seed every table the catalogue page reads.
+
+    Demo accounts are created only outside production. Their password is committed to this
+    repository, so seeding them on a public server would put an administrator account with a
+    published password on the internet.
+    """
     data = load_data()
+    is_production = get_settings().environment == "production"
     async with session_factory() as session:
         specializations = await seed_specializations(session, data["specializations"])
         accreditations = await seed_accreditations(session, data["accreditations"])
         courses = await seed_courses(session, data["courses"], specializations, accreditations)
-        users = await seed_users(session, data["users"])
+        users = 0 if is_production else await seed_users(session, data["users"])
         await session.commit()
+    accounts = "skipped in production" if is_production else f"{users} new users"
     print(
         f"seeded: {len(specializations)} specializations, {len(accreditations)} accreditations, "
-        f"{courses} new courses, {users} new users"
+        f"{courses} new courses, {accounts}"
     )
 
 
