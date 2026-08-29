@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from models.enums import UserRole
 
@@ -14,3 +14,11 @@ class UserOut(BaseModel):
     email: EmailStr
     full_name: str
     role: UserRole
+
+
+class UserUpdateIn(BaseModel):
+    """What the profile screen may change about an account."""
+
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    full_name: str = Field(min_length=1, max_length=200)

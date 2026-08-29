@@ -100,6 +100,11 @@ class FakeUserRepo:
         """Find an account by id."""
         return next((user for user in self.users if user.id == user_id), None)
 
+    async def update_full_name(self, user: User, *, full_name: str) -> User:
+        """Store a new display name."""
+        user.full_name = full_name
+        return user
+
     async def create(
         self, *, email: str, password_hash: str, full_name: str, role: UserRole
     ) -> User:

@@ -25,6 +25,12 @@ class UserRepo:
         user: User | None = await self.session.get(User, user_id)
         return user
 
+    async def update_full_name(self, user: User, *, full_name: str) -> User:
+        """Store a new display name and flush, so the caller reads back what was written."""
+        user.full_name = full_name
+        await self.session.flush()
+        return user
+
     async def create(
         self, *, email: str, password_hash: str, full_name: str, role: UserRole
     ) -> User:

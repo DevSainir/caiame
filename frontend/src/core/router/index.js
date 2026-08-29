@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import authRoutes from '@/features/auth/routes'
+import profileRoutes from '@/features/profile/routes'
 import homeRoutes from '@/features/home/routes'
 import { useAuthStore } from '@/core/session/store'
 
 // Screens that are drawn but not built yet. Each one moves into its own feature as soon as
 // that feature exists; until then the links must not break the app.
-const stubRoutes = ['/courses', '/courses/:slug', '/profile', '/support'].map((path) => ({
+const stubRoutes = ['/courses', '/courses/:slug', '/support'].map((path) => ({
   path,
   name: path.slice(1),
   component: () => import('@/core/views/StubView.vue'),
@@ -16,6 +17,7 @@ const router = createRouter({
   routes: [
     ...homeRoutes,
     ...authRoutes,
+    ...profileRoutes,
     ...stubRoutes,
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
@@ -34,6 +36,7 @@ router.beforeEach(async (to) => {
   // than before mount keeps first paint off the network round-trip.
   if (!auth.isReady) await auth.restore()
   if (to.meta.guestOnly && auth.isAuthenticated) return { path: '/' }
+  if (to.meta.requiresAuth && !auth.isAuthenticated) return { path: '/login' }
   return true
 })
 

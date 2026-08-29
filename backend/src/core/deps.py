@@ -18,6 +18,7 @@ from services.auth import AuthService
 from services.course import CourseService
 from services.rate_limit import RateLimitService
 from services.taxonomy import TaxonomyService
+from services.user import UserService
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -89,6 +90,11 @@ def get_client_ip(request: Request) -> str:
     return request.client.host if request.client else "unknown"
 
 
+def get_user_service(repo: Annotated[UserRepo, Depends(get_user_repo)]) -> UserService:
+    """Provide the user service with its repository injected."""
+    return UserService(user_repo=repo)
+
+
 async def get_current_user(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
     user_repo: Annotated[UserRepo, Depends(get_user_repo)],
@@ -120,5 +126,6 @@ async def get_current_user(
 CourseSvc = Annotated[CourseService, Depends(get_course_service)]
 TaxonomySvc = Annotated[TaxonomyService, Depends(get_taxonomy_service)]
 AuthSvc = Annotated[AuthService, Depends(get_auth_service)]
+UserSvc = Annotated[UserService, Depends(get_user_service)]
 ClientIp = Annotated[str, Depends(get_client_ip)]
 CurrentUser = Annotated[User, Depends(get_current_user)]

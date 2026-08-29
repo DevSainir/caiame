@@ -24,6 +24,11 @@ export const useAuthStore = defineStore('session', () => {
     return session
   }
 
+  /** Обновить сведения о вошедшем пользователе, не трогая токен. */
+  function applyUser(next) {
+    user.value = next
+  }
+
   function forget() {
     user.value = null
     setAccessToken(null)
@@ -80,5 +85,5 @@ export const useAuthStore = defineStore('session', () => {
     sessionLost: forget,
   })
 
-  return { user, isReady, isAuthenticated, register, signIn, signOut, restore }
+  return { user, isReady, isAuthenticated, applyUser, register, signIn, signOut, restore }
 })
