@@ -1,10 +1,18 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import * as authApi from '@/features/auth/api'
+import * as authApi from '@/core/session/api'
 import { configureAuth, refreshOnce, setAccessToken } from '@/core/api/client'
-import { hasSessionHint } from '@/features/auth/session-hint'
+import { hasSessionHint } from '@/core/session/session-hint'
 
-export const useAuthStore = defineStore('auth', () => {
+/**
+ * Состояние сессии.
+ *
+ * Живёт в core/, а не в features/auth, потому что о вошедшем пользователе спрашивают
+ * три инфраструктурных места — HTTP-клиент, охранник роутера и шапка — и только одно
+ * доменное: экраны входа. Область auth осталась тем, чем и должна быть: роуты, вью,
+ * валидация и расшифровка отказов.
+ */
+export const useAuthStore = defineStore('session', () => {
   const user = ref(null)
   const isReady = ref(false)
   const isAuthenticated = computed(() => user.value !== null)
@@ -29,12 +37,17 @@ export const useAuthStore = defineStore('auth', () => {
     return adopt(await authApi.login(payload))
   }
 
+  /**
+   * Выход из аккаунта.
+   *
+   * Локальное состояние очищается только после того, как сервер подтвердил выход.
+   * Забыть пользователя раньше — значит соврать: refresh-токен живёт в cookie, которую
+   * страница не видит и не может стереть, поэтому перезагрузка вернула бы сессию.
+   * На общем компьютере это ровно тот исход, ради которого нажимают «Выйти».
+   */
   async function signOut() {
-    try {
-      await authApi.logout()
-    } finally {
-      forget()
-    }
+    await authApi.logout()
+    forget()
   }
 
   /**

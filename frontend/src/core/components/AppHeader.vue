@@ -1,13 +1,37 @@
 <script setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import BaseContainer from '@/core/components/BaseContainer.vue'
 import IconUser from '@/core/components/icons/IconUser.vue'
-import { useAuthStore } from '@/features/auth/store'
+import { useAuthStore } from '@/core/session/store'
+import { useNotificationStore } from '@/core/notifications/store'
 import logoUrl from '@/assets/images/logo.svg'
 
 const route = useRoute()
+const router = useRouter()
 const auth = useAuthStore()
+const notifications = useNotificationStore()
+const isSigningOut = ref(false)
+
+/**
+ * Выход из аккаунта.
+ *
+ * Уводим на главную только с закрытых страниц: с открытой странице незачем никуда
+ * прыгать, а неожиданный переход после нажатия читается как сбой.
+ */
+async function signOut() {
+  if (isSigningOut.value) return
+  isSigningOut.value = true
+  try {
+    await auth.signOut()
+    notifications.notify('Вы вышли из аккаунта')
+    if (route.meta.requiresAuth) await router.push('/')
+  } catch {
+    notifications.notify('Не удалось выйти. Проверьте соединение и попробуйте ещё раз', 'danger')
+  } finally {
+    isSigningOut.value = false
+  }
+}
 
 // Auth screens put the page name in the middle and offer the way back instead of the
 // action the visitor is already performing.
@@ -52,14 +76,25 @@ const isAuthPage = computed(() => title.value !== null)
           </RouterLink>
         </nav>
 
-        <RouterLink
+        <!-- Состояния «вошёл» в макете нет, поэтому берём словарь самой шапки:
+             иконка, тот же серый разделитель, ссылка тем же начертанием. -->
+        <div
           v-if="auth.isReady && auth.isAuthenticated"
-          aria-label="Личный кабинет"
-          class="text-ink lg:justify-self-end"
-          to="/profile"
+          class="flex items-center gap-3 lg:gap-8 lg:justify-self-end"
         >
-          <IconUser class="w-6" />
-        </RouterLink>
+          <RouterLink aria-label="Личный кабинет" class="text-ink" to="/profile">
+            <IconUser class="w-6" />
+          </RouterLink>
+          <span class="h-4 w-px bg-neutral-400" />
+          <button
+            class="text-xs font-semibold text-ink disabled:opacity-50 lg:text-sm"
+            :disabled="isSigningOut"
+            type="button"
+            @click="signOut"
+          >
+            Выйти
+          </button>
+        </div>
         <div v-else-if="auth.isReady" class="flex items-center gap-3 lg:gap-8 lg:justify-self-end">
           <RouterLink
             class="text-xs font-semibold text-ink lg:text-sm"

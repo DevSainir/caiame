@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import authRoutes from '@/features/auth/routes'
 import homeRoutes from '@/features/home/routes'
-import { useAuthStore } from '@/features/auth/store'
+import { useAuthStore } from '@/core/session/store'
 
 // Screens that are drawn but not built yet. Each one moves into its own feature as soon as
 // that feature exists; until then the links must not break the app.
@@ -13,7 +13,12 @@ const stubRoutes = ['/courses', '/courses/:slug', '/profile', '/support'].map((p
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [...homeRoutes, ...authRoutes, ...stubRoutes, { path: '/:pathMatch(.*)*', redirect: '/' }],
+  routes: [
+    ...homeRoutes,
+    ...authRoutes,
+    ...stubRoutes,
+    { path: '/:pathMatch(.*)*', redirect: '/' },
+  ],
   scrollBehavior: () => ({ top: 0 }),
 })
 

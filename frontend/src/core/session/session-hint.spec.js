@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { hasSessionHint } from '@/features/auth/session-hint'
+import { hasSessionHint } from '@/core/session/session-hint'
 
 function withCookies(value) {
   globalThis.document = { cookie: value }

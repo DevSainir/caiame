@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import BaseButton from '@/core/components/BaseButton.vue'
 import BaseInput from '@/core/components/BaseInput.vue'
 import { describeFailure } from '@/features/auth/failures'
-import { useAuthStore } from '@/features/auth/store'
+import { useAuthStore } from '@/core/session/store'
 import { useNotificationStore } from '@/core/notifications/store'
 import { validateEmail } from '@/features/auth/validation'
 
@@ -46,8 +46,14 @@ async function submit() {
 
 <template>
   <section class="flex justify-center px-5 pb-20 pt-10 lg:px-6 lg:pb-35 lg:pt-25">
-    <form class="flex w-full max-w-card flex-col gap-6 lg:gap-8" novalidate @submit.prevent="submit">
-      <h1 class="text-2xl font-semibold text-ink lg:text-3xl">Укажите почту и пароль от аккаунта</h1>
+    <form
+      class="flex w-full max-w-card flex-col gap-6 lg:gap-8"
+      novalidate
+      @submit.prevent="submit"
+    >
+      <h1 class="text-2xl font-semibold text-ink lg:text-3xl">
+        Укажите почту и пароль от аккаунта
+      </h1>
 
       <div class="flex flex-col gap-5">
         <BaseInput
