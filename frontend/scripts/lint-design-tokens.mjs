@@ -71,6 +71,12 @@ const NON_COLOR = new Set([
   'wider',
   'tighter',
   'gradient',
+  // Sides, not colours: `border-t`, `border-x`, `divide-y` set a width, and the theme has
+  // no colour named `t` to compare them against.
+  't',
+  'b',
+  'l',
+  'r',
 ])
 
 main()

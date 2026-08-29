@@ -1,10 +1,9 @@
 // The backend ships machine-readable values; Russian wording belongs here.
-export const DIFFICULTY_LABELS = {
-  beginner: 'Начальный',
-  intermediate: 'Средний',
-  advanced: 'Продвинутый',
+export const AUDIENCE_LABELS = {
+  doctor: 'Для врачей',
+  nurse: 'Для медсестёр',
 }
 
-export function difficultyLabel(value) {
-  return DIFFICULTY_LABELS[value] ?? value
+export function audienceLabel(value) {
+  return AUDIENCE_LABELS[value] ?? value
 }

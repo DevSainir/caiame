@@ -2,17 +2,19 @@
 import BaseContainer from '@/core/components/BaseContainer.vue'
 import BaseSelect from '@/core/components/BaseSelect.vue'
 import CourseCard from '@/features/home/components/CourseCard.vue'
-import { difficultyLabel } from '@/features/catalog/labels'
+import { audienceLabel } from '@/features/catalog/labels'
 
 const props = defineProps({
   courses: { type: Array, default: () => [] },
   filters: { type: Object, default: () => ({}) },
   selected: { type: Object, required: true },
   isLoading: { type: Boolean, default: false },
+  isLoadingMore: { type: Boolean, default: false },
+  hasMore: { type: Boolean, default: false },
   error: { type: Object, default: null },
 })
 
-const emit = defineEmits(['change', 'retry'])
+const emit = defineEmits(['change', 'more', 'retry'])
 
 const options = (items, toOption) => (items ?? []).map(toOption)
 
@@ -24,7 +26,7 @@ function select(field, value) {
 </script>
 
 <template>
-  <section>
+  <section id="courses">
     <div class="bg-accent pb-28 pt-10 lg:pb-35 lg:pt-20">
       <BaseContainer>
         <div
@@ -33,7 +35,7 @@ function select(field, value) {
           <h2 class="text-2xl font-bold text-inverse lg:basis-1/4 lg:text-5xl">Список курсов</h2>
           <p class="text-sm font-medium text-inverse lg:basis-2/5 lg:text-lg">
             Изучите наш широкий каталог курсов, специально разработанных для медицинских
-            специалистов. Вы можете фильтровать курсы по специализации, сложности и типу
+            специалистов. Вы можете фильтровать курсы по специализации, аудитории и типу
             кредитования, чтобы найти именно то, что вам нужно.
           </p>
         </div>
@@ -56,12 +58,12 @@ function select(field, value) {
           />
           <BaseSelect
             class="flex-1 rounded-lg lg:rounded-none"
-            :model-value="props.selected.difficulty"
+            :model-value="props.selected.audience"
             :options="
-              options(props.filters.difficulties, (i) => ({ value: i, label: difficultyLabel(i) }))
+              options(props.filters.audiences, (i) => ({ value: i, label: audienceLabel(i) }))
             "
-            placeholder="Сложность"
-            @update:model-value="select('difficulty', $event)"
+            placeholder="Для кого"
+            @update:model-value="select('audience', $event)"
           />
           <BaseSelect
             class="flex-1 rounded-lg lg:rounded-none lg:rounded-r-xl"
@@ -105,12 +107,18 @@ function select(field, value) {
           <CourseCard v-for="course in props.courses" :key="course.id" :course="course" />
         </div>
 
-        <p
-          v-if="!props.isLoading && !props.error && props.courses.length > 0"
-          class="pt-8 text-center text-sm font-semibold text-subtle lg:pt-14 lg:text-lg"
-        >
-          Посмотреть больше курсов
-        </p>
+        <!-- Кнопки нет, когда показывать больше нечего: «посмотреть больше» без больше —
+             это тупик, который выглядит как поломка. -->
+        <div v-if="props.hasMore && !props.isLoading && !props.error" class="pt-8 lg:pt-14">
+          <button
+            class="mx-auto block text-sm font-semibold text-subtle disabled:opacity-50 lg:text-lg"
+            :disabled="props.isLoadingMore"
+            type="button"
+            @click="emit('more')"
+          >
+            {{ props.isLoadingMore ? 'Загружаем…' : 'Посмотреть больше курсов' }}
+          </button>
+        </div>
       </div>
     </BaseContainer>
   </section>

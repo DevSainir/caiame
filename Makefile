@@ -3,7 +3,8 @@
 PY := backend/.venv/bin
 
 .PHONY: help figma-extract tokens tailwind design covers lint-tokens db migrate seed api web \
-        backup-verify test-fast test-integration lint typecheck audit hooks
+        backup-verify test-fast test-integration lint typecheck audit hooks \
+        reset-catalog reseed
 
 help: ## Показать список целей
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -31,8 +32,13 @@ migrate: ## Накатить миграции
 backup-verify: ## Проверить восстановлением последнюю копию (запускается на сервере)
 	cd /opt/caiame && PYTHONPATH=ops/backup python3 ops/backup/backup.py --verify
 
-seed: ## Заполнить базу демо-каталогом
+seed: ## Заполнить базу каталогом
 	cd backend && .venv/bin/python scripts/seed.py
+
+reset-catalog: ## Стереть каталог целиком (курсы, программы, отзывы, прогресс)
+	cd backend && .venv/bin/python scripts/reset_catalog.py
+
+reseed: reset-catalog seed ## Переложить каталог заново: стереть и засеять
 
 api: ## Запустить бэкенд на :8001 (8000 занят чужим контейнером)
 	cd backend && PYTHONPATH=src .venv/bin/uvicorn main:app --reload --port 8001

@@ -125,6 +125,8 @@ export default {
       '25': '100px',
       '28': '112px',
       '35': '140px',
+      '0.25': '1px',
+      '3.5': '14px',
     },
     borderRadius: {
       none: '0px',

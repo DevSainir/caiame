@@ -6,7 +6,7 @@ from sqlalchemy.orm import selectinload
 
 from models.accreditation import Accreditation
 from models.course import Course
-from models.enums import CourseStatus, DifficultyLevel
+from models.enums import Audience, CourseStatus
 from models.specialization import Specialization
 
 
@@ -21,16 +21,22 @@ class CourseRepo:
         *,
         specialization_slug: str | None,
         accreditation_slug: str | None,
-        difficulty: DifficultyLevel | None,
+        audience: Audience | None,
         search: str | None,
         limit: int,
         offset: int,
     ) -> tuple[Sequence[Course], int]:
-        """Return one page of published courses and the total number that match the filters."""
+        """
+        Return one page of published courses and the total number that match the filters.
+
+        Ordered by the specialization's display position and not by creation date: the
+        catalogue is a fixed curriculum shown in the order the academy lists it, so
+        re-seeding a course must not move it to the front of the page.
+        """
         conditions = self._conditions(
             specialization_slug=specialization_slug,
             accreditation_slug=accreditation_slug,
-            difficulty=difficulty,
+            audience=audience,
             search=search,
         )
 
@@ -45,11 +51,18 @@ class CourseRepo:
         rows = await self.session.scalars(
             self._base_query()
             .where(*conditions)
-            .order_by(Course.created_at.desc(), Course.id.desc())
+            .order_by(Specialization.position, Course.title, Course.id)
             .limit(limit)
             .offset(offset)
         )
         return rows.all(), total or 0
+
+    async def get_published_by_slug(self, slug: str) -> Course | None:
+        """Return one published course with both taxonomies loaded, or nothing."""
+        course: Course | None = await self.session.scalar(
+            self._base_query().where(Course.status == CourseStatus.PUBLISHED, Course.slug == slug)
+        )
+        return course
 
     def _base_query(self) -> Select[tuple[Course]]:
         """
@@ -70,7 +83,7 @@ class CourseRepo:
         *,
         specialization_slug: str | None,
         accreditation_slug: str | None,
-        difficulty: DifficultyLevel | None,
+        audience: Audience | None,
         search: str | None,
     ) -> list[ColumnElement[bool]]:
         """Build the filter list shared by the page query and its count."""
@@ -79,8 +92,8 @@ class CourseRepo:
             conditions.append(Specialization.slug == specialization_slug)
         if accreditation_slug is not None:
             conditions.append(Accreditation.slug == accreditation_slug)
-        if difficulty is not None:
-            conditions.append(Course.difficulty == difficulty)
+        if audience is not None:
+            conditions.append(Specialization.audience == audience)
         if search:
             conditions.append(Course.title.ilike(f"%{search}%"))
         return conditions

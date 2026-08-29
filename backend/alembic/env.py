@@ -10,8 +10,13 @@ from core.config import get_settings
 from models.accreditation import Accreditation  # noqa: F401  # imported so autogenerate sees it
 from models.base import Base
 from models.course import Course  # noqa: F401  # imported so autogenerate sees it
+from models.course_benefit import CourseBenefit  # noqa: F401  # imported so autogenerate sees it
+from models.course_question import CourseQuestion  # noqa: F401  # imported so autogenerate sees it
+from models.course_unit import CourseUnit  # noqa: F401  # imported so autogenerate sees it
 from models.refresh_token import RefreshToken  # noqa: F401  # imported so autogenerate sees it
+from models.review import Review  # noqa: F401  # imported so autogenerate sees it
 from models.specialization import Specialization  # noqa: F401  # imported so autogenerate sees it
+from models.unit_progress import UnitProgress  # noqa: F401  # imported so autogenerate sees it
 from models.user import User  # noqa: F401  # imported so autogenerate sees it
 
 config = context.config

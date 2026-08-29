@@ -1,11 +1,12 @@
 <script setup>
+import AnchorLink from '@/core/components/AnchorLink.vue'
 import BaseContainer from '@/core/components/BaseContainer.vue'
 import IconArrowUpRight from '@/core/components/icons/IconArrowUpRight.vue'
 import heroUrl from '@/assets/images/hero-laboratory.webp'
 
 const ACTIONS = [
   { label: 'Войти', to: '/login', surface: 'bg-accent hover:bg-primary-600' },
-  { label: 'Изучить курсы', to: '/courses', surface: 'bg-success-500 hover:bg-success-600' },
+  { label: 'Изучить курсы', anchor: 'courses', surface: 'bg-success-500 hover:bg-success-600' },
 ]
 </script>
 
@@ -35,16 +36,18 @@ const ACTIONS = [
         </div>
 
         <div class="grid grid-cols-2 gap-2 lg:flex lg:basis-1/5 lg:flex-col lg:gap-8">
-          <RouterLink
+          <component
+            :is="action.anchor ? AnchorLink : 'RouterLink'"
             v-for="action in ACTIONS"
             :key="action.label"
-            :to="action.to"
+            :anchor="action.anchor"
+            :to="action.anchor ? undefined : action.to"
             class="flex aspect-video flex-col justify-between rounded-xl p-5 text-inverse transition-colors lg:aspect-square lg:p-10"
             :class="action.surface"
           >
             <span class="text-lg font-bold lg:text-2xl">{{ action.label }}</span>
             <IconArrowUpRight class="w-5 self-end lg:w-6" />
-          </RouterLink>
+          </component>
         </div>
       </div>
     </BaseContainer>

@@ -12,5 +12,5 @@ router = APIRouter(prefix="/catalog", tags=["Catalog"])
     responses={200: {"description": "Every value the catalogue filter bar offers."}},
 )
 async def get_catalog_filters(svc: TaxonomySvc) -> CatalogFiltersOut:
-    """Return specializations, accreditation schemes and difficulty levels in one response."""
+    """Return specializations, accreditation schemes and audiences in one response."""
     return await svc.get_filters()

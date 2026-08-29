@@ -4,7 +4,7 @@ import BaseButton from '@/core/components/BaseButton.vue'
 import BaseContainer from '@/core/components/BaseContainer.vue'
 import BaseInput from '@/core/components/BaseInput.vue'
 import { updateProfile } from '@/features/profile/api'
-import { initialsFor } from '@/features/profile/initials'
+import { initialsFor } from '@/core/initials'
 import { useAuthStore } from '@/core/session/store'
 import { useNotificationStore } from '@/core/notifications/store'
 

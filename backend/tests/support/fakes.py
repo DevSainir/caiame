@@ -12,8 +12,12 @@ from uuid import UUID
 from models.accreditation import Accreditation
 from models.base import uuid7
 from models.course import Course
-from models.enums import DifficultyLevel, UserRole
+from models.course_benefit import CourseBenefit
+from models.course_question import CourseQuestion
+from models.course_unit import CourseUnit
+from models.enums import Audience, UserRole
 from models.refresh_token import RefreshToken
+from models.review import Review
 from models.specialization import Specialization
 from models.user import User
 
@@ -30,7 +34,7 @@ class FakeCourseRepo:
         *,
         specialization_slug: str | None,
         accreditation_slug: str | None,
-        difficulty: DifficultyLevel | None,
+        audience: Audience | None,
         search: str | None,
         limit: int,
         offset: int,
@@ -40,7 +44,7 @@ class FakeCourseRepo:
             {
                 "specialization_slug": specialization_slug,
                 "accreditation_slug": accreditation_slug,
-                "difficulty": difficulty,
+                "audience": audience,
                 "search": search,
                 "limit": limit,
                 "offset": offset,
@@ -57,10 +61,76 @@ class FakeCourseRepo:
                     and course.accreditation.slug == accreditation_slug
                 )
             )
-            and (difficulty is None or course.difficulty is difficulty)
+            and (audience is None or course.specialization.audience is audience)
             and (search is None or search.lower() in course.title.lower())
         ]
         return matched[offset : offset + limit], len(matched)
+
+    async def get_published_by_slug(self, slug: str) -> Course | None:
+        """Find one course by slug, the way the query does."""
+        return next((course for course in self.courses if course.slug == slug), None)
+
+
+class FakeBenefitRepo:
+    """In-memory storage for the «why this course» blocks."""
+
+    def __init__(self, benefits: Sequence[CourseBenefit] = ()) -> None:
+        self.benefits = list(benefits)
+
+    async def list_for_course(self, course_id: UUID) -> Sequence[CourseBenefit]:
+        """Return every reason listed under one course."""
+        return self.benefits
+
+
+class FakeSyllabusRepo:
+    """In-memory outline storage plus one student's facts about it."""
+
+    def __init__(
+        self, units: Sequence[CourseUnit], statuses: dict[UUID, str] | None = None
+    ) -> None:
+        self.units = list(units)
+        self.statuses = statuses or {}
+        self.asked_for: list[UUID] = []
+
+    async def list_units(self, course_id: UUID) -> Sequence[CourseUnit]:
+        """Return the outline of one course."""
+        return [unit for unit in self.units if unit.course_id == course_id]
+
+    async def statuses_for(self, *, user_id: UUID, course_id: UUID) -> dict[UUID, str]:
+        """Return one student's statuses, recording that they were asked for at all."""
+        self.asked_for.append(user_id)
+        return dict(self.statuses)
+
+
+class FakeReviewRepo:
+    """In-memory review storage that pages the same way the query does."""
+
+    def __init__(self, reviews: Sequence[Review]) -> None:
+        self.reviews = list(reviews)
+
+    async def page(
+        self, *, course_id: UUID, limit: int, offset: int
+    ) -> tuple[Sequence[Review], int]:
+        """Return one page of reviews and the total."""
+        return self.reviews[offset : offset + limit], len(self.reviews)
+
+    async def counts_by_rating(self, course_id: UUID) -> dict[int, int]:
+        """Group the reviews by rating."""
+        counts: dict[int, int] = {}
+        for review in self.reviews:
+            counts[review.rating] = counts.get(review.rating, 0) + 1
+        return counts
+
+
+class FakeQuestionRepo:
+    """In-memory storage for the discussion block."""
+
+    def __init__(self, questions: Sequence[CourseQuestion]) -> None:
+        self.questions = list(questions)
+
+    async def list_for_course(self, course_id: UUID) -> Sequence[CourseQuestion]:
+        """Return every question of one course."""
+        return self.questions
 
 
 class FakeSpecializationRepo:

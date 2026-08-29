@@ -26,7 +26,7 @@ const PARAGRAPHS = [
           >
             {{ paragraph }}
           </p>
-          <BaseButton class="mt-2 self-start lg:mt-6" to="/courses">Узнать подробнее</BaseButton>
+          <BaseButton anchor="courses" class="mt-2 self-start lg:mt-6">Узнать подробнее</BaseButton>
         </div>
 
         <div class="relative lg:basis-1/2">

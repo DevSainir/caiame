@@ -1,4 +1,4 @@
-from models.enums import DifficultyLevel
+from models.enums import Audience
 from repos.taxonomy import AccreditationRepo, SpecializationRepo
 from schemas.taxonomy import AccreditationOut, CatalogFiltersOut, SpecializationOut
 
@@ -28,5 +28,5 @@ class TaxonomyService:
         return CatalogFiltersOut(
             specializations=[SpecializationOut.model_validate(item) for item in specializations],
             accreditations=[AccreditationOut.model_validate(item) for item in accreditations],
-            difficulties=list(DifficultyLevel),
+            audiences=list(Audience),
         )

@@ -7,7 +7,11 @@ const SPACING_CEILING = 160
  * Values agreed during layout that the audit could not see, because they describe the
  * height of an element rather than the distance between two. Every entry needs a reason.
  */
-const MANUAL_SPACING = [{ value: 80, reason: 'высота шапки и строки фильтров на главной' }]
+const MANUAL_SPACING = [
+  { value: 80, reason: 'высота шапки и строки фильтров на главной' },
+  { value: 1, reason: 'толщина разделителя между ссылками в шапке' },
+  { value: 14, reason: 'высота разделителя между ссылками в шапке на десктопе' },
+]
 
 /** Everything that measures a distance, snapped to the 4px grid with the drift recorded. */
 export function buildSpacing(spacing) {

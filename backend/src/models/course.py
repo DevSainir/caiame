@@ -7,7 +7,7 @@ from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.base import Base, TimeStampMixin, UUIDMixin
-from models.enums import CourseStatus, DifficultyLevel
+from models.enums import CourseStatus
 
 if TYPE_CHECKING:
     from models.accreditation import Accreditation
@@ -31,12 +31,6 @@ class Course(UUIDMixin, TimeStampMixin, Base):
         nullable=False,
         index=True,
     )
-    difficulty: Mapped[DifficultyLevel] = mapped_column(
-        SAEnum(DifficultyLevel, name="difficulty_level", native_enum=False, length=20),
-        nullable=False,
-        index=True,
-    )
-
     specialization_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True), ForeignKey("specializations.id"), nullable=False, index=True
     )

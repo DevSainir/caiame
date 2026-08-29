@@ -1,21 +1,33 @@
 """Builders for in-memory domain objects, so tests read as sentences and not as setup."""
 
+from datetime import UTC, datetime
+from uuid import UUID
+
 from core.security import hash_password
 from models.accreditation import Accreditation
 from models.base import uuid7
 from models.course import Course
-from models.enums import CourseStatus, DifficultyLevel, UserRole
+from models.course_benefit import CourseBenefit
+from models.course_question import CourseQuestion
+from models.course_unit import CourseUnit
+from models.enums import Audience, CourseStatus, CourseUnitKind, UserRole
+from models.review import Review
 from models.specialization import Specialization
 from models.user import User
 
 
-def make_specialization(*, slug: str = "cardiology", name: str = "Cardiology") -> Specialization:
-    """A medical field."""
-    return Specialization(id=uuid7(), slug=slug, name=name, position=0)
+def make_specialization(
+    *,
+    slug: str = "therapy",
+    name: str = "Therapy",
+    audience: Audience = Audience.DOCTOR,
+) -> Specialization:
+    """A field of practice."""
+    return Specialization(id=uuid7(), slug=slug, name=name, audience=audience, position=0)
 
 
 def make_accreditation(
-    *, slug: str = "nmo-36", name: str = "CME, 36 credits", short_code: str = "36"
+    *, slug: str = "certification-72", name: str = "Certified, 72 hours", short_code: str = "72 h"
 ) -> Accreditation:
     """A credit scheme."""
     return Accreditation(id=uuid7(), slug=slug, name=name, short_code=short_code, position=0)
@@ -23,9 +35,8 @@ def make_accreditation(
 
 def make_course(
     *,
-    slug: str = "acute-coronary-syndrome",
-    title: str = "Acute coronary syndrome",
-    difficulty: DifficultyLevel = DifficultyLevel.INTERMEDIATE,
+    slug: str = "therapy",
+    title: str = "Therapy",
     specialization: Specialization | None = None,
     accreditation: Accreditation | None = None,
 ) -> Course:
@@ -45,13 +56,12 @@ def make_course(
         description="A short summary.",
         cover_url=f"/covers/{slug}.jpg",
         status=CourseStatus.PUBLISHED,
-        difficulty=difficulty,
         specialization=specialization or make_specialization(),
         accreditation=accreditation if accreditation is not None else make_accreditation(),
         price_minor=750_000,
         currency="KGS",
-        credit_hours=36,
-        duration_hours=40,
+        credit_hours=72,
+        duration_hours=72,
     )
 
 
@@ -71,3 +81,49 @@ def make_user(
         role=role,
         is_active=is_active,
     )
+
+
+def make_unit(
+    *,
+    title: str = "Module one",
+    kind: CourseUnitKind = CourseUnitKind.MODULE,
+    position: int = 1,
+    course_id: UUID | None = None,
+) -> CourseUnit:
+    """One line of a course outline."""
+    return CourseUnit(
+        id=uuid7(),
+        course_id=course_id or uuid7(),
+        kind=kind,
+        position=position,
+        title=title,
+        summary="One line about it.",
+    )
+
+
+def make_review(*, rating: int = 5, author: User | None = None, text: str = "Good.") -> Review:
+    """A review with its author already attached, since the relation raises on lazy load."""
+    review = Review(
+        id=uuid7(),
+        course_id=uuid7(),
+        author_id=uuid7(),
+        rating=rating,
+        text=text,
+        author=author or make_user(email="reviewer@example.org"),
+    )
+    review.created_at = datetime(2026, 8, 1, tzinfo=UTC)
+    return review
+
+
+def make_question(
+    *, question: str = "How long is it?", answer: str = "72 hours."
+) -> CourseQuestion:
+    """One question of the discussion block."""
+    return CourseQuestion(
+        id=uuid7(), course_id=uuid7(), position=1, question=question, answer=answer
+    )
+
+
+def make_benefit(*, title: str = "Convenient format", text: str = "Study online.") -> CourseBenefit:
+    """One reason to take the course."""
+    return CourseBenefit(id=uuid7(), course_id=uuid7(), position=1, title=title, text=text)

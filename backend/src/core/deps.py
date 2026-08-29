@@ -10,13 +10,20 @@ from core.db import get_db_session
 from core.security import decode_access_token
 from integrations.redis import RedisCounterStore, get_redis
 from models.user import User
+from repos.benefit import BenefitRepo
 from repos.course import CourseRepo
+from repos.question import QuestionRepo
 from repos.refresh_token import RefreshTokenRepo
+from repos.review import ReviewRepo
+from repos.syllabus import SyllabusRepo
 from repos.taxonomy import AccreditationRepo, SpecializationRepo
 from repos.user import UserRepo
 from services.auth import AuthService
 from services.course import CourseService
+from services.question import QuestionService
 from services.rate_limit import RateLimitService
+from services.review import ReviewService
+from services.syllabus import SyllabusService
 from services.taxonomy import TaxonomyService
 from services.user import UserService
 
@@ -40,6 +47,26 @@ def get_accreditation_repo(session: SessionDep) -> AccreditationRepo:
     return AccreditationRepo(session)
 
 
+def get_benefit_repo(session: SessionDep) -> BenefitRepo:
+    """Provide the benefit repository bound to the request session."""
+    return BenefitRepo(session)
+
+
+def get_syllabus_repo(session: SessionDep) -> SyllabusRepo:
+    """Provide the syllabus repository bound to the request session."""
+    return SyllabusRepo(session)
+
+
+def get_review_repo(session: SessionDep) -> ReviewRepo:
+    """Provide the review repository bound to the request session."""
+    return ReviewRepo(session)
+
+
+def get_question_repo(session: SessionDep) -> QuestionRepo:
+    """Provide the question repository bound to the request session."""
+    return QuestionRepo(session)
+
+
 def get_user_repo(session: SessionDep) -> UserRepo:
     """Provide the user repository bound to the request session."""
     return UserRepo(session)
@@ -50,9 +77,36 @@ def get_refresh_token_repo(session: SessionDep) -> RefreshTokenRepo:
     return RefreshTokenRepo(session)
 
 
-def get_course_service(repo: Annotated[CourseRepo, Depends(get_course_repo)]) -> CourseService:
-    """Provide the course service with its repository injected."""
-    return CourseService(course_repo=repo)
+def get_course_service(
+    course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
+    benefit_repo: Annotated[BenefitRepo, Depends(get_benefit_repo)],
+) -> CourseService:
+    """Provide the course service with the repositories the catalogue and the page need."""
+    return CourseService(course_repo=course_repo, benefit_repo=benefit_repo)
+
+
+def get_syllabus_service(
+    course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
+    syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
+) -> SyllabusService:
+    """Provide the syllabus service with the course and outline repositories injected."""
+    return SyllabusService(course_repo=course_repo, syllabus_repo=syllabus_repo)
+
+
+def get_review_service(
+    course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
+    review_repo: Annotated[ReviewRepo, Depends(get_review_repo)],
+) -> ReviewService:
+    """Provide the review service with the course and review repositories injected."""
+    return ReviewService(course_repo=course_repo, review_repo=review_repo)
+
+
+def get_question_service(
+    course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
+    question_repo: Annotated[QuestionRepo, Depends(get_question_repo)],
+) -> QuestionService:
+    """Provide the question service with the course and question repositories injected."""
+    return QuestionService(course_repo=course_repo, question_repo=question_repo)
 
 
 def get_taxonomy_service(
@@ -123,9 +177,34 @@ async def get_current_user(
     return user
 
 
+async def get_optional_user(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
+    user_repo: Annotated[UserRepo, Depends(get_user_repo)],
+) -> User | None:
+    """
+    The account behind the token, or nobody.
+
+    For pages that are public but show more to a signed-in student. A broken or expired
+    token means «nobody» here rather than 401: the course page has to render for a guest,
+    and refusing it would turn an expired session into a broken catalogue.
+    """
+    if credentials is None:
+        return None
+    try:
+        payload = decode_access_token(credentials.credentials)
+    except jwt.InvalidTokenError:
+        return None
+    user = await user_repo.get_by_id(UUID(payload["sub"]))
+    return user if user is not None and user.is_active else None
+
+
 CourseSvc = Annotated[CourseService, Depends(get_course_service)]
+SyllabusSvc = Annotated[SyllabusService, Depends(get_syllabus_service)]
+ReviewSvc = Annotated[ReviewService, Depends(get_review_service)]
+QuestionSvc = Annotated[QuestionService, Depends(get_question_service)]
 TaxonomySvc = Annotated[TaxonomyService, Depends(get_taxonomy_service)]
 AuthSvc = Annotated[AuthService, Depends(get_auth_service)]
 UserSvc = Annotated[UserService, Depends(get_user_service)]
 ClientIp = Annotated[str, Depends(get_client_ip)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
+OptionalUser = Annotated[User | None, Depends(get_optional_user)]

@@ -1,9 +1,10 @@
 <script setup>
+import AnchorLink from '@/core/components/AnchorLink.vue'
 import BaseContainer from '@/core/components/BaseContainer.vue'
 
 const COLUMNS = [
   [
-    { label: 'Курсы', to: '/courses' },
+    { label: 'Курсы', anchor: 'courses' },
     { label: 'Форум и чат', to: '/support' },
     { label: 'Контакты', to: '/support' },
   ],
@@ -38,7 +39,12 @@ const COLUMNS = [
 
           <ul v-for="(column, index) in COLUMNS" :key="index" class="flex flex-col gap-3 lg:gap-6">
             <li v-for="link in column" :key="link.label">
-              <RouterLink class="text-xs lg:text-base" :to="link.to">{{ link.label }}</RouterLink>
+              <AnchorLink v-if="link.anchor" :anchor="link.anchor" class="text-xs lg:text-base">
+                {{ link.label }}
+              </AnchorLink>
+              <RouterLink v-else class="text-xs lg:text-base" :to="link.to">
+                {{ link.label }}
+              </RouterLink>
             </li>
           </ul>
         </div>
