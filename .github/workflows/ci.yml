@@ -38,11 +38,15 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Ровно то же, что делается локально, чтобы CI проверял ту же сборку окружения.
+      # Путь окружения задаётся явно: setup-uv выставляет VIRTUAL_ENV в корень
+      # репозитория, и без этого зависимости уезжают мимо backend/.venv, куда
+      # смотрят все следующие шаги.
       - name: Установить зависимости
         working-directory: backend
+        env:
+          VIRTUAL_ENV: ${{ github.workspace }}/backend/.venv
         run: |
-          uv venv
+          uv venv --python 3.12 "$VIRTUAL_ENV"
           uv pip install -e . --group dev
 
       - name: ruff
