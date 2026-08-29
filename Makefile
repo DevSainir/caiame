@@ -49,6 +49,7 @@ test-integration: ## Тесты против настоящего Postgres
 
 lint: lint-tokens ## ruff + линтер токенов
 	cd backend && .venv/bin/ruff check . && .venv/bin/ruff format --check .
+	backend/.venv/bin/ruff check ops && backend/.venv/bin/ruff format --check ops
 
 typecheck: ## mypy --strict
 	cd backend && .venv/bin/mypy src scripts tests

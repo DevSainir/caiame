@@ -1,0 +1,9 @@
+# Inherits the project settings; only the rules that make no sense for operations
+# scripts are relaxed, and each one is relaxed for a stated reason.
+extend = "../backend/pyproject.toml"
+
+[lint]
+# S603/S607: these scripts exist to drive `docker` and `age`; the timer unit sets PATH.
+# S108: the /tmp paths are either inside a throwaway container or under systemd PrivateTmp.
+# S608: the table names come from a constant in the same file, never from input.
+extend-ignore = ["S603", "S607", "S108", "S608"]

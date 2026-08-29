@@ -1,0 +1,14 @@
+[Unit]
+Description=Резервная копия базы Caiame в Cloudflare R2
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/caiame
+Environment=PYTHONPATH=/opt/caiame/ops/backup
+Environment=CAIAME_DIR=/opt/caiame
+ExecStart=/usr/bin/python3 /opt/caiame/ops/backup/backup.py
+# Дамп и архив пишутся сюда и удаляются в конце; systemd подчистит и после падения.
+PrivateTmp=true
+TimeoutStartSec=1800
