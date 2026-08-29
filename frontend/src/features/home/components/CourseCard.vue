@@ -16,12 +16,16 @@ const badges = () =>
 </script>
 
 <template>
-  <article class="row-span-4 grid grid-rows-subgrid gap-4 rounded-lg border p-4 lg:gap-5 lg:px-4 lg:py-5">
+  <article
+    class="row-span-4 grid grid-rows-subgrid gap-4 rounded-lg border p-4 lg:gap-5 lg:px-4 lg:py-5"
+  >
     <div class="flex flex-wrap content-start gap-2">
       <BaseBadge v-for="badge in badges()" :key="badge">{{ badge }}</BaseBadge>
     </div>
 
-    <div class="flex aspect-square items-center justify-center overflow-hidden rounded-md bg-neutral-100 lg:aspect-video">
+    <div
+      class="flex aspect-square items-center justify-center overflow-hidden rounded-md bg-neutral-100 lg:aspect-video"
+    >
       <img
         v-if="props.course.cover_url"
         decoding="async"

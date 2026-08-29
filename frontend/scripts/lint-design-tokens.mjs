@@ -11,16 +11,65 @@ const EXTENSIONS = new Set(['.vue', '.js', '.ts', '.html'])
 const ARBITRARY = /(?:^|[\s"'`:{])(-?[a-z][a-z0-9]*(?:-[a-z0-9]+)*)-\[([^\]]*)\]/g
 const INLINE_STYLE = /\bstyle\s*=\s*(?:"([^"]*)"|'([^']*)')/g
 const HEX = /#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3}(?:[0-9a-fA-F]{2})?)?\b/g
-const COLOR_UTILITY = /(?:^|[\s"'`:])(bg|text|border|ring|fill|stroke|divide|outline|decoration|shadow|from|via|to)-([a-z][a-z0-9-]*)/g
+const COLOR_UTILITY =
+  /(?:^|[\s"'`:])(bg|text|border|ring|fill|stroke|divide|outline|decoration|shadow|from|via|to)-([a-z][a-z0-9-]*)/g
 
 // Keywords these prefixes accept that are not colours at all.
 const NON_COLOR = new Set([
-  'left', 'right', 'center', 'justify', 'start', 'end', 'top', 'bottom', 'middle',
-  'balance', 'pretty', 'wrap', 'nowrap', 'ellipsis', 'clip', 'auto', 'none', 'full',
-  'solid', 'dashed', 'dotted', 'double', 'hidden', 'collapse', 'separate', 'fixed',
-  'cover', 'contain', 'repeat', 'no', 'local', 'scroll', 'origin', 'clone', 'slice',
-  'transparent', 'current', 'inherit', 'x', 'y', 'opacity', 'offset', 'width',
-  'size', 'inset', 'sm', 'md', 'lg', 'xl', 'xs', 'base', 'wide', 'wider', 'tighter',
+  'left',
+  'right',
+  'center',
+  'justify',
+  'start',
+  'end',
+  'top',
+  'bottom',
+  'middle',
+  'balance',
+  'pretty',
+  'wrap',
+  'nowrap',
+  'ellipsis',
+  'clip',
+  'auto',
+  'none',
+  'full',
+  'solid',
+  'dashed',
+  'dotted',
+  'double',
+  'hidden',
+  'collapse',
+  'separate',
+  'fixed',
+  'cover',
+  'contain',
+  'repeat',
+  'no',
+  'local',
+  'scroll',
+  'origin',
+  'clone',
+  'slice',
+  'transparent',
+  'current',
+  'inherit',
+  'x',
+  'y',
+  'opacity',
+  'offset',
+  'width',
+  'size',
+  'inset',
+  'sm',
+  'md',
+  'lg',
+  'xl',
+  'xs',
+  'base',
+  'wide',
+  'wider',
+  'tighter',
   'gradient',
 ])
 
@@ -78,7 +127,8 @@ function collectColorNames(config) {
     }
   }
   add(config.theme?.colors)
-  for (const key of ['textColor', 'backgroundColor', 'borderColor']) add(config.theme?.extend?.[key])
+  for (const key of ['textColor', 'backgroundColor', 'borderColor'])
+    add(config.theme?.extend?.[key])
   return names
 }
 
@@ -108,7 +158,10 @@ function lintFile(file, colors) {
     for (const [, doubleQuoted, singleQuoted] of text.matchAll(INLINE_STYLE)) {
       const value = doubleQuoted ?? singleQuoted ?? ''
       if (/\d\s*px|#[0-9a-fA-F]{3}|rgba?\(/.test(value)) {
-        report('inline-style', `\`style="${value.slice(0, 40)}"\` — hard-coded value in a style attribute`)
+        report(
+          'inline-style',
+          `\`style="${value.slice(0, 40)}"\` — hard-coded value in a style attribute`,
+        )
       }
     }
     for (const [hex] of text.matchAll(HEX)) {
@@ -118,7 +171,10 @@ function lintFile(file, colors) {
       const head = suffix.split('-')[0]
       if (NON_COLOR.has(head) || NON_COLOR.has(suffix)) continue
       if (colors.has(suffix) || colors.has(head)) continue
-      report('unknown-color', `\`${prefix}-${suffix}\` — not in the theme, this class renders nothing`)
+      report(
+        'unknown-color',
+        `\`${prefix}-${suffix}\` — not in the theme, this class renders nothing`,
+      )
     }
   })
   return problems

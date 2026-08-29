@@ -1,0 +1,74 @@
+# Ставится первым делом после клона: `pre-commit install`.
+# Хуки повторяют то же, что делает `make lint` и `make test-fast`, но на каждом коммите —
+# прятать поломку негде, ветки под задачи в этом проекте не заводятся.
+default_install_hook_types: [pre-commit, commit-msg]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        # Макеты-референсы законно весят под мегабайт; видео и дампы базы — нет.
+        args: [--maxkb=1500]
+      - id: detect-private-key
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        # Тип коммита определяет номер версии, поэтому он не украшение сообщения.
+        args: [feat, fix, perf, refactor, docs, test, chore, ci, build, style]
+
+  # Инструменты берутся из окружения проекта, а не ставятся хуком отдельно:
+  # так линтер на коммите — тот же самый, что в `make lint` и в CI.
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff (бэкенд и ops)
+        entry: backend/.venv/bin/ruff check --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
+      - id: ruff-format
+        name: ruff format
+        entry: backend/.venv/bin/ruff format --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
+      - id: mypy
+        name: mypy --strict
+        entry: bash -c 'cd backend && .venv/bin/mypy src scripts tests'
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      # Запускаются из frontend/ и получают пути без этого префикса: шаблоны files
+      # в плоском конфиге eslint считаются от текущего каталога, и запуск из корня
+      # репозитория молча выключил бы все правила границ.
+      - id: eslint
+        name: eslint
+        entry: bash -c 'cd frontend && exec npx eslint "${@#frontend/}"' --
+        language: system
+        files: ^frontend/.*\.(js|vue)$
+
+      - id: prettier
+        name: prettier
+        entry: bash -c 'cd frontend && exec npx prettier --check "${@#frontend/}"' --
+        language: system
+        files: ^frontend/.*\.(js|vue|json|css|md)$
+
+      - id: design-tokens
+        name: произвольные значения в вёрстке
+        entry: bash -c 'cd frontend && npm run --silent lint:tokens'
+        language: system
+        files: ^frontend/src/.*\.(vue|js)$
+        pass_filenames: false

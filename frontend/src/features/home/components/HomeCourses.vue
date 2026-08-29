@@ -27,7 +27,9 @@ function select(field, value) {
   <section>
     <div class="bg-accent pb-28 pt-10 lg:pb-35 lg:pt-20">
       <BaseContainer>
-        <div class="flex flex-col items-center gap-3 text-center lg:flex-row lg:items-start lg:gap-8 lg:text-left">
+        <div
+          class="flex flex-col items-center gap-3 text-center lg:flex-row lg:items-start lg:gap-8 lg:text-left"
+        >
           <h2 class="text-2xl font-bold text-inverse lg:basis-1/4 lg:text-5xl">Список курсов</h2>
           <p class="text-sm font-medium text-inverse lg:basis-2/5 lg:text-lg">
             Изучите наш широкий каталог курсов, специально разработанных для медицинских
@@ -46,21 +48,27 @@ function select(field, value) {
           <BaseSelect
             class="flex-1 rounded-lg lg:rounded-none"
             :model-value="props.selected.specialization"
-            :options="options(props.filters.specializations, (i) => ({ value: i.slug, label: i.name }))"
+            :options="
+              options(props.filters.specializations, (i) => ({ value: i.slug, label: i.name }))
+            "
             placeholder="Специализация"
             @update:model-value="select('specialization', $event)"
           />
           <BaseSelect
             class="flex-1 rounded-lg lg:rounded-none"
             :model-value="props.selected.difficulty"
-            :options="options(props.filters.difficulties, (i) => ({ value: i, label: difficultyLabel(i) }))"
+            :options="
+              options(props.filters.difficulties, (i) => ({ value: i, label: difficultyLabel(i) }))
+            "
             placeholder="Сложность"
             @update:model-value="select('difficulty', $event)"
           />
           <BaseSelect
             class="flex-1 rounded-lg lg:rounded-none lg:rounded-r-xl"
             :model-value="props.selected.accreditation"
-            :options="options(props.filters.accreditations, (i) => ({ value: i.slug, label: i.name }))"
+            :options="
+              options(props.filters.accreditations, (i) => ({ value: i.slug, label: i.name }))
+            "
             placeholder="Тип кредитования"
             @update:model-value="select('accreditation', $event)"
           />
@@ -70,7 +78,10 @@ function select(field, value) {
 
     <BaseContainer>
       <div class="-mt-24 rounded-xl bg-page p-5 lg:-mt-28 lg:p-8">
-        <p v-if="props.isLoading" class="py-24 text-center text-sm font-semibold text-subtle lg:py-35 lg:text-lg">
+        <p
+          v-if="props.isLoading"
+          class="py-24 text-center text-sm font-semibold text-subtle lg:py-35 lg:text-lg"
+        >
           Загружаем курсы…
         </p>
 

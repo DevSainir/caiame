@@ -112,8 +112,11 @@ function typographySection({ typography }) {
       lines.push(`- ${item.fontSize}px ×${item.count} → ${item.snappedTo}px — «${item.samples[0] ?? ''}»`)
     }
   }
-  lines.push('\n**Letter-spacing.** Доминирует ' + typography.letterSpacing.dominant + '% от кегля: ')
-  lines.push(typography.letterSpacing.distribution.map(([percent, count]) => `${percent}% ×${count}`).join(', ') + '.')
+  const spacing = typography.letterSpacing.distribution
+    .map(([percent, count]) => `${percent}% ×${count}`)
+    .join(', ')
+  lines.push(`\n**Letter-spacing.** Доминирует ${typography.letterSpacing.dominant}% от кегля:`)
+  lines.push(`${spacing}.`)
   lines.push('\n**Веса.** ' + typography.weights.map((w) => `${w.weight} (${w.name}) ×${w.count}`).join(', ') + '.')
   return lines.join('\n')
 }

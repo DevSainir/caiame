@@ -77,7 +77,6 @@ describe('the axios client', () => {
   })
 })
 
-
 /**
  * The same queue also serves session restore.
  *

@@ -183,7 +183,7 @@
 - 26px ×1 → 24px — «Raddan Yatoro»
 - 36px ×1 → 38px — «RY»
 
-**Letter-spacing.** Доминирует -3% от кегля: 
+**Letter-spacing.** Доминирует -3% от кегля:
 -3% ×390, -2% ×30, -6% ×7, 0% ×3, 4% ×1.
 
 **Веса.** 600 (semibold) ×159, 700 (bold) ×137, 400 (regular) ×72, 500 (medium) ×55, 800 (extrabold) ×8.

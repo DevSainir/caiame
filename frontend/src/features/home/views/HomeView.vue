@@ -15,9 +15,7 @@ const error = ref(null)
 
 /** Drop empty controls, so the API is not asked to filter by an empty string. */
 function activeParams() {
-  return Object.fromEntries(
-    Object.entries(selected.value).filter(([, value]) => value !== ''),
-  )
+  return Object.fromEntries(Object.entries(selected.value).filter(([, value]) => value !== ''))
 }
 
 function applyFilter(field, value) {

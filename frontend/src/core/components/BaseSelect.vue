@@ -20,6 +20,8 @@ const model = defineModel({ type: String, default: '' })
         {{ option.label }}
       </option>
     </select>
-    <IconChevronDown class="pointer-events-none absolute right-5 w-2 text-neutral-500 lg:right-8 lg:w-3" />
+    <IconChevronDown
+      class="pointer-events-none absolute right-5 w-2 text-neutral-500 lg:right-8 lg:w-3"
+    />
   </div>
 </template>

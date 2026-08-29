@@ -1,0 +1,8 @@
+dist
+node_modules
+public/covers
+src/assets
+
+# Генерируется из tokens.json скриптом tools/design-tokens/tailwind.mjs.
+# Причесать его здесь — значит получать расхождение при каждой пересборке токенов.
+tailwind.config.js

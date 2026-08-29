@@ -1,0 +1,100 @@
+# Те же ворота, что и локально: pre-commit ловит их на коммите, CI — на случай,
+# если хуки кто-то обошёл. Расхождение между этими двумя списками означает,
+# что зелёный CI перестал что-то значить.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    name: Бэкенд
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: caiame
+          POSTGRES_PASSWORD: caiame
+          POSTGRES_DB: caiame
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U caiame"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL: postgresql+asyncpg://caiame:caiame@localhost:5432/caiame
+      REDIS_URL: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      # Ровно то же, что делается локально, чтобы CI проверял ту же сборку окружения.
+      - name: Установить зависимости
+        working-directory: backend
+        run: |
+          uv venv
+          uv pip install -e . --group dev
+
+      - name: ruff
+        working-directory: backend
+        run: |
+          .venv/bin/ruff check .
+          .venv/bin/ruff format --check .
+
+      - name: ruff для ops
+        run: backend/.venv/bin/ruff check ops && backend/.venv/bin/ruff format --check ops
+
+      - name: mypy --strict
+        working-directory: backend
+        run: .venv/bin/mypy src scripts tests
+
+      - name: Тесты всех тиров
+        working-directory: backend
+        run: .venv/bin/pytest -q
+
+      # Уязвимость в транзитивной зависимости иначе не обнаруживается вообще.
+      # --skip-editable пропускает наш собственный пакет: на PyPI его нет и не будет.
+      - name: Аудит зависимостей
+        working-directory: backend
+        run: uv run --with pip-audit pip-audit --skip-editable
+
+  frontend:
+    name: Фронтенд
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: eslint
+        run: npm run lint
+
+      - name: prettier
+        run: npm run format:check
+
+      - name: Произвольные значения в вёрстке
+        run: npm run lint:tokens:self-test && npm run lint:tokens
+
+      - name: Юнит-тесты
+        run: npm test
+
+      - name: Сборка
+        run: npm run build

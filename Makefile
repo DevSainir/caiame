@@ -3,7 +3,7 @@
 PY := backend/.venv/bin
 
 .PHONY: help figma-extract tokens tailwind design covers lint-tokens db migrate seed api web \
-        test-fast test-integration lint typecheck
+        backup-verify test-fast test-integration lint typecheck audit hooks
 
 help: ## Показать список целей
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -28,6 +28,9 @@ db: ## Поднять Postgres и Redis в docker (host-порты 5433 и 6380)
 migrate: ## Накатить миграции
 	cd backend && .venv/bin/alembic upgrade head
 
+backup-verify: ## Проверить восстановлением последнюю копию (запускается на сервере)
+	cd /opt/caiame && PYTHONPATH=ops/backup python3 ops/backup/backup.py --verify
+
 seed: ## Заполнить базу демо-каталогом
 	cd backend && .venv/bin/python scripts/seed.py
 
@@ -47,9 +50,18 @@ test-fast: ## Юнит и компонентные тесты бэкенда, ю
 test-integration: ## Тесты против настоящего Postgres
 	cd backend && .venv/bin/pytest -q -m integration
 
-lint: lint-tokens ## ruff + линтер токенов
+lint: lint-tokens ## ruff, eslint, prettier и линтер токенов
 	cd backend && .venv/bin/ruff check . && .venv/bin/ruff format --check .
 	backend/.venv/bin/ruff check ops && backend/.venv/bin/ruff format --check ops
+	npm run lint --prefix frontend
+	npm run format:check --prefix frontend
 
 typecheck: ## mypy --strict
 	cd backend && .venv/bin/mypy src scripts tests
+
+audit: ## Проверить зависимости на известные уязвимости
+	cd backend && uv run --with pip-audit pip-audit --skip-editable
+
+hooks: ## Поставить pre-commit (делается один раз после клона)
+	pre-commit install
+	pre-commit run --all-files

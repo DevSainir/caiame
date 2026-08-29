@@ -86,7 +86,9 @@ function main() {
   mkdirSync(dirname(MAPPING), { recursive: true })
   writeFileSync(
     MAPPING,
-    renderMapping({
+    // Файл проходит те же хуки, что и рукописные: без завершающего перевода строки
+    // end-of-file-fixer будет чинить его после каждой пересборки.
+    ensureTrailingNewline(renderMapping({
       audit,
       clusters,
       byGroup,
@@ -101,7 +103,7 @@ function main() {
       semantic,
       threshold: MERGE_THRESHOLD,
       contrast: contrastReport(ramps),
-    }),
+    })),
   )
 
   console.log(`tokens:  ${TOKENS}`)
@@ -148,6 +150,10 @@ function findStep(ramps, hex) {
     }
   }
   return null
+}
+
+function ensureTrailingNewline(text) {
+  return text.endsWith('\n') ? text : `${text}\n`
 }
 
 function contrastReport(ramps) {
