@@ -10,13 +10,15 @@ from models.unit_progress import UnitProgress
 
 # Display order is spelled out instead of falling out of the enum: sorting by the stored
 # value gives alphabetical order, and renaming a member would silently reshuffle the page.
+#
+# Written as comparisons and not as the shorter `case({...}, value=...)`: the dictionary
+# form compares the column against the enum members without putting them through the
+# column's type, the stored names never match, every row gets NULL — and the list quietly
+# falls back to sorting by position alone, interleaving assignments with tests.
 KIND_ORDER = case(
-    {
-        CourseUnitKind.MODULE: 0,
-        CourseUnitKind.ASSIGNMENT: 1,
-        CourseUnitKind.TEST: 2,
-    },
-    value=CourseUnit.kind,
+    (CourseUnit.kind == CourseUnitKind.MODULE, 0),
+    (CourseUnit.kind == CourseUnitKind.ASSIGNMENT, 1),
+    else_=2,
 )
 
 

@@ -28,7 +28,18 @@ from tests.support.fakes import FakeCounterStore
 
 BACKEND_ROOT = Path(__file__).resolve().parents[2]
 TEST_DATABASE = "caiame_test"
-TABLES = ("refresh_tokens", "courses", "users", "specializations", "accreditations")
+TABLES = (
+    "refresh_tokens",
+    "course_units",
+    "course_questions",
+    "course_benefits",
+    "reviews",
+    "unit_progress",
+    "courses",
+    "users",
+    "specializations",
+    "accreditations",
+)
 
 
 def _url(database: str) -> URL:
