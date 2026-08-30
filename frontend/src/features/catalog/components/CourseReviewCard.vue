@@ -1,6 +1,6 @@
 <script setup>
 import IconSparkle from '@/core/components/icons/IconSparkle.vue'
-import { formatDate } from '@/features/catalog/format'
+import { formatDate } from '@/core/format'
 import { initialsFor } from '@/core/initials'
 
 const props = defineProps({

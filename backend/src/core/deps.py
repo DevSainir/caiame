@@ -12,7 +12,9 @@ from integrations.redis import RedisCounterStore, get_redis
 from models.user import User
 from repos.benefit import BenefitRepo
 from repos.course import CourseRepo
+from repos.lesson import LessonRepo
 from repos.question import QuestionRepo
+from repos.quiz import QuizRepo
 from repos.refresh_token import RefreshTokenRepo
 from repos.review import ReviewRepo
 from repos.syllabus import SyllabusRepo
@@ -20,7 +22,9 @@ from repos.taxonomy import AccreditationRepo, SpecializationRepo
 from repos.user import UserRepo
 from services.auth import AuthService
 from services.course import CourseService
+from services.learning import LearningService
 from services.question import QuestionService
+from services.quiz import QuizService
 from services.rate_limit import RateLimitService
 from services.review import ReviewService
 from services.syllabus import SyllabusService
@@ -50,6 +54,16 @@ def get_accreditation_repo(session: SessionDep) -> AccreditationRepo:
 def get_benefit_repo(session: SessionDep) -> BenefitRepo:
     """Provide the benefit repository bound to the request session."""
     return BenefitRepo(session)
+
+
+def get_lesson_repo(session: SessionDep) -> LessonRepo:
+    """Provide the lesson repository bound to the request session."""
+    return LessonRepo(session)
+
+
+def get_quiz_repo(session: SessionDep) -> QuizRepo:
+    """Provide the quiz repository bound to the request session."""
+    return QuizRepo(session)
 
 
 def get_syllabus_repo(session: SessionDep) -> SyllabusRepo:
@@ -88,9 +102,37 @@ def get_course_service(
 def get_syllabus_service(
     course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
     syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
+    lesson_repo: Annotated[LessonRepo, Depends(get_lesson_repo)],
 ) -> SyllabusService:
-    """Provide the syllabus service with the course and outline repositories injected."""
-    return SyllabusService(course_repo=course_repo, syllabus_repo=syllabus_repo)
+    """Provide the syllabus service with the course, outline and lesson repositories."""
+    return SyllabusService(
+        course_repo=course_repo, syllabus_repo=syllabus_repo, lesson_repo=lesson_repo
+    )
+
+
+def get_learning_service(
+    course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
+    syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
+    lesson_repo: Annotated[LessonRepo, Depends(get_lesson_repo)],
+) -> LearningService:
+    """Provide the learning service with the course, outline and lesson repositories."""
+    return LearningService(
+        course_repo=course_repo, unit_repo=syllabus_repo, lesson_repo=lesson_repo
+    )
+
+
+def get_quiz_service(
+    course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
+    syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
+    quiz_repo: Annotated[QuizRepo, Depends(get_quiz_repo)],
+) -> QuizService:
+    """Provide the quiz service; the outline repository is also where progress is written."""
+    return QuizService(
+        course_repo=course_repo,
+        unit_repo=syllabus_repo,
+        quiz_repo=quiz_repo,
+        progress_repo=syllabus_repo,
+    )
 
 
 def get_review_service(
@@ -202,6 +244,8 @@ CourseSvc = Annotated[CourseService, Depends(get_course_service)]
 SyllabusSvc = Annotated[SyllabusService, Depends(get_syllabus_service)]
 ReviewSvc = Annotated[ReviewService, Depends(get_review_service)]
 QuestionSvc = Annotated[QuestionService, Depends(get_question_service)]
+LearningSvc = Annotated[LearningService, Depends(get_learning_service)]
+QuizSvc = Annotated[QuizService, Depends(get_quiz_service)]
 TaxonomySvc = Annotated[TaxonomyService, Depends(get_taxonomy_service)]
 AuthSvc = Annotated[AuthService, Depends(get_auth_service)]
 UserSvc = Annotated[UserService, Depends(get_user_service)]

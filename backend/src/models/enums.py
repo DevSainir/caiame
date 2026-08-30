@@ -50,3 +50,23 @@ class UnitStatus(StrEnum):
     NOT_STARTED = "not_started"
     IN_PROGRESS = "in_progress"
     DONE = "done"
+
+
+class LessonKind(StrEnum):
+    """
+    What a lesson is made of, and therefore what «finished» means for it.
+
+    The rule per kind lives in one place — `services/learning.py` — and not in an `if` in
+    three of them. A new kind is a new completion rule, a new payload and a new component;
+    without all three it is not a kind.
+    """
+
+    VIDEO = "video"
+    PDF = "pdf"
+
+
+class QuestionKind(StrEnum):
+    """How many options a question expects. Grading differs, so the type is stored."""
+
+    SINGLE = "single"
+    MULTIPLE = "multiple"

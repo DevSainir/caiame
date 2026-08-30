@@ -20,7 +20,10 @@ from models.course import Course
 from models.course_benefit import CourseBenefit
 from models.course_question import CourseQuestion
 from models.course_unit import CourseUnit
-from models.enums import CourseUnitKind, UnitStatus
+from models.enums import CourseUnitKind, LessonKind, QuestionKind, UnitStatus
+from models.lesson import Lesson
+from models.quiz import Quiz
+from models.quiz_question import QuizOption, QuizQuestion
 from models.review import Review
 from models.specialization import Specialization
 from models.unit_progress import UnitProgress
@@ -126,6 +129,139 @@ async def seed_benefits(
             )
             created += 1
     return created
+
+
+async def seed_lessons(
+    session: AsyncSession, courses: dict[str, Course], templates: list[dict[str, Any]]
+) -> int:
+    """
+    Fill every module with lectures.
+
+    Titles are built from the module they belong to rather than written one by one: this is
+    scaffolding for real material, and scaffolding that pretends to be hand-written content
+    is harder to spot and to replace.
+    """
+    created = 0
+    modules = (
+        await session.scalars(
+            select(CourseUnit)
+            .where(CourseUnit.kind == CourseUnitKind.MODULE)
+            .order_by(CourseUnit.position)
+        )
+    ).all()
+    known = {course.id for course in courses.values()}
+    for module in modules:
+        if module.course_id not in known:
+            continue
+        if await session.scalar(select(func.count(Lesson.id)).where(Lesson.unit_id == module.id)):
+            continue
+        for position, template in enumerate(templates, start=1):
+            session.add(
+                Lesson(
+                    unit_id=module.id,
+                    position=position,
+                    title=f"{module.title}: {template['suffix']}",
+                    description=str(template["description"]),
+                    kind=LessonKind(template["kind"]),
+                    duration_minutes=int(template["minutes"]),
+                    # No storage yet: the page shows the material inline and the link is a
+                    # plain path. Signed links from private storage replace it later.
+                    asset_url="",
+                )
+            )
+            created += 1
+    await session.flush()
+    return created
+
+
+async def seed_quizzes(
+    session: AsyncSession,
+    courses: dict[str, Course],
+    template: dict[str, Any],
+    facts: dict[str, dict[str, Any]],
+    course_items: list[dict[str, Any]],
+) -> int:
+    """
+    Give every test of every course three questions the catalogue itself can verify.
+
+    Deliberately not clinical: inventing medical questions and declaring which answer is
+    correct on the site of a medical academy is not scaffolding, it is misinformation.
+    These check that the mechanism works — single and multiple choice, weights, grading —
+    and wait for the methodologists to replace them.
+    """
+    created = 0
+    by_slug = {str(item["slug"]): item for item in course_items}
+    other_modules = [
+        str(module["title"]) for item in course_items for module in item["syllabus"]["modules"]
+    ]
+    for slug, course in courses.items():
+        tests = (
+            await session.scalars(
+                select(CourseUnit)
+                .where(CourseUnit.course_id == course.id, CourseUnit.kind == CourseUnitKind.TEST)
+                .order_by(CourseUnit.position)
+            )
+        ).all()
+        own = [str(module["title"]) for module in by_slug[slug]["syllabus"]["modules"]]
+        stranger = next(title for title in other_modules if title not in own)
+        for test in tests:
+            if await session.scalar(select(func.count(Quiz.id)).where(Quiz.unit_id == test.id)):
+                continue
+            quiz = Quiz(
+                unit_id=test.id,
+                passing_score=int(template["passing_score"]),
+                max_attempts=template["max_attempts"],
+            )
+            session.add(quiz)
+            await session.flush()
+            created += await _add_questions(session, quiz, template, own, stranger, facts[slug])
+    return created
+
+
+async def _add_questions(
+    session: AsyncSession,
+    quiz: Quiz,
+    template: dict[str, Any],
+    own_modules: list[str],
+    stranger: str,
+    facts: dict[str, Any],
+) -> int:
+    """Three questions of one test, with the options each of them offers."""
+    created = 0
+    for position, item in enumerate(template["questions"], start=1):
+        question = QuizQuestion(
+            quiz_id=quiz.id,
+            position=position,
+            text=str(item["text"]),
+            kind=QuestionKind(item["kind"]),
+            points=int(item["points"]),
+        )
+        session.add(question)
+        # Flushed before the options: they carry the question id, and the id exists only
+        # after the row does.
+        await session.flush()
+        created += 1
+        for index, (text, is_correct) in enumerate(
+            _options(item, own_modules, stranger, facts), start=1
+        ):
+            session.add(
+                QuizOption(
+                    question_id=question.id, position=index, text=text, is_correct=is_correct
+                )
+            )
+    return created
+
+
+def _options(
+    item: dict[str, Any], own_modules: list[str], stranger: str, facts: dict[str, Any]
+) -> list[tuple[str, bool]]:
+    """The options of one question, with the answer marked for the grader only."""
+    source = str(item["source"])
+    if source == "modules":
+        return [(title, True) for title in own_modules[:3]] + [(stranger, False)]
+    if source == "hours":
+        return [(text, text == facts["hours"]) for text in item["options"]]
+    return [(text, text == item["correct"]) for text in item["options"]]
 
 
 async def seed_review_authors(

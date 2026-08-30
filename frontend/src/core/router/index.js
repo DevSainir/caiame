@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import authRoutes from '@/features/auth/routes'
 import catalogRoutes from '@/features/catalog/routes'
+import learningRoutes from '@/features/learning/routes'
 import profileRoutes from '@/features/profile/routes'
 import homeRoutes from '@/features/home/routes'
 import { scrollToAnchor } from '@/core/scroll'
@@ -42,6 +43,7 @@ const router = createRouter({
     ...homeRoutes,
     ...authRoutes,
     ...catalogRoutes,
+    ...learningRoutes,
     ...profileRoutes,
     ...stubRoutes,
     { path: '/:pathMatch(.*)*', redirect: '/' },

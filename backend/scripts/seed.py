@@ -20,8 +20,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from seed_learning import (
     course_facts,
     seed_benefits,
+    seed_lessons,
     seed_progress,
     seed_questions,
+    seed_quizzes,
     seed_review_authors,
     seed_reviews,
     seed_units,
@@ -176,6 +178,10 @@ async def main() -> None:
         )
         questions = await seed_questions(session, courses, data["questions"], facts)
         benefits = await seed_benefits(session, courses, data["benefits"], data["courses"])
+        lessons = await seed_lessons(session, courses, data["lesson_templates"])
+        quizzes = await seed_quizzes(
+            session, courses, data["quiz_template"], facts, data["courses"]
+        )
 
         reviews = progress = 0
         users: dict[str, User] = {}
@@ -194,7 +200,7 @@ async def main() -> None:
     print(
         f"seeded: {len(specializations)} specializations, {len(accreditations)} accreditations, "
         f"{len(courses)} courses, {units} new units, {questions} new questions, "
-        f"{benefits} new benefits, {demo}"
+        f"{benefits} new benefits, {lessons} new lessons, {quizzes} new questions, {demo}"
     )
 
 

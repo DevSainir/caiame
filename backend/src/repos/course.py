@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from uuid import UUID
 
 from sqlalchemy import ColumnElement, Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -61,6 +62,13 @@ class CourseRepo:
         """Return one published course with both taxonomies loaded, or nothing."""
         course: Course | None = await self.session.scalar(
             self._base_query().where(Course.status == CourseStatus.PUBLISHED, Course.slug == slug)
+        )
+        return course
+
+    async def get_published_by_id(self, course_id: UUID) -> Course | None:
+        """One published course by id — the way the lesson pages find their heading."""
+        course: Course | None = await self.session.scalar(
+            select(Course).where(Course.status == CourseStatus.PUBLISHED, Course.id == course_id)
         )
         return course
 

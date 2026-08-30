@@ -10,7 +10,8 @@ from models.course import Course
 from models.course_benefit import CourseBenefit
 from models.course_question import CourseQuestion
 from models.course_unit import CourseUnit
-from models.enums import Audience, CourseStatus, CourseUnitKind, UserRole
+from models.enums import Audience, CourseStatus, CourseUnitKind, LessonKind, UserRole
+from models.lesson import Lesson
 from models.review import Review
 from models.specialization import Specialization
 from models.user import User
@@ -127,3 +128,25 @@ def make_question(
 def make_benefit(*, title: str = "Convenient format", text: str = "Study online.") -> CourseBenefit:
     """One reason to take the course."""
     return CourseBenefit(id=uuid7(), course_id=uuid7(), position=1, title=title, text=text)
+
+
+def make_lesson(
+    *,
+    title: str = "Lecture one",
+    unit_id: UUID | None = None,
+    position: int = 1,
+    kind: LessonKind = LessonKind.VIDEO,
+    is_required: bool = True,
+) -> Lesson:
+    """One lecture inside a module."""
+    return Lesson(
+        id=uuid7(),
+        unit_id=unit_id or uuid7(),
+        position=position,
+        title=title,
+        description="One line about it.",
+        kind=kind,
+        duration_minutes=23,
+        asset_url="",
+        is_required=is_required,
+    )

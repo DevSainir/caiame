@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatDate, formatHours, formatPrice, formatReviews } from '@/features/catalog/format'
+import { formatDate, formatHours, formatMinutes, formatPrice, formatReviews } from '@/core/format'
 
 describe('formatPrice', () => {
   it('переводит копейки в сомы и группирует тысячи', () => {
@@ -45,5 +45,13 @@ describe('formatDate', () => {
 
   it('на мусоре возвращает пустую строку, а не «Invalid Date»', () => {
     expect(formatDate('не дата')).toBe('')
+  })
+})
+
+describe('formatMinutes', () => {
+  it('склоняет минуты', () => {
+    expect(formatMinutes(1)).toBe('1 минута')
+    expect(formatMinutes(23)).toBe('23 минуты')
+    expect(formatMinutes(12)).toBe('12 минут')
   })
 })

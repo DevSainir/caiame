@@ -21,6 +21,7 @@ from tests.support.fakes import (
     FakeAccreditationRepo,
     FakeBenefitRepo,
     FakeCourseRepo,
+    FakeLessonRepo,
     FakeQuestionRepo,
     FakeReviewRepo,
     FakeSpecializationRepo,
@@ -60,6 +61,7 @@ def client() -> Iterator[TestClient]:
         [make_benefit(title="Удобный формат")]
     )
     app.dependency_overrides[deps.get_syllabus_repo] = lambda: FakeSyllabusRepo(units)
+    app.dependency_overrides[deps.get_lesson_repo] = lambda: FakeLessonRepo()
     app.dependency_overrides[deps.get_review_repo] = lambda: FakeReviewRepo(
         [make_review(rating=5), make_review(rating=4)]
     )

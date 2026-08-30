@@ -4,7 +4,7 @@ import BaseButton from '@/core/components/BaseButton.vue'
 import BaseContainer from '@/core/components/BaseContainer.vue'
 import CourseFact from '@/features/catalog/components/CourseFact.vue'
 import { audienceLabel } from '@/features/catalog/labels'
-import { formatHours, formatPrice } from '@/features/catalog/format'
+import { formatHours, formatPrice } from '@/core/format'
 import { useAuthStore } from '@/core/session/store'
 
 const props = defineProps({

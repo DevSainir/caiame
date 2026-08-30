@@ -15,7 +15,11 @@ from models.course import Course
 from models.course_benefit import CourseBenefit
 from models.course_question import CourseQuestion
 from models.course_unit import CourseUnit
-from models.enums import Audience, UserRole
+from models.enums import Audience, UnitStatus, UserRole
+from models.lesson import Lesson
+from models.quiz import Quiz
+from models.quiz_attempt import QuizAttempt, QuizAttemptAnswer
+from models.quiz_question import QuizOption, QuizQuestion
 from models.refresh_token import RefreshToken
 from models.review import Review
 from models.specialization import Specialization
@@ -70,6 +74,10 @@ class FakeCourseRepo:
         """Find one course by slug, the way the query does."""
         return next((course for course in self.courses if course.slug == slug), None)
 
+    async def get_published_by_id(self, course_id: UUID) -> Course | None:
+        """Find one course by id, the way the lesson pages do."""
+        return next((course for course in self.courses if course.id == course_id), None)
+
 
 class FakeBenefitRepo:
     """In-memory storage for the «why this course» blocks."""
@@ -80,6 +88,37 @@ class FakeBenefitRepo:
     async def list_for_course(self, course_id: UUID) -> Sequence[CourseBenefit]:
         """Return every reason listed under one course."""
         return self.benefits
+
+
+class FakeLessonRepo:
+    """In-memory lesson storage plus one student's facts about the lessons."""
+
+    def __init__(
+        self, lessons: Sequence[Lesson] = (), statuses: dict[UUID, str] | None = None
+    ) -> None:
+        self.lessons = list(lessons)
+        self.statuses = statuses or {}
+        self.completed: list[tuple[UUID, UUID]] = []
+
+    async def get(self, lesson_id: UUID) -> Lesson | None:
+        """One lesson by id."""
+        return next((lesson for lesson in self.lessons if lesson.id == lesson_id), None)
+
+    async def list_for_unit(self, unit_id: UUID) -> Sequence[Lesson]:
+        """Every lesson of one module."""
+        return [lesson for lesson in self.lessons if lesson.unit_id == unit_id]
+
+    async def list_for_course(self, course_id: UUID) -> Sequence[Lesson]:
+        """Every lesson handed in; the fake holds one course at a time."""
+        return list(self.lessons)
+
+    async def statuses_for_course(self, *, user_id: UUID, course_id: UUID) -> dict[UUID, str]:
+        """One student's lesson statuses."""
+        return dict(self.statuses)
+
+    async def mark_completed(self, *, user_id: UUID, lesson_id: UUID) -> None:
+        """Record the mark, so a test can see it happened exactly once per call."""
+        self.completed.append((user_id, lesson_id))
 
 
 class FakeSyllabusRepo:
@@ -100,6 +139,14 @@ class FakeSyllabusRepo:
         """Return one student's statuses, recording that they were asked for at all."""
         self.asked_for.append(user_id)
         return dict(self.statuses)
+
+    async def get_unit(self, unit_id: UUID) -> CourseUnit | None:
+        """One line of the outline by id."""
+        return next((unit for unit in self.units if unit.id == unit_id), None)
+
+    async def mark_unit(self, *, user_id: UUID, unit_id: UUID, status: UnitStatus) -> None:
+        """Record how far a student got in one unit."""
+        self.statuses[unit_id] = str(status)
 
 
 class FakeReviewRepo:
@@ -153,6 +200,55 @@ class FakeAccreditationRepo:
     async def list_active(self) -> Sequence[Accreditation]:
         """Return every accreditation scheme."""
         return self.items
+
+
+class FakeQuizRepo:
+    """
+    In-memory quiz storage.
+
+    Options hang off the questions here, the way the fake's callers build them; the real
+    repository fetches them in a second query. Both answer the same two methods, which is
+    what the service is written against.
+    """
+
+    def __init__(self, quiz: Quiz, questions: Sequence[QuizQuestion]) -> None:
+        self.quiz = quiz
+        self.questions = list(questions)
+        self.attempts: list[QuizAttempt] = []
+        self.answers: list[QuizAttemptAnswer] = []
+
+    async def get_by_unit(self, unit_id: UUID) -> Quiz | None:
+        """The test of this unit, if it is the one the fake was built with."""
+        return self.quiz if self.quiz.unit_id == unit_id else None
+
+    async def list_questions(self, quiz_id: UUID) -> Sequence[QuizQuestion]:
+        """Live questions of the test."""
+        return [question for question in self.questions if question.deleted_at is None]
+
+    async def list_options(self, question_ids: Sequence[UUID]) -> Sequence[QuizOption]:
+        """Options of the given questions."""
+        wanted = set(question_ids)
+        return [
+            option
+            for question in self.questions
+            if question.id in wanted
+            for option in getattr(question, "options", [])
+        ]
+
+    async def latest_attempt(self, *, user_id: UUID, quiz_id: UUID) -> QuizAttempt | None:
+        """The student's most recent attempt."""
+        mine = [attempt for attempt in self.attempts if attempt.user_id == user_id]
+        return mine[-1] if mine else None
+
+    async def count_attempts(self, *, user_id: UUID, quiz_id: UUID) -> int:
+        """How many attempts the student has spent."""
+        return len([attempt for attempt in self.attempts if attempt.user_id == user_id])
+
+    async def add_attempt(self, attempt: QuizAttempt, answers: Sequence[QuizAttemptAnswer]) -> None:
+        """Store a graded attempt with its answers."""
+        attempt.id = uuid7()
+        self.attempts.append(attempt)
+        self.answers.extend(answers)
 
 
 class FakeUserRepo:

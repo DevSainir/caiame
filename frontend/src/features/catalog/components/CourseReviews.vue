@@ -2,7 +2,7 @@
 import BaseContainer from '@/core/components/BaseContainer.vue'
 import CourseReviewCard from '@/features/catalog/components/CourseReviewCard.vue'
 import IconSparkle from '@/core/components/icons/IconSparkle.vue'
-import { formatReviews } from '@/features/catalog/format'
+import { formatReviews } from '@/core/format'
 
 const props = defineProps({
   summary: { type: Object, default: null },

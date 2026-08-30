@@ -2,10 +2,11 @@ from collections.abc import Sequence
 from uuid import UUID
 
 from sqlalchemy import case, select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.course_unit import CourseUnit
-from models.enums import CourseUnitKind
+from models.enums import CourseUnitKind, UnitStatus
 from models.unit_progress import UnitProgress
 
 # Display order is spelled out instead of falling out of the enum: sorting by the stored
@@ -37,6 +38,13 @@ class SyllabusRepo:
         )
         return rows.all()
 
+    async def get_unit(self, unit_id: UUID) -> CourseUnit | None:
+        """One line of the outline by its id."""
+        unit: CourseUnit | None = await self.session.scalar(
+            select(CourseUnit).where(CourseUnit.id == unit_id)
+        )
+        return unit
+
     async def statuses_for(self, *, user_id: UUID, course_id: UUID) -> dict[UUID, str]:
         """
         One student's status per unit, as a lookup keyed by unit.
@@ -50,3 +58,19 @@ class SyllabusRepo:
             .where(UnitProgress.user_id == user_id, CourseUnit.course_id == course_id)
         )
         return {unit_id: str(status) for unit_id, status in rows.all()}
+
+    async def mark_unit(self, *, user_id: UUID, unit_id: UUID, status: UnitStatus) -> None:
+        """
+        Record how far a student got in one unit of the outline.
+
+        An upsert that never walks a status backwards: a second, worse attempt at a test
+        does not take away a pass that already happened.
+        """
+        statement = insert(UnitProgress).values(user_id=user_id, unit_id=unit_id, status=status)
+        await self.session.execute(
+            statement.on_conflict_do_update(
+                index_elements=[UnitProgress.user_id, UnitProgress.unit_id],
+                set_={"status": status},
+                where=UnitProgress.status != UnitStatus.DONE,
+            )
+        )

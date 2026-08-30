@@ -6,6 +6,7 @@ const CURRENCY_LABELS = {
 
 const HOUR_FORMS = ['час', 'часа', 'часов']
 const REVIEW_FORMS = ['отзыв', 'отзыва', 'отзывов']
+const MINUTE_FORMS = ['минута', 'минуты', 'минут']
 
 /**
  * Русское склонение после числа: 1 час, 72 часа, 5 часов.
@@ -50,4 +51,9 @@ export function formatDate(value) {
   return date
     .toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
     .replace(/\s*г\.$/, '')
+}
+
+/** Длительность лекции: «23 минуты». */
+export function formatMinutes(minutes) {
+  return `${minutes} ${plural(minutes, MINUTE_FORMS)}`
 }
