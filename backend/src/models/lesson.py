@@ -19,7 +19,18 @@ class Lesson(UUIDMixin, TimeStampMixin, Base):
     """
 
     __tablename__ = "lessons"
-    __table_args__ = (UniqueConstraint("unit_id", "position", name="uq_lesson_position"),)
+    # Deferred on purpose: swapping two rows passes through a state where both hold
+    # the same position for an instant. Checked at commit, the constraint sees the
+    # finished order; checked per statement, it would refuse every reorder.
+    __table_args__ = (
+        UniqueConstraint(
+            "unit_id",
+            "position",
+            name="uq_lesson_position",
+            deferrable=True,
+            initially="DEFERRED",
+        ),
+    )
 
     unit_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),

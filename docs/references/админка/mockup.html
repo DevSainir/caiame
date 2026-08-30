@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ЦАИДМО — макет админки</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="./mockup.css" rel="stylesheet" />
+  </head>
+  <body class="font-sans">
+    <div class="mx-auto max-w-container px-6 py-10">
+      <p class="text-2xs font-semibold uppercase text-subtle">Макет, а не рабочий экран</p>
+      <h1 class="pt-2 text-4xl font-bold text-ink">Админка ЦАИДМО</h1>
+      <p class="max-w-xl pt-4 text-base font-medium leading-relaxed text-muted">
+        Собрано на токенах проекта: те же цвета, шрифт, радиусы и шкала отступов, что и на
+        сайте. Данные на экранах вымышленные — это набросок для обсуждения, а не страница.
+      </p>
+    </div>
+
+    <!-- ЭКРАН 1 — КУРСЫ -->
+    <section class="mx-auto max-w-container px-6 pb-14">
+      <p class="pb-3 text-xs font-semibold uppercase text-accent">Экран 1 · Курсы</p>
+
+      <div class="overflow-hidden rounded-xl border border-subtle bg-page">
+        <div class="flex">
+          <!-- Боковое меню -->
+          <aside class="hidden w-56 shrink-0 border-r border-subtle bg-subtle p-5 lg:block">
+            <div class="flex items-center gap-2 pb-8">
+              <span class="rounded-sm bg-accent px-3 py-2 text-2xs font-bold text-inverse">
+                ЦАИДМО
+              </span>
+              <span class="text-2xs font-semibold text-subtle">админка</span>
+            </div>
+
+            <nav class="flex flex-col gap-2">
+              <span class="rounded-sm bg-page px-4 py-3 text-sm font-bold text-accent">Курсы</span>
+              <span class="px-4 py-3 text-sm font-medium text-muted">Студенты и доступ</span>
+              <span class="px-4 py-3 text-sm font-medium text-muted">Проверка работ</span>
+              <span class="px-4 py-3 text-sm font-medium text-muted">Отзывы</span>
+              <span class="px-4 py-3 text-sm font-medium text-muted">Вопросы к курсам</span>
+            </nav>
+
+            <div class="mt-8 border-t border-subtle pt-5">
+              <p class="text-sm font-semibold text-ink">Асель Турганбаева</p>
+              <p class="pt-2 text-2xs font-medium text-subtle">Администратор</p>
+            </div>
+          </aside>
+
+          <!-- Содержимое -->
+          <div class="min-w-0 flex-1">
+            <header
+              class="flex items-center justify-between gap-4 border-b border-subtle px-6 py-5"
+            >
+              <div>
+                <h2 class="text-2xl font-bold text-ink">Курсы</h2>
+                <p class="pt-2 text-xs font-medium text-subtle">7 курсов, 2 из них черновики</p>
+              </div>
+              <span
+                class="inline-flex items-center justify-center rounded-sm bg-accent px-8 py-2 text-base font-bold text-inverse"
+              >
+                Новый курс
+              </span>
+            </header>
+
+            <div class="flex flex-wrap gap-3 px-6 py-5">
+              <span
+                class="rounded-sm border border-subtle px-4 py-2 text-xs font-semibold text-ink"
+              >
+                Все статусы
+              </span>
+              <span
+                class="rounded-sm border border-subtle px-4 py-2 text-xs font-medium text-subtle"
+              >
+                Специализация
+              </span>
+              <span
+                class="rounded-sm border border-subtle px-4 py-2 text-xs font-medium text-subtle"
+              >
+                Поиск по названию
+              </span>
+            </div>
+
+            <table class="w-full text-left">
+              <thead>
+                <tr class="border-y border-subtle bg-subtle">
+                  <th class="px-6 py-3 text-2xs font-semibold uppercase text-subtle">Курс</th>
+                  <th class="px-4 py-3 text-2xs font-semibold uppercase text-subtle">Часы</th>
+                  <th class="px-4 py-3 text-2xs font-semibold uppercase text-subtle">Программа</th>
+                  <th class="px-4 py-3 text-2xs font-semibold uppercase text-subtle">Студенты</th>
+                  <th class="px-4 py-3 text-2xs font-semibold uppercase text-subtle">Статус</th>
+                  <th class="px-6 py-3"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-subtle">
+                  <td class="px-6 py-5">
+                    <p class="text-sm font-bold text-ink">Повышение квалификации по терапии</p>
+                    <p class="pt-2 text-2xs font-medium text-subtle">Терапия · для врачей</p>
+                  </td>
+                  <td class="px-4 py-5 text-sm font-medium text-muted">72</td>
+                  <td class="px-4 py-5 text-sm font-medium text-muted">5 модулей · 20 лекций</td>
+                  <td class="px-4 py-5 text-sm font-medium text-muted">128</td>
+                  <td class="px-4 py-5">
+                    <span
+                      class="rounded-sm bg-success-500 px-3 py-2 text-2xs font-semibold text-inverse"
+                    >
+                      Опубликован
+                    </span>
+                  </td>
+                  <td class="px-6 py-5 text-right text-sm font-semibold text-accent">Открыть</td>
+                </tr>
+                <tr class="border-b border-subtle">
+                  <td class="px-6 py-5">
+                    <p class="text-sm font-bold text-ink">Повышение квалификации по хирургии</p>
+                    <p class="pt-2 text-2xs font-medium text-subtle">Хирургия · для врачей</p>
+                  </td>
+                  <td class="px-4 py-5 text-sm font-medium text-muted">72</td>
+                  <td class="px-4 py-5 text-sm font-medium text-muted">5 модулей · 20 лекций</td>
+                  <td class="px-4 py-5 text-sm font-medium text-muted">64</td>
+                  <td class="px-4 py-5">
+                    <span
+                      class="rounded-sm bg-success-500 px-3 py-2 text-2xs font-semibold text-inverse"
+                    >
+                      Опубликован
+                    </span>
+                  </td>
+                  <td class="px-6 py-5 text-right text-sm font-semibold text-accent">Открыть</td>
+                </tr>
+                <tr class="border-b border-subtle">
+                  <td class="px-6 py-5">
+                    <p class="text-sm font-bold text-ink">Паллиативная помощь: сёстринский уход</p>
+                    <p class="pt-2 text-2xs font-medium text-subtle">
+                      Паллиативная терапия · для медсестёр
+                    </p>
+                  </td>
+                  <td class="px-4 py-5 text-sm font-medium text-muted">72</td>
+                  <td class="px-4 py-5 text-sm font-medium text-muted">4 модуля · 12 лекций</td>
+                  <td class="px-4 py-5 text-sm font-medium text-muted">—</td>
+                  <td class="px-4 py-5">
+                    <span
+                      class="rounded-sm border border-neutral-400 px-3 py-2 text-2xs font-semibold text-subtle"
+                    >
+                      Черновик
+                    </span>
+                  </td>
+                  <td class="px-6 py-5 text-right text-sm font-semibold text-accent">Открыть</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <p class="max-w-xl pt-4 text-xs font-medium leading-relaxed text-subtle">
+        Черновик виден только здесь: студент на его адресе получает 404, а не «нет доступа» —
+        так адрес курса не сообщает, что курс существует.
+      </p>
+    </section>
+
+    <!-- ЭКРАН 2 — ПРОГРАММА КУРСА -->
+    <section class="mx-auto max-w-container px-6 pb-14">
+      <p class="pb-3 text-xs font-semibold uppercase text-accent">Экран 2 · Программа курса</p>
+
+      <div class="overflow-hidden rounded-xl border border-subtle bg-page">
+        <header class="border-b border-subtle px-6 py-5">
+          <p class="text-2xs font-medium text-subtle">Курсы / Терапия</p>
+          <div class="flex items-center justify-between gap-4 pt-2">
+            <h2 class="text-2xl font-bold text-ink">Повышение квалификации по терапии</h2>
+            <div class="flex items-center gap-3">
+              <span class="rounded-sm border border-subtle px-6 py-2 text-sm font-semibold text-ink">
+                Снять с публикации
+              </span>
+              <span class="rounded-sm bg-accent px-8 py-2 text-base font-bold text-inverse">
+                Сохранить
+              </span>
+            </div>
+          </div>
+          <nav class="flex gap-6 pt-5">
+            <span class="border-b-2 border-accent pb-3 text-sm font-bold text-accent">Программа</span>
+            <span class="pb-3 text-sm font-medium text-muted">Описание и цена</span>
+            <span class="pb-3 text-sm font-medium text-muted">Отзывы</span>
+            <span class="pb-3 text-sm font-medium text-muted">Вопросы</span>
+          </nav>
+        </header>
+
+        <div class="grid gap-6 p-6 lg:grid-cols-3">
+          <!-- Дерево программы -->
+          <div class="lg:col-span-2">
+            <div class="flex items-center justify-between pb-4">
+              <p class="text-sm font-bold text-ink">5 модулей · 20 лекций · 5 работ</p>
+              <span class="text-sm font-semibold text-accent">+ Модуль</span>
+            </div>
+
+            <div class="rounded-lg border border-subtle">
+              <!-- Модуль раскрыт -->
+              <div class="border-b border-subtle">
+                <div class="flex items-center gap-4 px-5 py-4">
+                  <span class="text-lg font-bold text-disabled">⠿</span>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-sm font-bold text-ink">1. Приём терапевта</p>
+                    <p class="pt-2 text-2xs font-medium text-subtle">
+                      Сбор жалоб, осмотр, объём обследования на первом визите
+                    </p>
+                  </div>
+                  <span class="text-2xs font-medium text-subtle">4 лекции</span>
+                  <span class="text-sm font-semibold text-accent">Изменить</span>
+                </div>
+
+                <div class="border-t border-subtle bg-subtle">
+                  <div class="flex items-center gap-4 px-5 py-3 pl-12">
+                    <span class="text-base font-bold text-disabled">⠿</span>
+                    <span class="rounded-xs bg-primary-50 px-2 py-1 text-2xs font-semibold text-accent">
+                      видео
+                    </span>
+                    <span class="min-w-0 flex-1 truncate text-sm font-medium text-ink">
+                      Приём терапевта: ключевые положения
+                    </span>
+                    <span class="text-2xs font-medium text-subtle">23 мин</span>
+                    <span class="text-2xs font-semibold text-success-600">файл загружен</span>
+                    <span class="text-sm font-semibold text-accent">Изменить</span>
+                  </div>
+                  <div class="flex items-center gap-4 border-t border-subtle px-5 py-3 pl-12">
+                    <span class="text-base font-bold text-disabled">⠿</span>
+                    <span class="rounded-xs bg-primary-50 px-2 py-1 text-2xs font-semibold text-accent">
+                      видео
+                    </span>
+                    <span class="min-w-0 flex-1 truncate text-sm font-medium text-ink">
+                      Приём терапевта: разбор клинических случаев
+                    </span>
+                    <span class="text-2xs font-medium text-subtle">19 мин</span>
+                    <span class="text-2xs font-semibold text-danger-500">нет файла</span>
+                    <span class="text-sm font-semibold text-accent">Изменить</span>
+                  </div>
+                  <div class="flex items-center gap-4 border-t border-subtle px-5 py-3 pl-12">
+                    <span class="text-base font-bold text-disabled">⠿</span>
+                    <span class="rounded-xs bg-neutral-100 px-2 py-1 text-2xs font-semibold text-muted">
+                      pdf
+                    </span>
+                    <span class="min-w-0 flex-1 truncate text-sm font-medium text-ink">
+                      Приём терапевта: методические рекомендации
+                    </span>
+                    <span class="text-2xs font-medium text-subtle">12 мин</span>
+                    <span class="text-2xs font-semibold text-danger-500">нет файла</span>
+                    <span class="text-sm font-semibold text-accent">Изменить</span>
+                  </div>
+                  <div class="border-t border-subtle px-5 py-3 pl-12">
+                    <span class="text-sm font-semibold text-accent">+ Лекция</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Свёрнутые модули -->
+              <div class="flex items-center gap-4 border-b border-subtle px-5 py-4">
+                <span class="text-lg font-bold text-disabled">⠿</span>
+                <p class="flex-1 text-sm font-bold text-ink">2. Артериальная гипертензия</p>
+                <span class="text-2xs font-medium text-subtle">4 лекции</span>
+                <span class="text-sm font-semibold text-accent">Изменить</span>
+              </div>
+              <div class="flex items-center gap-4 px-5 py-4">
+                <span class="text-lg font-bold text-disabled">⠿</span>
+                <p class="flex-1 text-sm font-bold text-ink">3. Ишемическая болезнь сердца</p>
+                <span class="text-2xs font-medium text-subtle">4 лекции</span>
+                <span class="text-sm font-semibold text-accent">Изменить</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-6">
+              <p class="text-sm font-bold text-ink">Работы курса</p>
+              <span class="text-sm font-semibold text-accent">+ Задание · + Тестирование</span>
+            </div>
+            <div class="mt-4 rounded-lg border border-subtle">
+              <div class="flex items-center gap-4 border-b border-subtle px-5 py-4">
+                <span class="text-lg font-bold text-disabled">⠿</span>
+                <span class="rounded-xs bg-neutral-100 px-2 py-1 text-2xs font-semibold text-muted">
+                  задание
+                </span>
+                <p class="flex-1 text-sm font-medium text-ink">
+                  Разбор случая: одышка у пациента 55 лет
+                </p>
+                <span class="text-2xs font-medium text-subtle">7 работ на проверке</span>
+                <span class="text-sm font-semibold text-accent">Изменить</span>
+              </div>
+              <div class="flex items-center gap-4 px-5 py-4">
+                <span class="text-lg font-bold text-disabled">⠿</span>
+                <span class="rounded-xs bg-danger-100 px-2 py-1 text-2xs font-semibold text-danger-700">
+                  тест
+                </span>
+                <p class="flex-1 text-sm font-medium text-ink">Тестирование по разделам 1–3</p>
+                <span class="text-2xs font-medium text-subtle">3 вопроса · порог 4 из 6</span>
+                <span class="text-sm font-semibold text-accent">Изменить</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Правая колонка -->
+          <aside class="flex flex-col gap-4">
+            <div class="rounded-lg border border-subtle p-5">
+              <p class="text-sm font-bold text-ink">Публикация</p>
+              <p class="pt-3 text-xs font-medium leading-relaxed text-muted">
+                Курс опубликован. Правки структуры видны студентам сразу — они проходят его
+                прямо сейчас.
+              </p>
+            </div>
+            <div class="rounded-lg border border-danger-200 bg-danger-50 p-5">
+              <p class="text-sm font-bold text-danger-700">Осторожно с удалением</p>
+              <p class="pt-3 text-xs font-medium leading-relaxed text-danger-700">
+                Удалённая лекция исчезает из программы и из знаменателя процента, но остаётся
+                в истории тех, кто её прошёл. Их прогресс не откатится.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ЭКРАН 3 — ЛЕКЦИЯ -->
+    <section class="mx-auto max-w-container px-6 pb-14">
+      <p class="pb-3 text-xs font-semibold uppercase text-accent">Экран 3 · Лекция и материал</p>
+
+      <div class="overflow-hidden rounded-xl border border-subtle bg-page">
+        <header class="flex items-center justify-between gap-4 border-b border-subtle px-6 py-5">
+          <div>
+            <p class="text-2xs font-medium text-subtle">
+              Курсы / Терапия / Приём терапевта
+            </p>
+            <h2 class="pt-2 text-2xl font-bold text-ink">Лекция</h2>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="rounded-sm border border-subtle px-6 py-2 text-sm font-semibold text-danger-500">
+              Удалить
+            </span>
+            <span class="rounded-sm bg-accent px-8 py-2 text-base font-bold text-inverse">
+              Сохранить
+            </span>
+          </div>
+        </header>
+
+        <div class="grid gap-8 p-6 lg:grid-cols-2">
+          <div class="flex flex-col gap-5">
+            <label class="flex flex-col gap-2">
+              <span class="text-xs font-semibold text-muted">Название</span>
+              <span class="rounded-lg border border-neutral-900 px-5 py-4 text-sm font-medium text-ink">
+                Приём терапевта: ключевые положения
+              </span>
+            </label>
+
+            <label class="flex flex-col gap-2">
+              <span class="text-xs font-semibold text-muted">Описание</span>
+              <span
+                class="min-h-25 rounded-lg border border-neutral-400 px-5 py-4 text-sm font-medium text-ink"
+              >
+                Видеолекция по теме модуля: что нужно знать до разбора случаев.
+              </span>
+            </label>
+
+            <div class="grid grid-cols-2 gap-4">
+              <label class="flex flex-col gap-2">
+                <span class="text-xs font-semibold text-muted">Тип</span>
+                <span
+                  class="rounded-lg border border-neutral-400 px-5 py-4 text-sm font-medium text-ink"
+                >
+                  Видео-лекция ▾
+                </span>
+              </label>
+              <label class="flex flex-col gap-2">
+                <span class="text-xs font-semibold text-muted">Длительность, мин</span>
+                <span
+                  class="rounded-lg border border-neutral-400 px-5 py-4 text-sm font-medium text-ink"
+                >
+                  23
+                </span>
+              </label>
+            </div>
+
+            <label class="flex items-center gap-3">
+              <span class="h-4 w-4 rounded-xs bg-accent"></span>
+              <span class="text-sm font-medium text-ink">Обязательная лекция</span>
+            </label>
+            <p class="text-xs font-medium leading-relaxed text-subtle">
+              Необязательная не входит в знаменатель прогресса — так материал можно добавить
+              в идущий курс, не сбрасывая процент у тех, кто его уже прошёл.
+            </p>
+          </div>
+
+          <div class="flex flex-col gap-5">
+            <p class="text-xs font-semibold text-muted">Материал</p>
+            <div
+              class="flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-neutral-400 px-6 py-14"
+            >
+              <p class="text-sm font-bold text-ink">Перетащите файл сюда</p>
+              <p class="text-xs font-medium text-subtle">MP4 до 2 ГБ или PDF до 50 МБ</p>
+              <span class="mt-2 rounded-sm bg-accent px-8 py-2 text-sm font-bold text-inverse">
+                Выбрать файл
+              </span>
+            </div>
+
+            <div class="rounded-lg border border-subtle p-5">
+              <div class="flex items-center justify-between gap-4">
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-medium text-ink">priem-terapevta-01.mp4</p>
+                  <p class="pt-2 text-2xs font-medium text-subtle">
+                    248 МБ · загружено 30 августа
+                  </p>
+                </div>
+                <span class="text-sm font-semibold text-danger-500">Заменить</span>
+              </div>
+              <div class="mt-4 h-2 rounded-full bg-neutral-100">
+                <div class="h-full w-full rounded-full bg-success-500"></div>
+              </div>
+            </div>
+
+            <p class="text-xs font-medium leading-relaxed text-subtle">
+              Файл уходит в приватное хранилище напрямую из браузера, минуя приложение;
+              студент получает подписанную ссылку с коротким сроком жизни.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ЭКРАН 4 — ВОПРОСЫ ТЕСТА -->
+    <section class="mx-auto max-w-container px-6 pb-14">
+      <p class="pb-3 text-xs font-semibold uppercase text-accent">Экран 4 · Вопросы теста</p>
+
+      <div class="overflow-hidden rounded-xl border border-subtle bg-page">
+        <header class="flex items-center justify-between gap-4 border-b border-subtle px-6 py-5">
+          <div>
+            <p class="text-2xs font-medium text-subtle">Курсы / Терапия</p>
+            <h2 class="pt-2 text-2xl font-bold text-ink">Тестирование по разделам 1–3</h2>
+          </div>
+          <span class="rounded-sm bg-accent px-8 py-2 text-base font-bold text-inverse">
+            Сохранить
+          </span>
+        </header>
+
+        <div class="flex flex-wrap gap-6 border-b border-subtle px-6 py-5">
+          <span class="text-sm font-medium text-muted">
+            Проходной балл: <span class="font-bold text-ink">4</span> из 6
+          </span>
+          <span class="text-sm font-medium text-muted">
+            Попыток: <span class="font-bold text-ink">без ограничения</span>
+          </span>
+          <span class="text-sm font-medium text-muted">
+            Показывать ответы: <span class="font-bold text-ink">после исчерпания попыток</span>
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-5 p-6">
+          <div class="rounded-lg border border-subtle p-5">
+            <div class="flex items-start justify-between gap-4">
+              <p class="text-base font-bold text-ink">1. Какие модули входят в программу курса?</p>
+              <div class="flex shrink-0 items-center gap-3">
+                <span class="rounded-sm bg-primary-50 px-3 py-2 text-2xs font-semibold text-accent">
+                  3 балла
+                </span>
+                <span class="rounded-sm bg-neutral-100 px-3 py-2 text-2xs font-semibold text-muted">
+                  несколько верных
+                </span>
+              </div>
+            </div>
+            <div class="flex flex-col gap-3 pt-4">
+              <div class="flex items-center gap-3">
+                <span class="h-4 w-4 rounded-xs bg-success-500"></span>
+                <span class="text-sm font-medium text-ink">Приём терапевта</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="h-4 w-4 rounded-xs bg-success-500"></span>
+                <span class="text-sm font-medium text-ink">Артериальная гипертензия</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="h-4 w-4 rounded-xs border border-neutral-400"></span>
+                <span class="text-sm font-medium text-ink">Осмотр и рефракция</span>
+              </div>
+              <span class="text-sm font-semibold text-accent">+ Вариант</span>
+            </div>
+          </div>
+
+          <div class="rounded-lg border border-neutral-400 bg-subtle p-5">
+            <div class="flex items-start justify-between gap-4">
+              <p class="text-base font-bold text-ink">2. Сколько часов занимает программа?</p>
+              <span class="shrink-0 rounded-sm bg-primary-50 px-3 py-2 text-2xs font-semibold text-accent">
+                1 балл
+              </span>
+            </div>
+            <p class="pt-3 text-xs font-medium leading-relaxed text-muted">
+              По этому вопросу есть 42 попытки — он больше не редактируется. Правка создаст
+              новый вопрос, старый уйдёт в архив: иначе в базе останется «неверно» на вопрос,
+              которого студент не видел.
+            </p>
+            <div class="flex gap-4 pt-4">
+              <span class="text-sm font-semibold text-accent">Заменить новым</span>
+              <span class="text-sm font-semibold text-danger-500">Убрать из теста</span>
+            </div>
+          </div>
+
+          <span class="text-sm font-semibold text-accent">+ Вопрос</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ЭКРАН 5 — ПРОВЕРКА РАБОТ -->
+    <section class="mx-auto max-w-container px-6 pb-14">
+      <p class="pb-3 text-xs font-semibold uppercase text-accent">
+        Экран 5 · Проверка работ (преподаватель)
+      </p>
+
+      <div class="overflow-hidden rounded-xl border border-subtle bg-page">
+        <header class="flex items-center justify-between gap-4 border-b border-subtle px-6 py-5">
+          <div>
+            <h2 class="text-2xl font-bold text-ink">Проверка работ</h2>
+            <p class="pt-2 text-xs font-medium text-subtle">
+              7 работ ждут проверки · только по вашим курсам
+            </p>
+          </div>
+        </header>
+
+        <div class="grid gap-6 p-6 lg:grid-cols-3">
+          <div class="rounded-lg border border-subtle lg:col-span-1">
+            <div class="border-b border-subtle bg-subtle px-5 py-4 text-sm font-bold text-accent">
+              Айгуль Садыкова
+              <p class="pt-2 text-2xs font-medium text-subtle">
+                Терапия · сдано 29 августа, попытка 2
+              </p>
+            </div>
+            <div class="border-b border-subtle px-5 py-4">
+              <p class="text-sm font-medium text-ink">Нурбек Абдылдаев</p>
+              <p class="pt-2 text-2xs font-medium text-subtle">Терапия · сдано 29 августа</p>
+            </div>
+            <div class="px-5 py-4">
+              <p class="text-sm font-medium text-ink">Гульнара Исмаилова</p>
+              <p class="pt-2 text-2xs font-medium text-subtle">Хирургия · сдано 28 августа</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-5 lg:col-span-2">
+            <div>
+              <p class="text-2xs font-medium text-subtle">
+                Разбор случая: одышка у пациента 55 лет
+              </p>
+              <h3 class="pt-2 text-xl font-bold text-ink">Работа Айгуль Садыковой</h3>
+            </div>
+
+            <div class="rounded-lg border border-subtle p-5">
+              <p class="text-sm font-medium leading-relaxed text-muted">
+                Дифференциальный диагноз: сердечная недостаточность, ХОБЛ, анемия. План
+                обследования: ЭКГ, эхокардиография, общий анализ крови, спирометрия…
+              </p>
+              <p class="pt-4 text-2xs font-medium text-subtle">Вложение: sluchay-odyshka.pdf</p>
+            </div>
+
+            <div class="rounded-lg border border-subtle p-5">
+              <p class="text-xs font-semibold text-muted">Прошлая рецензия · 21 августа</p>
+              <p class="pt-3 text-sm font-medium leading-relaxed text-muted">
+                Не хватает обоснования срочности. Вернул на доработку.
+              </p>
+            </div>
+
+            <div class="flex flex-col gap-4">
+              <span class="text-xs font-semibold text-muted">Комментарий студенту</span>
+              <span
+                class="min-h-25 rounded-lg border border-neutral-400 px-5 py-4 text-sm font-medium text-subtle"
+              >
+                Виден студенту целиком — внутренних заметок здесь нет
+              </span>
+              <div class="flex flex-wrap items-center gap-4">
+                <span class="text-xs font-semibold text-muted">Балл</span>
+                <span class="rounded-lg border border-neutral-400 px-5 py-3 text-sm font-medium text-ink">
+                  8 из 10
+                </span>
+                <span class="rounded-sm bg-success-500 px-8 py-2 text-base font-bold text-inverse">
+                  Принять
+                </span>
+                <span class="rounded-sm border border-neutral-400 px-8 py-2 text-base font-bold text-ink">
+                  На доработку
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ЭКРАН 6 — СТУДЕНТЫ И ДОСТУП -->
+    <section class="mx-auto max-w-container px-6 pb-25">
+      <p class="pb-3 text-xs font-semibold uppercase text-accent">Экран 6 · Студенты и доступ</p>
+
+      <div class="overflow-hidden rounded-xl border border-subtle bg-page">
+        <header class="flex items-center justify-between gap-4 border-b border-subtle px-6 py-5">
+          <div>
+            <h2 class="text-2xl font-bold text-ink">Студенты и доступ</h2>
+            <p class="pt-2 text-xs font-medium text-subtle">
+              До подключения оплаты доступ выдаётся руками
+            </p>
+          </div>
+          <span class="rounded-sm bg-accent px-8 py-2 text-base font-bold text-inverse">
+            Выдать доступ
+          </span>
+        </header>
+
+        <table class="w-full text-left">
+          <thead>
+            <tr class="border-b border-subtle bg-subtle">
+              <th class="px-6 py-3 text-2xs font-semibold uppercase text-subtle">Студент</th>
+              <th class="px-4 py-3 text-2xs font-semibold uppercase text-subtle">Курс</th>
+              <th class="px-4 py-3 text-2xs font-semibold uppercase text-subtle">Доступ</th>
+              <th class="px-4 py-3 text-2xs font-semibold uppercase text-subtle">Прогресс</th>
+              <th class="px-6 py-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-subtle">
+              <td class="px-6 py-5">
+                <p class="text-sm font-bold text-ink">Айгуль Садыкова</p>
+                <p class="pt-2 text-2xs font-medium text-subtle">student@caiame.kg</p>
+              </td>
+              <td class="px-4 py-5 text-sm font-medium text-muted">Терапия</td>
+              <td class="px-4 py-5">
+                <span class="rounded-sm bg-success-500 px-3 py-2 text-2xs font-semibold text-inverse">
+                  выдан вручную
+                </span>
+              </td>
+              <td class="px-4 py-5">
+                <div class="flex items-center gap-3">
+                  <span class="h-2 w-25 rounded-full bg-neutral-100">
+                    <span class="block h-full w-10 rounded-full bg-accent"></span>
+                  </span>
+                  <span class="text-xs font-medium text-muted">38 %</span>
+                </div>
+              </td>
+              <td class="px-6 py-5 text-right text-sm font-semibold text-danger-500">Отозвать</td>
+            </tr>
+            <tr class="border-b border-subtle">
+              <td class="px-6 py-5">
+                <p class="text-sm font-bold text-ink">Нурбек Абдылдаев</p>
+                <p class="pt-2 text-2xs font-medium text-subtle">nurbek@example.kg</p>
+              </td>
+              <td class="px-4 py-5 text-sm font-medium text-muted">Хирургия</td>
+              <td class="px-4 py-5">
+                <span class="rounded-sm bg-success-500 px-3 py-2 text-2xs font-semibold text-inverse">
+                  выдан вручную
+                </span>
+              </td>
+              <td class="px-4 py-5">
+                <div class="flex items-center gap-3">
+                  <span class="h-2 w-25 rounded-full bg-neutral-100">
+                    <span class="block h-full w-24 rounded-full bg-accent"></span>
+                  </span>
+                  <span class="text-xs font-medium text-muted">92 %</span>
+                </div>
+              </td>
+              <td class="px-6 py-5 text-right text-sm font-semibold text-danger-500">Отозвать</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-5">
+                <p class="text-sm font-bold text-ink">Тимур Садыков</p>
+                <p class="pt-2 text-2xs font-medium text-subtle">timur@example.kg</p>
+              </td>
+              <td class="px-4 py-5 text-sm font-medium text-muted">Терапия</td>
+              <td class="px-4 py-5">
+                <span class="rounded-sm border border-neutral-400 px-3 py-2 text-2xs font-semibold text-subtle">
+                  отозван
+                </span>
+              </td>
+              <td class="px-4 py-5">
+                <div class="flex items-center gap-3">
+                  <span class="h-2 w-25 rounded-full bg-neutral-100">
+                    <span class="block h-full w-6 rounded-full bg-neutral-400"></span>
+                  </span>
+                  <span class="text-xs font-medium text-subtle">16 %</span>
+                </div>
+              </td>
+              <td class="px-6 py-5 text-right text-sm font-semibold text-accent">Вернуть</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="max-w-xl pt-4 text-xs font-medium leading-relaxed text-subtle">
+        Отозванный доступ не стирает прогресс: студент просто не может открыть лекции, а
+        после возврата продолжает с того же места.
+      </p>
+    </section>
+  </body>
+</html>

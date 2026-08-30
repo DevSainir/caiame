@@ -6,7 +6,7 @@ leaves the test green while production breaks. These raise AttributeError instea
 """
 
 from collections.abc import Sequence
-from datetime import datetime
+from datetime import UTC, datetime
 from uuid import UUID
 
 from models.accreditation import Accreditation
@@ -15,7 +15,7 @@ from models.course import Course
 from models.course_benefit import CourseBenefit
 from models.course_question import CourseQuestion
 from models.course_unit import CourseUnit
-from models.enums import Audience, UnitStatus, UserRole
+from models.enums import Audience, CourseStatus, CourseUnitKind, UnitStatus, UserRole
 from models.lesson import Lesson
 from models.quiz import Quiz
 from models.quiz_attempt import QuizAttempt, QuizAttemptAnswer
@@ -77,6 +77,116 @@ class FakeCourseRepo:
     async def get_published_by_id(self, course_id: UUID) -> Course | None:
         """Find one course by id, the way the lesson pages do."""
         return next((course for course in self.courses if course.id == course_id), None)
+
+
+class FakeAdminRepo:
+    """In-memory storage for the administration, drafts included."""
+
+    def __init__(
+        self,
+        courses: Sequence[Course] = (),
+        units: Sequence[CourseUnit] = (),
+        lessons: Sequence[Lesson] = (),
+    ) -> None:
+        self.courses = list(courses)
+        self.units = list(units)
+        self.lessons = list(lessons)
+        self.flushes = 0
+
+    async def list_courses(self) -> Sequence[Course]:
+        """Every course the fake was built with."""
+        return self.courses
+
+    async def get_course(self, course_id: UUID) -> Course | None:
+        """One course by id, whatever its status."""
+        return next((course for course in self.courses if course.id == course_id), None)
+
+    async def count_units(self, course_ids: Sequence[UUID]) -> dict[UUID, int]:
+        """Modules per course."""
+        return {
+            course_id: len(
+                [
+                    unit
+                    for unit in self.units
+                    if unit.course_id == course_id and unit.kind is CourseUnitKind.MODULE
+                ]
+            )
+            for course_id in course_ids
+        }
+
+    async def count_lessons(self, course_ids: Sequence[UUID]) -> dict[UUID, int]:
+        """Live lectures per course."""
+        units = {unit.id: unit.course_id for unit in self.units}
+        counts: dict[UUID, int] = dict.fromkeys(course_ids, 0)
+        for lesson in self.lessons:
+            course_id = units.get(lesson.unit_id)
+            if course_id in counts and lesson.deleted_at is None:
+                counts[course_id] += 1
+        return counts
+
+    async def set_status(self, course: Course, status: CourseStatus) -> None:
+        """Publish or unpublish."""
+        course.status = status
+
+    async def add_unit(self, unit: CourseUnit) -> CourseUnit:
+        """Insert a line of the programme."""
+        unit.id = uuid7()
+        self.units.append(unit)
+        return unit
+
+    async def next_position(self, *, course_id: UUID, kind: CourseUnitKind) -> int:
+        """After the last line of the same kind."""
+        positions = [
+            unit.position
+            for unit in self.units
+            if unit.course_id == course_id and unit.kind is kind
+        ]
+        return max(positions, default=0) + 1
+
+    async def siblings(self, unit: CourseUnit) -> Sequence[CourseUnit]:
+        """Lines of the same course and kind, in order."""
+        return sorted(
+            (
+                other
+                for other in self.units
+                if other.course_id == unit.course_id and other.kind is unit.kind
+            ),
+            key=lambda row: row.position,
+        )
+
+    async def delete_unit(self, unit: CourseUnit) -> None:
+        """Remove a line."""
+        self.units = [other for other in self.units if other.id != unit.id]
+
+    async def add_lesson(self, lesson: Lesson) -> Lesson:
+        """Insert a lecture."""
+        lesson.id = uuid7()
+        self.lessons.append(lesson)
+        return lesson
+
+    async def next_lesson_position(self, unit_id: UUID) -> int:
+        """After the last lecture of the module."""
+        positions = [lesson.position for lesson in self.lessons if lesson.unit_id == unit_id]
+        return max(positions, default=0) + 1
+
+    async def lesson_siblings(self, unit_id: UUID) -> Sequence[Lesson]:
+        """Live lectures of one module, in order."""
+        return sorted(
+            (
+                lesson
+                for lesson in self.lessons
+                if lesson.unit_id == unit_id and lesson.deleted_at is None
+            ),
+            key=lambda row: row.position,
+        )
+
+    async def soft_delete_lesson(self, lesson: Lesson) -> None:
+        """Retire a lecture."""
+        lesson.deleted_at = datetime.now(UTC)
+
+    async def flush(self) -> None:
+        """Count the flushes, so a test can see the reorder was pushed at once."""
+        self.flushes += 1
 
 
 class FakeBenefitRepo:

@@ -10,7 +10,7 @@ const COLUMNS = [
   ],
   [
     { label: 'Личный кабинет', to: '/profile' },
-    { label: 'Администрирование', to: '/profile' },
+    { label: 'Администрирование', to: '/admin' },
     { label: 'О нас', to: '/support' },
   ],
   [

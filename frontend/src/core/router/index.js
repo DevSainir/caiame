@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import authRoutes from '@/features/auth/routes'
+import adminRoutes from '@/features/admin/routes'
 import catalogRoutes from '@/features/catalog/routes'
 import learningRoutes from '@/features/learning/routes'
 import profileRoutes from '@/features/profile/routes'
@@ -42,6 +43,7 @@ const router = createRouter({
   routes: [
     ...homeRoutes,
     ...authRoutes,
+    ...adminRoutes,
     ...catalogRoutes,
     ...learningRoutes,
     ...profileRoutes,
@@ -84,6 +86,9 @@ router.beforeEach(async (to) => {
   if (!auth.isReady) await auth.restore()
   if (to.meta.guestOnly && auth.isAuthenticated) return { path: '/' }
   if (to.meta.requiresAuth && !auth.isAuthenticated) return { path: '/login' }
+  // Ступень доступа: экран не показывается тому, кому сервер всё равно откажет. Это
+  // избавляет от мигания чужой страницы, а не защищает — защита стоит на API.
+  if (to.meta.requiresRole && auth.user?.role !== to.meta.requiresRole) return { path: '/' }
   return true
 })
 

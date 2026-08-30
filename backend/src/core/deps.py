@@ -10,6 +10,7 @@ from core.db import get_db_session
 from core.security import decode_access_token
 from integrations.redis import RedisCounterStore, get_redis
 from models.user import User
+from repos.admin import AdminRepo
 from repos.benefit import BenefitRepo
 from repos.course import CourseRepo
 from repos.lesson import LessonRepo
@@ -20,6 +21,7 @@ from repos.review import ReviewRepo
 from repos.syllabus import SyllabusRepo
 from repos.taxonomy import AccreditationRepo, SpecializationRepo
 from repos.user import UserRepo
+from services.administration import AdministrationService
 from services.auth import AuthService
 from services.course import CourseService
 from services.learning import LearningService
@@ -49,6 +51,11 @@ def get_specialization_repo(session: SessionDep) -> SpecializationRepo:
 def get_accreditation_repo(session: SessionDep) -> AccreditationRepo:
     """Provide the accreditation repository bound to the request session."""
     return AccreditationRepo(session)
+
+
+def get_admin_repo(session: SessionDep) -> AdminRepo:
+    """Provide the administration repository bound to the request session."""
+    return AdminRepo(session)
 
 
 def get_benefit_repo(session: SessionDep) -> BenefitRepo:
@@ -107,6 +114,17 @@ def get_syllabus_service(
     """Provide the syllabus service with the course, outline and lesson repositories."""
     return SyllabusService(
         course_repo=course_repo, syllabus_repo=syllabus_repo, lesson_repo=lesson_repo
+    )
+
+
+def get_administration_service(
+    admin_repo: Annotated[AdminRepo, Depends(get_admin_repo)],
+    syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
+    lesson_repo: Annotated[LessonRepo, Depends(get_lesson_repo)],
+) -> AdministrationService:
+    """Provide the administration service with the three repositories the editor needs."""
+    return AdministrationService(
+        admin_repo=admin_repo, unit_repo=syllabus_repo, lesson_repo=lesson_repo
     )
 
 
@@ -246,6 +264,7 @@ ReviewSvc = Annotated[ReviewService, Depends(get_review_service)]
 QuestionSvc = Annotated[QuestionService, Depends(get_question_service)]
 LearningSvc = Annotated[LearningService, Depends(get_learning_service)]
 QuizSvc = Annotated[QuizService, Depends(get_quiz_service)]
+AdministrationSvc = Annotated[AdministrationService, Depends(get_administration_service)]
 TaxonomySvc = Annotated[TaxonomyService, Depends(get_taxonomy_service)]
 AuthSvc = Annotated[AuthService, Depends(get_auth_service)]
 UserSvc = Annotated[UserService, Depends(get_user_service)]
