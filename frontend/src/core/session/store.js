@@ -42,6 +42,11 @@ export const useAuthStore = defineStore('session', () => {
     return adopt(await authApi.login(payload))
   }
 
+  /** Сменить пароль и принять выданную взамен сессию — старая перестала действовать. */
+  async function changePassword(payload) {
+    return adopt(await authApi.changePassword(payload))
+  }
+
   /**
    * Выход из аккаунта.
    *
@@ -85,5 +90,15 @@ export const useAuthStore = defineStore('session', () => {
     sessionLost: forget,
   })
 
-  return { user, isReady, isAuthenticated, applyUser, register, signIn, signOut, restore }
+  return {
+    user,
+    isReady,
+    isAuthenticated,
+    applyUser,
+    register,
+    signIn,
+    changePassword,
+    signOut,
+    restore,
+  }
 })

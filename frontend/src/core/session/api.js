@@ -22,3 +22,14 @@ export async function refresh() {
 export async function logout() {
   await client.post('/auth/logout')
 }
+
+/**
+ * Сменить пароль своей учётной записи.
+ *
+ * В ответ приходит новая сессия: смена пароля закрывает все сессии аккаунта, включая эту,
+ * и без новой пары человек оказался бы выброшен собственным действием.
+ */
+export async function changePassword(payload) {
+  const { data } = await client.put('/auth/password', payload)
+  return data
+}

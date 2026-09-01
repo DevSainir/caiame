@@ -34,3 +34,15 @@ class SessionOut(BaseModel):
     token_type: str = "bearer"  # noqa: S105
     expires_in: int
     user: UserOut
+
+
+class PasswordChangeIn(BaseModel):
+    """
+    Changing one's own password.
+
+    The current one is required even though the request is already authenticated: without
+    it, a session left open on somebody else's machine is enough to take the account over.
+    """
+
+    current_password: str = Field(min_length=1, max_length=128)
+    new_password: str = Field(min_length=8, max_length=128)

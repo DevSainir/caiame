@@ -411,6 +411,11 @@ class FakeUserRepo:
         user.full_name = full_name
         return user
 
+    async def set_password(self, user: User, *, password_hash: str) -> User:
+        """Store a new password hash."""
+        user.password_hash = password_hash
+        return user
+
     async def create(
         self, *, email: str, password_hash: str, full_name: str, role: UserRole
     ) -> User:
@@ -454,6 +459,15 @@ class FakeRefreshTokenRepo:
     async def revoke(self, token: RefreshToken, *, at: datetime) -> None:
         """Mark one token as spent."""
         token.revoked_at = at
+
+    async def revoke_all_for_user(self, user_id: UUID, *, at: datetime) -> int:
+        """Revoke every live token of one account."""
+        revoked = [
+            token for token in self.tokens if token.user_id == user_id and token.revoked_at is None
+        ]
+        for token in revoked:
+            token.revoked_at = at
+        return len(revoked)
 
     async def revoke_family(self, family_id: UUID, *, at: datetime) -> None:
         """Revoke every live token of one login chain."""

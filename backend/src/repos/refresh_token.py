@@ -41,6 +41,26 @@ class RefreshTokenRepo:
         token.revoked_at = at
         await self.session.flush()
 
+    async def revoke_all_for_user(self, user_id: UUID, *, at: datetime) -> int:
+        """
+        End every live session of one account and say how many were ended.
+
+        Called when the password changes. A refresh token outlives the password it was
+        issued under, so without this a stolen session survives the very action taken to
+        stop it.
+        """
+        live = (
+            await self.session.scalars(
+                select(RefreshToken).where(
+                    RefreshToken.user_id == user_id, RefreshToken.revoked_at.is_(None)
+                )
+            )
+        ).all()
+        for token in live:
+            token.revoked_at = at
+        await self.session.flush()
+        return len(live)
+
     async def revoke_family(self, family_id: UUID, *, at: datetime) -> None:
         """
         Revoke every live token of one login chain.

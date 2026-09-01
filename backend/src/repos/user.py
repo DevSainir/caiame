@@ -31,6 +31,12 @@ class UserRepo:
         await self.session.flush()
         return user
 
+    async def set_password(self, user: User, *, password_hash: str) -> User:
+        """Store a new password hash and flush, so the change is visible in this request."""
+        user.password_hash = password_hash
+        await self.session.flush()
+        return user
+
     async def create(
         self, *, email: str, password_hash: str, full_name: str, role: UserRole
     ) -> User:

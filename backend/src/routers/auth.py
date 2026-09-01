@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 
 from core.config import get_settings
 from core.deps import AuthSvc, ClientIp, CurrentUser
-from schemas.auth import LoginIn, RegisterIn, SessionOut
+from schemas.auth import LoginIn, PasswordChangeIn, RegisterIn, SessionOut
 from schemas.user import UserOut
 from services.auth import (
     EmailAlreadyRegisteredError,
@@ -174,3 +174,37 @@ async def logout(request: Request, response: Response, svc: AuthSvc) -> None:
 async def me(current_user: CurrentUser) -> UserOut:
     """Return the account behind the presented access token."""
     return UserOut.model_validate(current_user)
+
+
+@router.put(
+    "/password",
+    response_model=SessionOut,
+    responses={
+        200: {"description": "Password changed; every other session was ended."},
+        401: {"description": "No valid access token, or the current password is wrong."},
+        422: {"description": "The new password is shorter than 8 characters."},
+        429: {"description": "Too many attempts on this account."},
+    },
+)
+async def change_password(
+    payload: PasswordChangeIn, current_user: CurrentUser, svc: AuthSvc, response: Response
+) -> SessionOut:
+    """
+    Change the password of the signed-in account and hand back a fresh session.
+
+    Fresh on purpose: the change ends every session of the account, including this one, and
+    without a new pair the person who just changed their password would be thrown out.
+    """
+    try:
+        issued = await svc.change_password(
+            user=current_user,
+            current_password=payload.current_password,
+            new_password=payload.new_password,
+        )
+    except InvalidCredentialsError as error:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid_credentials"
+        ) from error
+    except RateLimitExceededError as error:
+        raise _too_many_requests(error) from error
+    return _attach_session(response, issued)

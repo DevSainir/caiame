@@ -11,7 +11,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from core.security import hash_refresh_token
+from core.security import hash_refresh_token, verify_password
 from models.refresh_token import RefreshToken
 from models.user import User
 from services.auth import (
@@ -214,3 +214,78 @@ async def test_new_account_is_always_a_student() -> None:
 
     assert issued.session.user.role.value == "student"
     assert user_repo.users[0].role.value == "student"
+
+
+async def test_changing_the_password_needs_the_current_one() -> None:
+    """
+    A session left open on somebody else's machine must not be enough to take the account.
+
+    This is the only thing standing between a borrowed laptop and a stolen account, so the
+    refusal is checked before anything else about the feature.
+    """
+    user = make_user(email="student@example.org", password="correct-horse-battery")
+    service = AuthService(
+        user_repo=FakeUserRepo([user]),
+        refresh_repo=FakeRefreshTokenRepo(),
+        rate_limiter=RateLimitService(store=FakeCounterStore()),
+    )
+    before = user.password_hash
+
+    with pytest.raises(InvalidCredentialsError):
+        await service.change_password(
+            user=user, current_password="not-the-password", new_password="new-password-here"
+        )
+
+    assert user.password_hash == before
+
+
+async def test_a_password_change_ends_every_other_session() -> None:
+    """
+    A refresh token outlives the password it was issued under.
+
+    Without this, changing the password of an account somebody else is signed into leaves
+    them signed in for another week — which is the one thing the change was for.
+    """
+    user = make_user(email="student@example.org", password="correct-horse-battery")
+    refresh_repo = FakeRefreshTokenRepo()
+    service = AuthService(
+        user_repo=FakeUserRepo([user]),
+        refresh_repo=refresh_repo,
+        rate_limiter=RateLimitService(store=FakeCounterStore()),
+    )
+    await service.login(
+        email="student@example.org", password="correct-horse-battery", client_ip="1.1.1.1"
+    )
+    await service.login(
+        email="student@example.org", password="correct-horse-battery", client_ip="2.2.2.2"
+    )
+    assert len(refresh_repo.live) == 2
+
+    await service.change_password(
+        user=user,
+        current_password="correct-horse-battery",
+        new_password="a-brand-new-password",
+    )
+
+    # Ровно одна живая сессия — та, что выдана в ответе: человек, сменивший пароль,
+    # не должен оказаться выброшенным из системы этим же действием.
+    assert len(refresh_repo.live) == 1
+
+
+async def test_the_new_password_works_and_the_old_one_does_not() -> None:
+    """The point of the whole feature, stated as the two facts that make it true."""
+    user = make_user(email="student@example.org", password="correct-horse-battery")
+    service = AuthService(
+        user_repo=FakeUserRepo([user]),
+        refresh_repo=FakeRefreshTokenRepo(),
+        rate_limiter=RateLimitService(store=FakeCounterStore()),
+    )
+
+    await service.change_password(
+        user=user,
+        current_password="correct-horse-battery",
+        new_password="a-brand-new-password",
+    )
+
+    assert verify_password("a-brand-new-password", user.password_hash)
+    assert not verify_password("correct-horse-battery", user.password_hash)

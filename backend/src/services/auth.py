@@ -54,6 +54,10 @@ class UserReader(Protocol):
         """Find an account by id."""
         ...
 
+    async def set_password(self, user: User, *, password_hash: str) -> User:
+        """Store a new password hash."""
+        ...
+
     async def create(
         self, *, email: str, password_hash: str, full_name: str, role: UserRole
     ) -> User:
@@ -76,6 +80,10 @@ class RefreshTokenWriter(Protocol):
 
     async def revoke(self, token: RefreshToken, *, at: datetime) -> None:
         """Mark one token as spent."""
+        ...
+
+    async def revoke_all_for_user(self, user_id: UUID, *, at: datetime) -> int:
+        """End every live session of one account."""
         ...
 
     async def revoke_family(self, family_id: UUID, *, at: datetime) -> None:
@@ -203,6 +211,33 @@ class AuthService:
         if stored is None:
             return
         await self.refresh_repo.revoke_family(stored.family_id, at=datetime.now(UTC))
+
+    async def change_password(
+        self, *, user: User, current_password: str, new_password: str
+    ) -> IssuedSession:
+        """
+        Replace the password of the account making the request, and start a fresh session.
+
+        The current password is asked for even though the caller is already signed in: a
+        borrowed unlocked laptop is exactly the case this stops, and it is the only thing
+        standing between somebody sitting down at a desk and owning the account.
+
+        Every other session ends here. A refresh token outlives the password it was issued
+        under, so leaving them alive would mean the change did nothing to whoever the
+        change was aimed at. The caller keeps working: they get a new session in the same
+        answer, which is why this returns one instead of just succeeding.
+        """
+        await self.rate_limiter.hit(
+            f"password:{user.id}",
+            limit=_settings.login_attempts_per_account,
+            window_seconds=_settings.login_window_seconds,
+        )
+        if not verify_password(current_password, user.password_hash):
+            raise InvalidCredentialsError(user.email)
+
+        await self.user_repo.set_password(user, password_hash=hash_password(new_password))
+        await self.refresh_repo.revoke_all_for_user(user.id, at=datetime.now(UTC))
+        return await self._issue(user, family_id=uuid7())
 
     async def _issue(self, user: User, *, family_id: UUID) -> IssuedSession:
         """Mint an access token and the next refresh token of the family."""
