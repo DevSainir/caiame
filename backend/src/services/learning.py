@@ -6,6 +6,7 @@ from models.course import Course
 from models.course_unit import CourseUnit
 from models.enums import CourseUnitKind, LessonKind, MediaStatus, UnitStatus
 from models.lesson import Lesson
+from models.lesson_progress import LessonProgress
 from models.media_file import MediaFile
 from models.user import User
 from schemas.learning import (
@@ -15,6 +16,7 @@ from schemas.learning import (
     LessonStatusOut,
     ModuleDetailOut,
     ModuleRefOut,
+    PlaybackOut,
 )
 
 
@@ -78,6 +80,20 @@ class EnrolmentWriter(Protocol):
         ...
 
 
+class PlaybackWriter(Protocol):
+    """Where played time is recorded."""
+
+    async def record_playback(
+        self, *, user_id: UUID, lesson_id: UUID, position_sec: int, watched_delta: int
+    ) -> LessonProgress:
+        """Add played seconds, remember the position, and hand back the row."""
+        ...
+
+    async def get_progress(self, *, user_id: UUID, lesson_id: UUID) -> LessonProgress | None:
+        """One student's row for one lesson."""
+        ...
+
+
 class LessonReader(Protocol):
     """What the lesson pages need from the lesson storage."""
 
@@ -98,15 +114,37 @@ class LessonReader(Protocol):
         ...
 
 
+# Titles and goodbyes at the end are not watched by everybody, and demanding the whole
+# length turns into a stream of «I finished it and it did not count».
+WATCHED_SHARE_TO_FINISH = 0.9
+# A player reports every fifteen to thirty seconds; the ceiling is double that, so a slow
+# tab still counts everything it played and a client inventing hours counts a minute.
+MAX_REPORTED_SECONDS = 60
+
+
 def completion_is_the_students_to_declare(kind: LessonKind) -> bool:
     """
     Whether pressing «finished» is what closes a lesson of this kind.
 
-    The rule per kind lives here and in no `if` anywhere else. Today both kinds are closed
-    by the student saying so; when watched time starts being counted (see `media-video`),
-    video moves to «watched 90 % of the length» and only this function changes.
+    The rule per kind lives here and in no `if` anywhere else. A handout is closed by the
+    student saying so — nothing else can be observed about reading a file. A video is
+    closed by how much of it was actually played, so the button is not what decides.
     """
-    return kind in (LessonKind.VIDEO, LessonKind.PDF)
+    return kind is LessonKind.PDF
+
+
+def is_watched_enough(*, watched_seconds: int, duration_seconds: int) -> bool:
+    """
+    Whether a video counts as watched.
+
+    Measured against played time, never against the position: the position jumps wherever
+    the slider is dragged, and a lecture that finishes on a drag to the end is a lecture
+    nobody watched. A file of unknown length cannot be judged this way at all, and the
+    honest answer there is «not yet».
+    """
+    if duration_seconds <= 0:
+        return False
+    return watched_seconds >= duration_seconds * WATCHED_SHARE_TO_FINISH
 
 
 class LearningService:
@@ -119,6 +157,7 @@ class LearningService:
         unit_repo: UnitReader,
         lesson_repo: LessonReader,
         media_repo: MaterialReader,
+        playback_repo: PlaybackWriter,
         media_service: MaterialSigner,
         enrollment_repo: EnrolmentWriter,
         billing: AccessGuard,
@@ -127,6 +166,7 @@ class LearningService:
         self.unit_repo = unit_repo
         self.lesson_repo = lesson_repo
         self.media_repo = media_repo
+        self.playback_repo = playback_repo
         self.media_service = media_service
         self.enrollment_repo = enrollment_repo
         self.billing = billing
@@ -196,6 +236,7 @@ class LearningService:
         )
 
         statuses = await self._statuses(user_id=viewer.id, course_id=course.id)
+        progress = await self.playback_repo.get_progress(user_id=viewer.id, lesson_id=lesson.id)
         return LessonDetailOut(
             id=lesson.id,
             title=lesson.title,
@@ -204,9 +245,68 @@ class LearningService:
             duration_minutes=lesson.duration_minutes,
             material_url=await self._material_url(lesson),
             status=status_of(lesson.id, statuses),
+            last_position_sec=progress.last_position_sec if progress else 0,
             course=CourseRefOut.model_validate(course),
             module=ModuleRefOut(id=unit.id, title=unit.title),
         )
+
+    async def report_playback(
+        self, *, lesson_id: UUID, viewer: User, position_sec: int, delta_sec: int
+    ) -> PlaybackOut:
+        """
+        Record that a stretch of a video was actually played.
+
+        Two numbers arrive and they mean different things. The position is where the player
+        is now — it moves anywhere, including backwards, and exists so the lecture reopens
+        where it was left. The delta is time that really elapsed, and only it decides
+        whether the lecture counts as watched.
+
+        The delta is capped rather than believed. A client saying «I watched an hour» gets
+        the ceiling for one report and no error: nothing about that is worth failing a
+        request over, and nothing about it should count either.
+        """
+        lesson = await self.lesson_repo.get(lesson_id)
+        if lesson is None:
+            raise LessonNotFoundError(lesson_id)
+        unit = await self.unit_repo.get_unit(lesson.unit_id)
+        if unit is None:
+            raise LessonNotFoundError(lesson_id)
+        await self.billing.require_access(user=viewer, course_id=unit.course_id)
+
+        progress = await self.playback_repo.record_playback(
+            user_id=viewer.id,
+            lesson_id=lesson_id,
+            position_sec=max(0, position_sec),
+            watched_delta=min(max(0, delta_sec), MAX_REPORTED_SECONDS),
+        )
+
+        duration = await self._duration(lesson)
+        if progress.status is not UnitStatus.DONE and is_watched_enough(
+            watched_seconds=progress.watched_seconds, duration_seconds=duration
+        ):
+            await self.lesson_repo.mark_completed(user_id=viewer.id, lesson_id=lesson_id)
+            return PlaybackOut(
+                status=UnitStatus.DONE,
+                watched_seconds=progress.watched_seconds,
+                last_position_sec=progress.last_position_sec,
+            )
+        return PlaybackOut(
+            status=progress.status,
+            watched_seconds=progress.watched_seconds,
+            last_position_sec=progress.last_position_sec,
+        )
+
+    async def _duration(self, lesson: Lesson) -> int:
+        """
+        How long the lecture actually is, in seconds.
+
+        Read from the file, not from the minutes typed into the form: the form is a rounded
+        hint for the listing, and rounding it down would finish a lecture early.
+        """
+        if lesson.media_file_id is None:
+            return 0
+        media = await self.media_repo.get(lesson.media_file_id)
+        return media.duration_seconds if media is not None else 0
 
     async def complete_lesson(self, *, lesson_id: UUID, viewer: User) -> LessonStatusOut:
         """

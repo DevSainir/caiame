@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 from uuid import UUID
 
-from sqlalchemy import func, select
+from sqlalchemy import case, func, literal, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -101,6 +101,59 @@ class LessonRepo:
             .group_by(LessonProgress.user_id, CourseUnit.course_id)
         )
         return {(user_id, course_id): int(count) for user_id, course_id, count in rows.all()}
+
+    async def get_progress(self, *, user_id: UUID, lesson_id: UUID) -> LessonProgress | None:
+        """One student's row for one lesson, if there is one yet."""
+        progress: LessonProgress | None = await self.session.scalar(
+            select(LessonProgress).where(
+                LessonProgress.user_id == user_id, LessonProgress.lesson_id == lesson_id
+            )
+        )
+        return progress
+
+    async def record_playback(
+        self, *, user_id: UUID, lesson_id: UUID, position_sec: int, watched_delta: int
+    ) -> LessonProgress:
+        """
+        Add played time to a lesson and remember where the student is.
+
+        An upsert rather than «read, add, write»: a player sends these while the page is
+        being closed, and two events in flight would otherwise overwrite each other and
+        lose the seconds one of them carried. The addition happens in the database, where
+        it cannot race with itself.
+        """
+        insertion = insert(LessonProgress).values(
+            user_id=user_id,
+            lesson_id=lesson_id,
+            status=UnitStatus.IN_PROGRESS,
+            last_position_sec=position_sec,
+            watched_seconds=watched_delta,
+        )
+        statement = insertion.on_conflict_do_update(
+            index_elements=[LessonProgress.user_id, LessonProgress.lesson_id],
+            set_={
+                "last_position_sec": position_sec,
+                "watched_seconds": LessonProgress.watched_seconds + watched_delta,
+                # A finished lesson stays finished: rewatching does not undo it.
+                #
+                # The two results are wrapped in `literal` with the column's own type on
+                # purpose. Without it SQLAlchemy binds the enum by its value and writes
+                # «in_progress» into a column that stores member names — the row goes in
+                # and every later read of it raises.
+                "status": case(
+                    (
+                        LessonProgress.status == UnitStatus.DONE,
+                        literal(UnitStatus.DONE, LessonProgress.status.type),
+                    ),
+                    else_=literal(UnitStatus.IN_PROGRESS, LessonProgress.status.type),
+                ),
+            },
+        ).returning(LessonProgress)
+        # `scalar_one` rather than a nullable read: an upsert with RETURNING always gives
+        # back exactly one row, and pretending it might not adds a branch nothing can reach.
+        result = await self.session.execute(statement)
+        progress: LessonProgress = result.scalar_one()
+        return progress
 
     async def mark_completed(self, *, user_id: UUID, lesson_id: UUID) -> None:
         """

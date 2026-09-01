@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BaseButton from '@/core/components/BaseButton.vue'
 import BaseContainer from '@/core/components/BaseContainer.vue'
@@ -7,7 +7,8 @@ import IconFile from '@/core/components/icons/IconFile.vue'
 import { describeError } from '@/core/api/messages'
 import AccessNotice from '@/features/learning/components/AccessNotice.vue'
 import LearningCrumbs from '@/features/learning/components/LearningCrumbs.vue'
-import { completeLesson, fetchLesson } from '@/features/learning/api'
+import { createPlaybackTracker } from '@/features/learning/playback'
+import { completeLesson, fetchLesson, reportPlayback } from '@/features/learning/api'
 
 const route = useRoute()
 
@@ -15,6 +16,9 @@ const lesson = ref(null)
 const isLoading = ref(true)
 const isSaving = ref(false)
 const error = ref(null)
+
+const player = ref(null)
+const tracker = createPlaybackTracker()
 
 const isDone = computed(() => lesson.value?.status === 'done')
 // 402 — это не поломка, а закрытый доступ: экран для него отдельный.
@@ -52,7 +56,45 @@ async function markDone() {
   }
 }
 
-watch(() => route.params.id, load, { immediate: true })
+/** Отправить накопленное. Ошибку глотаем: это фоновая отметка, а не действие человека. */
+async function send(seconds) {
+  if (!seconds || !lesson.value) return
+  try {
+    const result = await reportPlayback(lesson.value.id, {
+      positionSec: player.value?.currentTime ?? 0,
+      deltaSec: seconds,
+    })
+    lesson.value = { ...lesson.value, status: result.status }
+  } catch {
+    // Секунды потеряются, и это дешевле, чем красная плашка поверх лекции.
+  }
+}
+
+function onTimeUpdate() {
+  send(tracker.advance(player.value?.currentTime ?? 0))
+}
+
+/** При паузе и в конце отдаём остаток: иначе последние секунды лекции не засчитываются. */
+function onPause() {
+  send(tracker.take())
+}
+
+// Продолжаем с того места, где остановились в прошлый раз.
+function onLoaded() {
+  const position = lesson.value?.last_position_sec ?? 0
+  if (player.value && position > 0) player.value.currentTime = position
+}
+
+onBeforeUnmount(() => send(tracker.take()))
+
+watch(
+  () => route.params.id,
+  (id) => {
+    tracker.reset()
+    load(id)
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -95,11 +137,16 @@ watch(() => route.params.id, load, { immediate: true })
           >
             <video
               v-if="lesson.material_url"
+              ref="player"
               class="aspect-video w-full rounded-md bg-neutral-900"
               controls
               controlsList="nodownload"
               preload="metadata"
               :src="lesson.material_url"
+              @ended="onPause"
+              @loadedmetadata="onLoaded"
+              @pause="onPause"
+              @timeupdate="onTimeUpdate"
             ></video>
             <div
               v-else
@@ -107,9 +154,10 @@ watch(() => route.params.id, load, { immediate: true })
             >
               <p class="text-sm font-medium text-subtle">Видео пока не загружено</p>
             </div>
-            <BaseButton :disabled="isDone || isSaving" size="sm" @click="markDone">
-              {{ isDone ? 'Выполнено' : 'Пометить, как выполненное' }}
-            </BaseButton>
+            <p v-if="isDone" class="text-sm font-semibold text-success-600">Лекция пройдена</p>
+            <p v-else class="text-center text-sm font-medium text-subtle">
+              Лекция засчитается сама, когда вы досмотрите её почти до конца
+            </p>
           </div>
 
           <!-- Файл. Ссылка на материал приходит с сервера; когда её ещё нет, кнопка

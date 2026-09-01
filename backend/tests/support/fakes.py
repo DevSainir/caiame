@@ -26,6 +26,7 @@ from models.enums import (
     UserRole,
 )
 from models.lesson import Lesson
+from models.lesson_progress import LessonProgress
 from models.media_file import MediaFile
 from models.quiz import Quiz
 from models.quiz_attempt import QuizAttempt, QuizAttemptAnswer
@@ -239,6 +240,7 @@ class FakeLessonRepo:
         self.lessons = list(lessons)
         self.statuses = statuses or {}
         self.completed: list[tuple[UUID, UUID]] = []
+        self.playback: dict[tuple[UUID, UUID], LessonProgress] = {}
 
     async def get(self, lesson_id: UUID) -> Lesson | None:
         """One lesson by id."""
@@ -259,6 +261,30 @@ class FakeLessonRepo:
     async def mark_completed(self, *, user_id: UUID, lesson_id: UUID) -> None:
         """Record the mark, so a test can see it happened exactly once per call."""
         self.completed.append((user_id, lesson_id))
+
+    async def get_progress(self, *, user_id: UUID, lesson_id: UUID) -> LessonProgress | None:
+        """One student's row for one lesson."""
+        return self.playback.get((user_id, lesson_id))
+
+    async def record_playback(
+        self, *, user_id: UUID, lesson_id: UUID, position_sec: int, watched_delta: int
+    ) -> LessonProgress:
+        """Accumulate played time the way the upsert does."""
+        row = self.playback.get((user_id, lesson_id))
+        if row is None:
+            row = LessonProgress(
+                id=uuid7(),
+                user_id=user_id,
+                lesson_id=lesson_id,
+                status=UnitStatus.IN_PROGRESS,
+                last_position_sec=position_sec,
+                watched_seconds=watched_delta,
+            )
+            self.playback[(user_id, lesson_id)] = row
+            return row
+        row.last_position_sec = position_sec
+        row.watched_seconds += watched_delta
+        return row
 
 
 class FakeSyllabusRepo:

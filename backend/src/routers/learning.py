@@ -4,7 +4,13 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, Path, status
 
 from core.deps import CurrentUser, LearningSvc, OptionalUser, QuizSvc
-from schemas.learning import LessonDetailOut, LessonStatusOut, ModuleDetailOut
+from schemas.learning import (
+    LessonDetailOut,
+    LessonStatusOut,
+    ModuleDetailOut,
+    PlaybackIn,
+    PlaybackOut,
+)
 from schemas.quiz import AttemptResultOut, AttemptSubmitIn, QuizForStudentOut
 from services.billing import AccessRequiredError
 from services.learning import LessonNotFoundError, ModuleNotFoundError
@@ -95,6 +101,38 @@ async def complete_lesson(
     """Mark a lecture finished for the signed-in student."""
     try:
         return await svc.complete_lesson(lesson_id=lesson_id, viewer=current_user)
+    except LessonNotFoundError as error:
+        raise _not_found("lesson_not_found") from error
+    except AccessRequiredError as error:
+        raise _payment_required() from error
+
+
+@router.post(
+    "/lessons/{lesson_id}/playback",
+    response_model=PlaybackOut,
+    responses={
+        200: {"description": "Played time recorded; the lecture may have closed by it."},
+        401: {"description": "No valid access token."},
+        402: {"description": "The course is not open to this account."},
+        404: {"description": "No such lecture."},
+    },
+)
+async def report_playback(
+    svc: LearningSvc, current_user: CurrentUser, lesson_id: LessonId, payload: PlaybackIn
+) -> PlaybackOut:
+    """
+    Record a stretch of video that was actually played.
+
+    Sent by the player every few seconds and when the page is closed, so it has to be cheap
+    and forgiving: an oversized report is trimmed rather than refused.
+    """
+    try:
+        return await svc.report_playback(
+            lesson_id=lesson_id,
+            viewer=current_user,
+            position_sec=payload.position_sec,
+            delta_sec=payload.delta_sec,
+        )
     except LessonNotFoundError as error:
         raise _not_found("lesson_not_found") from error
     except AccessRequiredError as error:

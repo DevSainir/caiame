@@ -217,6 +217,7 @@ def get_learning_service(
         unit_repo=syllabus_repo,
         lesson_repo=lesson_repo,
         media_repo=media_repo,
+        playback_repo=lesson_repo,
         media_service=media_service,
         enrollment_repo=enrollment_repo,
         billing=billing,

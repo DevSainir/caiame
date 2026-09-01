@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from models.enums import LessonKind, UnitStatus
 
@@ -65,6 +65,9 @@ class LessonDetailOut(BaseModel):
     duration_minutes: int
     material_url: str | None
     status: UnitStatus
+    # Where the student stopped last time, so the player opens there. Zero means «from the
+    # beginning», which is also the answer for a handout, where there is no position at all.
+    last_position_sec: int
     course: CourseRefOut
     module: ModuleRefOut
 
@@ -73,3 +76,23 @@ class LessonStatusOut(BaseModel):
     """The answer to «mark it finished»: the status the lesson has now."""
 
     status: UnitStatus
+
+
+class PlaybackIn(BaseModel):
+    """
+    What the player reports while a video is being watched.
+
+    Both numbers come from the browser and neither is trusted: the position is only used to
+    reopen the lecture where it was left, and the delta is capped before it counts.
+    """
+
+    position_sec: int = Field(ge=0, le=24 * 60 * 60)
+    delta_sec: int = Field(ge=0, le=24 * 60 * 60)
+
+
+class PlaybackOut(BaseModel):
+    """Where the student stands in this lecture after the report."""
+
+    status: UnitStatus
+    watched_seconds: int
+    last_position_sec: int

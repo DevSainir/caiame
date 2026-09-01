@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import DateTime, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column
@@ -37,3 +37,12 @@ class LessonProgress(UUIDMixin, TimeStampMixin, Base):
         SAEnum(UnitStatus, name="unit_status", native_enum=False, length=20), nullable=False
     )
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    # Where the student is now. Moves in both directions, including backwards, and exists
+    # for one thing: reopening a lecture where it was left.
+    last_position_sec: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    # How much was actually played. Only ever grows, and only by time that really passed —
+    # this is the number that decides whether a lecture counts as watched. Keeping the two
+    # apart is the whole point: with one field, dragging the slider to the end finishes the
+    # lecture without watching a second of it.
+    watched_seconds: Mapped[int] = mapped_column(Integer, default=0, nullable=False)

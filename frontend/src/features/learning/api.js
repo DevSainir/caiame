@@ -12,6 +12,20 @@ export async function fetchLesson(id) {
   return data
 }
 
+/**
+ * Сообщить, сколько видео проиграли.
+ *
+ * Позиция — чтобы вернуться туда же в следующий раз, дельта — чтобы засчитать просмотр.
+ * Сервер режет дельту по потолку, поэтому отправка чаще нужного ничего не ломает.
+ */
+export async function reportPlayback(id, { positionSec, deltaSec }) {
+  const { data } = await client.post(`/lessons/${id}/playback`, {
+    position_sec: Math.round(positionSec),
+    delta_sec: Math.round(deltaSec),
+  })
+  return data
+}
+
 /** Отметить лекцию пройденной. Повтор ничего не меняет и не сдвигает дату. */
 export async function completeLesson(id) {
   const { data } = await client.post(`/lessons/${id}/completion`)
