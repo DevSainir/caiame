@@ -45,6 +45,19 @@ class EnrollmentRepo:
             )
         )
 
+    async def mark_completed(self, enrollment: Enrollment, *, at: datetime) -> Enrollment:
+        """
+        Stamp the moment a course was finished, once.
+
+        Never moved afterwards: the percentage is a derived number and can fall — a lecture
+        added to a course drops everybody's — but finishing is an event, and an event that
+        un-happens is a bug with a certificate attached to it.
+        """
+        if enrollment.completed_at is None:
+            enrollment.completed_at = at
+            await self.session.flush()
+        return enrollment
+
     async def list_for_user(self, user_id: UUID) -> Sequence[Enrollment]:
         """Every course this student has started, most recently started first."""
         rows = await self.session.scalars(

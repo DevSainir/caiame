@@ -28,6 +28,23 @@ class FakeEnrollments:
         """Everything this student has started."""
         return [record for record in self.records if record.user_id == user_id]
 
+    async def get(self, *, user_id: UUID, course_id: UUID) -> Enrollment | None:
+        """One study record."""
+        return next(
+            (
+                record
+                for record in self.records
+                if record.user_id == user_id and record.course_id == course_id
+            ),
+            None,
+        )
+
+    async def mark_completed(self, enrollment: Enrollment, *, at: datetime) -> Enrollment:
+        """Stamp the moment the course was finished, once."""
+        if enrollment.completed_at is None:
+            enrollment.completed_at = at
+        return enrollment
+
 
 class FakeCatalogue:
     """Courses by identifier, archived ones included."""
@@ -132,3 +149,34 @@ async def test_a_student_who_started_nothing_gets_an_empty_list() -> None:
     service, _, _ = _service()
 
     assert await service.my_courses(viewer=make_user(email="nobody@example.org")) == []
+
+
+async def test_finishing_the_last_item_records_the_completion() -> None:
+    """The percentage reaching a hundred is the event; the stamp is what remembers it."""
+    service, student, course = _service(done=4, total=4)
+
+    assert await service.note_progress(viewer=student, course_id=course.id) is True
+    assert (await service.my_courses(viewer=student))[0].is_completed is True
+
+
+async def test_an_unfinished_course_is_not_recorded() -> None:
+    """Three lectures out of four is not a finished course, however close it feels."""
+    service, student, course = _service(done=3, total=4)
+
+    assert await service.note_progress(viewer=student, course_id=course.id) is False
+
+
+async def test_a_finished_course_is_recorded_once() -> None:
+    """
+    The stamp never moves.
+
+    The percentage can fall afterwards — a lecture added to a live course drops everybody's
+    — but the course was finished, and a certificate that un-issues itself is worse than no
+    certificate at all.
+    """
+    service, student, course = _service(done=4, total=4)
+    await service.note_progress(viewer=student, course_id=course.id)
+    first = (await service.my_courses(viewer=student))[0]
+
+    assert await service.note_progress(viewer=student, course_id=course.id) is False
+    assert first.is_completed is True

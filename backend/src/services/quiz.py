@@ -80,6 +80,14 @@ class AccessGuard(Protocol):
         ...
 
 
+class CompletionRecorder(Protocol):
+    """The one place that decides whether a course has just been finished."""
+
+    async def note_progress(self, *, viewer: User, course_id: UUID) -> bool:
+        """Record completion if this was the last thing left."""
+        ...
+
+
 class UnitProgressWriter(Protocol):
     """The one thing grading needs from the progress storage."""
 
@@ -98,12 +106,14 @@ class QuizService:
         unit_repo: UnitReader,
         quiz_repo: QuizReader,
         progress_repo: UnitProgressWriter,
+        completion: CompletionRecorder,
         billing: AccessGuard,
     ) -> None:
         self.course_repo = course_repo
         self.unit_repo = unit_repo
         self.quiz_repo = quiz_repo
         self.progress_repo = progress_repo
+        self.completion = completion
         self.billing = billing
 
     async def get_for_student(self, *, unit_id: UUID, viewer: User) -> QuizForStudentOut:
@@ -210,6 +220,8 @@ class QuizService:
         # started. Passing once is not undone by a worse attempt later.
         status = UnitStatus.DONE if attempt.passed else UnitStatus.IN_PROGRESS
         await self.progress_repo.mark_unit(user_id=user_id, unit_id=unit.id, status=status)
+        if attempt.passed:
+            await self.completion.note_progress(viewer=viewer, course_id=course.id)
         return AttemptResultOut(
             number=attempt.number,
             score=attempt.score,

@@ -139,6 +139,23 @@ def get_syllabus_repo(session: SessionDep) -> SyllabusRepo:
     return SyllabusRepo(session)
 
 
+def get_enrollment_service(
+    enrollment_repo: Annotated[EnrollmentRepo, Depends(get_enrollment_repo)],
+    course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
+    lesson_repo: Annotated[LessonRepo, Depends(get_lesson_repo)],
+    syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
+    billing: Annotated[BillingService, Depends(get_billing_service)],
+) -> EnrollmentService:
+    """Provide the student's own list of courses."""
+    return EnrollmentService(
+        enrollment_repo=enrollment_repo,
+        course_repo=course_repo,
+        lesson_repo=lesson_repo,
+        unit_repo=syllabus_repo,
+        billing=billing,
+    )
+
+
 def get_review_repo(session: SessionDep) -> ReviewRepo:
     """Provide the review repository bound to the request session."""
     return ReviewRepo(session)
@@ -217,6 +234,7 @@ def get_learning_service(
     media_repo: Annotated[MediaRepo, Depends(get_media_repo)],
     media_service: Annotated[MediaService, Depends(get_media_service)],
     enrollment_repo: Annotated[EnrollmentRepo, Depends(get_enrollment_repo)],
+    completion: Annotated[EnrollmentService, Depends(get_enrollment_service)],
     billing: Annotated[BillingService, Depends(get_billing_service)],
 ) -> LearningService:
     """Provide the learning service, including the two things a lecture page needs: the
@@ -229,6 +247,7 @@ def get_learning_service(
         playback_repo=lesson_repo,
         media_service=media_service,
         enrollment_repo=enrollment_repo,
+        completion=completion,
         billing=billing,
     )
 
@@ -237,6 +256,7 @@ def get_quiz_service(
     course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
     syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
     quiz_repo: Annotated[QuizRepo, Depends(get_quiz_repo)],
+    completion: Annotated[EnrollmentService, Depends(get_enrollment_service)],
     billing: Annotated[BillingService, Depends(get_billing_service)],
 ) -> QuizService:
     """Provide the quiz service; the outline repository is also where progress is written."""
@@ -245,6 +265,7 @@ def get_quiz_service(
         unit_repo=syllabus_repo,
         quiz_repo=quiz_repo,
         progress_repo=syllabus_repo,
+        completion=completion,
         billing=billing,
     )
 
@@ -298,29 +319,16 @@ def get_grading_service(
     assignment_repo: Annotated[AssignmentRepo, Depends(get_assignment_repo)],
     syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
     media_service: Annotated[MediaService, Depends(get_media_service)],
+    completion: Annotated[EnrollmentService, Depends(get_enrollment_service)],
+    user_repo: Annotated[UserRepo, Depends(get_user_repo)],
 ) -> GradingService:
     """Provide the reviewer's side; the outline repository is where unit progress is written."""
     return GradingService(
         assignment_repo=assignment_repo,
         progress_repo=syllabus_repo,
+        completion=completion,
         media_service=media_service,
-    )
-
-
-def get_enrollment_service(
-    enrollment_repo: Annotated[EnrollmentRepo, Depends(get_enrollment_repo)],
-    course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
-    lesson_repo: Annotated[LessonRepo, Depends(get_lesson_repo)],
-    syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
-    billing: Annotated[BillingService, Depends(get_billing_service)],
-) -> EnrollmentService:
-    """Provide the student's own list of courses."""
-    return EnrollmentService(
-        enrollment_repo=enrollment_repo,
-        course_repo=course_repo,
-        lesson_repo=lesson_repo,
-        unit_repo=syllabus_repo,
-        billing=billing,
+        students=user_repo,
     )
 
 

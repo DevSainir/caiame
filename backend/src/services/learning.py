@@ -80,6 +80,19 @@ class EnrolmentWriter(Protocol):
         ...
 
 
+class CompletionRecorder(Protocol):
+    """
+    The one place that decides whether a course has just been finished.
+
+    Asked rather than repeated here: the same question is asked after a test and after a
+    piece of work is accepted, and four copies of the rule would drift into four answers.
+    """
+
+    async def note_progress(self, *, viewer: User, course_id: UUID) -> bool:
+        """Record completion if this was the last thing left."""
+        ...
+
+
 class PlaybackWriter(Protocol):
     """Where played time is recorded."""
 
@@ -160,6 +173,7 @@ class LearningService:
         playback_repo: PlaybackWriter,
         media_service: MaterialSigner,
         enrollment_repo: EnrolmentWriter,
+        completion: CompletionRecorder,
         billing: AccessGuard,
     ) -> None:
         self.course_repo = course_repo
@@ -169,6 +183,7 @@ class LearningService:
         self.playback_repo = playback_repo
         self.media_service = media_service
         self.enrollment_repo = enrollment_repo
+        self.completion = completion
         self.billing = billing
 
     async def get_module(self, *, unit_id: UUID, viewer: User | None) -> ModuleDetailOut:
@@ -285,6 +300,7 @@ class LearningService:
             watched_seconds=progress.watched_seconds, duration_seconds=duration
         ):
             await self.lesson_repo.mark_completed(user_id=viewer.id, lesson_id=lesson_id)
+            await self.completion.note_progress(viewer=viewer, course_id=unit.course_id)
             return PlaybackOut(
                 status=UnitStatus.DONE,
                 watched_seconds=progress.watched_seconds,
@@ -326,6 +342,7 @@ class LearningService:
         # progress for material the account may not open is the same hole with a nicer name.
         await self.billing.require_access(user=viewer, course_id=unit.course_id)
         await self.lesson_repo.mark_completed(user_id=viewer.id, lesson_id=lesson_id)
+        await self.completion.note_progress(viewer=viewer, course_id=unit.course_id)
         return LessonStatusOut(status=UnitStatus.DONE)
 
     async def _material_url(self, lesson: Lesson) -> str | None:

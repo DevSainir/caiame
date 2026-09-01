@@ -29,6 +29,7 @@ from services.grading import (
     SubmissionNotFoundError,
 )
 from tests.support.factories import make_unit, make_user
+from tests.support.fakes import FakeCompletion
 
 
 class FakeAssignmentRepo:
@@ -125,6 +126,17 @@ class FakeProgressRepo:
         self.marks[unit_id] = status
 
 
+class FakeStudents:
+    """Accounts by identifier, for asking about the author's progress."""
+
+    def __init__(self, student: User) -> None:
+        self.student = student
+
+    async def get_by_id(self, user_id: UUID) -> User | None:
+        """The one account these tests know about."""
+        return self.student if self.student.id == user_id else None
+
+
 class FakeSigner:
     """Links are not what these tests are about."""
 
@@ -162,7 +174,11 @@ def _service(
     )
     progress = FakeProgressRepo()
     service = GradingService(
-        assignment_repo=repo, progress_repo=progress, media_service=FakeSigner()
+        assignment_repo=repo,
+        progress_repo=progress,
+        completion=FakeCompletion(),
+        media_service=FakeSigner(),
+        students=FakeStudents(student),
     )
     return service, submission, student, progress, repo
 

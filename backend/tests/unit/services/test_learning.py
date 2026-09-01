@@ -19,6 +19,7 @@ from services.media import MediaService
 from tests.support.factories import make_course, make_lesson, make_unit, make_user
 from tests.support.fakes import (
     FakeBilling,
+    FakeCompletion,
     FakeCourseRepo,
     FakeEnrollmentRepo,
     FakeLessonRepo,
@@ -66,6 +67,7 @@ def _service(
         playback_repo=lesson_repo,
         media_service=MediaService(media_repo=media_repo, storage=storage, settings=Settings()),
         enrollment_repo=FakeEnrollmentRepo(),
+        completion=FakeCompletion(),
         billing=FakeBilling(allowed=allowed),
     )
     return service, lesson, unit

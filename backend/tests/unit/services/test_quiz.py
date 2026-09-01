@@ -10,7 +10,13 @@ from models.quiz_question import QuizOption, QuizQuestion
 from schemas.quiz import AnswerIn
 from services.quiz import NoAttemptsLeftError, QuizNotFoundError, QuizService
 from tests.support.factories import make_course, make_unit, make_user
-from tests.support.fakes import FakeBilling, FakeCourseRepo, FakeQuizRepo, FakeSyllabusRepo
+from tests.support.fakes import (
+    FakeBilling,
+    FakeCompletion,
+    FakeCourseRepo,
+    FakeQuizRepo,
+    FakeSyllabusRepo,
+)
 
 
 def _question(*, kind: QuestionKind, points: int, correct: int, options: int = 3) -> QuizQuestion:
@@ -48,6 +54,7 @@ def _service(
             unit_repo=syllabus,
             quiz_repo=FakeQuizRepo(quiz, questions),
             progress_repo=syllabus,
+            completion=FakeCompletion(),
             billing=FakeBilling(),
         ),
         unit,

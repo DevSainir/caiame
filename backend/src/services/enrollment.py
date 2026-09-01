@@ -8,6 +8,7 @@ stays in the list, and its lectures stop opening.
 """
 
 from collections.abc import Sequence
+from datetime import UTC, datetime
 from typing import Protocol
 from uuid import UUID
 
@@ -18,10 +19,14 @@ from schemas.enrollment import MyCourseOut
 from services.learning import completion_percent
 
 
-class EnrolmentReader(Protocol):
+class EnrolmentStore(Protocol):
     """Study records of one student."""
 
     async def list_for_user(self, user_id: UUID) -> Sequence[Enrollment]: ...
+
+    async def get(self, *, user_id: UUID, course_id: UUID) -> Enrollment | None: ...
+
+    async def mark_completed(self, enrollment: Enrollment, *, at: datetime) -> Enrollment: ...
 
 
 class CourseReader(Protocol):
@@ -62,7 +67,7 @@ class EnrollmentService:
     def __init__(
         self,
         *,
-        enrollment_repo: EnrolmentReader,
+        enrollment_repo: EnrolmentStore,
         course_repo: CourseReader,
         lesson_repo: LessonCounts,
         unit_repo: WorkCounts,
@@ -120,3 +125,39 @@ class EnrollmentService:
                 )
             )
         return rows
+
+    async def note_progress(self, *, viewer: User, course_id: UUID) -> bool:
+        """
+        Check whether this student has just finished the course, and record it if so.
+
+        Called after anything that can be the last thing left: a lecture marked read, a
+        video watched to the end, a test passed, a piece of work accepted. Deliberately one
+        place rather than a rule repeated in four services — the four would drift, and the
+        drift would show up as a certificate that never arrives.
+
+        Recording happens once. The percentage is derived and can fall afterwards — adding a
+        lecture to a live course drops everybody's — but the course was finished, and that
+        does not stop being true.
+        """
+        enrollment = await self.enrollment_repo.get(user_id=viewer.id, course_id=course_id)
+        if enrollment is None or enrollment.completed_at is not None:
+            return False
+        if await self._percent(viewer=viewer, course_id=course_id) < 100:
+            return False
+        await self.enrollment_repo.mark_completed(enrollment, at=datetime.now(UTC))
+        return True
+
+    async def _percent(self, *, viewer: User, course_id: UUID) -> int:
+        """How much of one course this student has finished, counted from the facts."""
+        courses = [course_id]
+        users = [viewer.id]
+        return completion_percent(
+            lessons_done=(
+                await self.lesson_repo.done_by_student(course_ids=courses, user_ids=users)
+            ).get((viewer.id, course_id), 0),
+            lessons_total=(await self.lesson_repo.required_totals(courses)).get(course_id, 0),
+            works_done=(
+                await self.unit_repo.done_works_by_student(course_ids=courses, user_ids=users)
+            ).get((viewer.id, course_id), 0),
+            works_total=(await self.unit_repo.work_totals(courses)).get(course_id, 0),
+        )

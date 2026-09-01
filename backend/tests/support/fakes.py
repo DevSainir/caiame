@@ -665,3 +665,20 @@ class FakeEntitlementRepo:
         """Withdraw a right, keeping the row."""
         entitlement.revoked_at = at
         return entitlement
+
+
+class FakeCompletion:
+    """
+    The neighbour that decides whether a course has just been finished.
+
+    Handwritten so a test can assert the question was asked at all: a service that quietly
+    stops asking it leaves students with courses that never close.
+    """
+
+    def __init__(self) -> None:
+        self.asked: list[UUID] = []
+
+    async def note_progress(self, *, viewer: User, course_id: UUID) -> bool:
+        """Remember the question; nothing here finishes a course."""
+        self.asked.append(course_id)
+        return False

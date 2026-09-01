@@ -68,6 +68,14 @@ class GradingStore(Protocol):
     async def get_unit_of(self, assignment: Assignment) -> CourseUnit | None: ...
 
 
+class CompletionRecorder(Protocol):
+    """The one place that decides whether a course has just been finished."""
+
+    async def note_progress(self, *, viewer: User, course_id: UUID) -> bool:
+        """Record completion if this was the last thing left."""
+        ...
+
+
 class ProgressWriter(Protocol):
     """Where the course page reads whether a line of the outline is finished."""
 
@@ -80,6 +88,12 @@ class MediaSigner(Protocol):
     def playback_url(self, media: MediaFile) -> str: ...
 
 
+class StudentLookup(Protocol):
+    """Finding the account behind a study record, to ask about their progress."""
+
+    async def get_by_id(self, user_id: UUID) -> User | None: ...
+
+
 class GradingService:
     """The queue of work to look at, and what happens when somebody looks at it."""
 
@@ -88,11 +102,15 @@ class GradingService:
         *,
         assignment_repo: GradingStore,
         progress_repo: ProgressWriter,
+        completion: CompletionRecorder,
         media_service: MediaSigner,
+        students: StudentLookup,
     ) -> None:
         self.assignment_repo = assignment_repo
         self.progress_repo = progress_repo
+        self.completion = completion
         self.media_service = media_service
+        self.students = students
 
     async def queue(self, *, course_id: UUID | None, limit: int, offset: int) -> QueuePageOut:
         """Work waiting for a reviewer, the one who has waited longest first."""
@@ -192,6 +210,11 @@ class GradingService:
                 await self.progress_repo.mark_unit(
                     user_id=enrollment.user_id, unit_id=unit.id, status=UnitStatus.DONE
                 )
+                # Accepted work can be the last thing a course was waiting for, and the
+                # student is not here to notice it — so the check happens on their behalf.
+                student = await self.students.get_by_id(enrollment.user_id)
+                if student is not None:
+                    await self.completion.note_progress(viewer=student, course_id=unit.course_id)
         return await self.get_submission(submission_id)
 
     async def _submission(self, submission_id: UUID) -> Submission:
