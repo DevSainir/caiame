@@ -52,10 +52,16 @@ refresh-токеном и никто не сможет остаться в си�
 
 ```bash
 cd /opt/caiame
-docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml build api web
 docker compose -f docker-compose.prod.yml run --rm api alembic upgrade head
+docker compose -f docker-compose.prod.yml up -d
 docker compose -f docker-compose.prod.yml run --rm api python scripts/seed.py
 ```
+
+**Порядок здесь важен, и не тот, который кажется.** Сборка идёт первой: `run --rm api`
+запускает существующий образ, и миграция до сборки накатывает не то, что вы только что
+залили, а то, что лежало здесь до вас. Вывод при этом выглядит успешным — просто новых
+миграций в старом образе нет.
 
 Миграции запускаются отдельным шагом, а не при старте контейнера: так их видно в выводе
 выката, и они не выполняются повторно каждым перезапуском.
