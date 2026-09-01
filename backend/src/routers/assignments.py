@@ -4,8 +4,8 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, Path, status
 
 from core.deps import AssignmentSvc, CurrentUser, MediaSvc
-from schemas.admin import UploadStartIn, UploadTicketOut
-from schemas.assignment import AssignmentOut, SubmissionIn
+from schemas.admin import UploadTicketOut
+from schemas.assignment import AssignmentOut, AttachmentStartIn, SubmissionIn
 from services.assignment import (
     AssignmentNotFoundError,
     AttachmentRejectedError,
@@ -93,7 +93,7 @@ async def submit_work(
     },
 )
 async def start_attachment_upload(
-    svc: MediaSvc, current_user: CurrentUser, payload: UploadStartIn
+    svc: MediaSvc, current_user: CurrentUser, payload: AttachmentStartIn
 ) -> UploadTicketOut:
     """
     Reserve a place in storage for a file a student attaches to their work.

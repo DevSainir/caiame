@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { describeError } from '@/core/api/messages'
 import BaseButton from '@/core/components/BaseButton.vue'
 import BaseField from '@/core/components/BaseField.vue'
+import { formatPoints } from '@/core/format'
 import { useNotificationStore } from '@/core/notifications/store'
 import AdminQuestionForm from '@/features/admin/components/AdminQuestionForm.vue'
 import AdminShell from '@/features/admin/components/AdminShell.vue'
@@ -160,7 +161,7 @@ watch([courseId, unitId], load, { immediate: true })
             </p>
             <div class="flex shrink-0 items-center gap-4">
               <span class="text-2xs font-medium text-subtle">
-                {{ question.points }} балл(ов) ·
+                {{ formatPoints(question.points) }} ·
                 {{ question.kind === 'single' ? 'один ответ' : 'несколько ответов' }}
               </span>
               <button

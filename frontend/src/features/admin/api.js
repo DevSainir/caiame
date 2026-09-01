@@ -219,3 +219,21 @@ export async function deleteQuestion(courseId, unitId, questionId) {
   )
   return data
 }
+
+/** Очередь работ на проверку: первым тот, кто ждёт дольше всех. */
+export async function fetchSubmissions({ limit = 20, offset = 0 } = {}) {
+  const { data } = await client.get('/admin/submissions', { params: { limit, offset } })
+  return data
+}
+
+/** Одна работа со вложениями и всем, что студент присылал до неё. */
+export async function fetchSubmission(submissionId) {
+  const { data } = await client.get(`/admin/submissions/${submissionId}`)
+  return data
+}
+
+/** Оценить работу: принять или вернуть на доработку. */
+export async function reviewSubmission(submissionId, payload) {
+  const { data } = await client.post(`/admin/submissions/${submissionId}/review`, payload)
+  return data
+}

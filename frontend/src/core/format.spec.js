@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { formatDate, formatHours, formatMinutes, formatPrice, formatReviews } from '@/core/format'
+import {
+  formatDate,
+  formatHours,
+  formatMinutes,
+  formatPrice,
+  formatReviews,
+  formatPoints,
+  formatWorks,
+} from '@/core/format'
 
 describe('formatPrice', () => {
   it('переводит копейки в сомы и группирует тысячи', () => {
@@ -53,5 +61,24 @@ describe('formatMinutes', () => {
     expect(formatMinutes(1)).toBe('1 минута')
     expect(formatMinutes(23)).toBe('23 минуты')
     expect(formatMinutes(12)).toBe('12 минут')
+  })
+})
+
+describe('formatWorks', () => {
+  it('склоняет слово «работа» по числу', () => {
+    // Очередь проверки показывает это число каждый день, и «1 работ» читается как ошибка
+    // в данных, а не в вёрстке.
+    expect(formatWorks(1)).toBe('1 работа')
+    expect(formatWorks(3)).toBe('3 работы')
+    expect(formatWorks(11)).toBe('11 работ')
+    expect(formatWorks(22)).toBe('22 работы')
+  })
+})
+
+describe('formatPoints', () => {
+  it('склоняет «балл» по числу', () => {
+    expect(formatPoints(1)).toBe('1 балл')
+    expect(formatPoints(2)).toBe('2 балла')
+    expect(formatPoints(5)).toBe('5 баллов')
   })
 })

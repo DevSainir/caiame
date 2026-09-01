@@ -1,4 +1,5 @@
 <script setup>
+import { formatPoints } from '@/core/format'
 const props = defineProps({
   question: { type: Object, required: true },
   selected: { type: Array, default: () => [] },
@@ -35,10 +36,7 @@ function pick(optionId) {
       <span
         class="shrink-0 rounded-sm bg-primary-50 px-3 py-2 text-2xs font-medium text-accent lg:text-xs"
       >
-        {{ props.question.points }}
-        <span v-if="props.question.points === 1">балл</span>
-        <span v-else-if="props.question.points < 5">балла</span>
-        <span v-else>баллов</span>
+        {{ formatPoints(props.question.points) }}
       </span>
     </div>
 

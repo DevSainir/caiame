@@ -7,6 +7,8 @@ const CURRENCY_LABELS = {
 const HOUR_FORMS = ['час', 'часа', 'часов']
 const REVIEW_FORMS = ['отзыв', 'отзыва', 'отзывов']
 const MINUTE_FORMS = ['минута', 'минуты', 'минут']
+const WORK_FORMS = ['работа', 'работы', 'работ']
+const POINT_FORMS = ['балл', 'балла', 'баллов']
 
 /**
  * Русское склонение после числа: 1 час, 72 часа, 5 часов.
@@ -56,4 +58,14 @@ export function formatDate(value) {
 /** Длительность лекции: «23 минуты». */
 export function formatMinutes(minutes) {
   return `${minutes} ${plural(minutes, MINUTE_FORMS)}`
+}
+
+/** «1 работа ждёт проверки», «5 работ ждут проверки» — счётчик очереди. */
+export function formatWorks(count) {
+  return `${count} ${plural(count, WORK_FORMS)}`
+}
+
+/** «1 балл», «2 балла», «5 баллов» — вес вопроса и оценка за работу. */
+export function formatPoints(count) {
+  return `${count} ${plural(count, POINT_FORMS)}`
 }

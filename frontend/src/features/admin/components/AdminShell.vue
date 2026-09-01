@@ -8,6 +8,7 @@ defineProps({
 
 const SECTIONS = [
   { label: 'Курсы', to: '/admin' },
+  { label: 'Проверка работ', to: '/admin/submissions' },
   { label: 'Студенты и доступ', to: '/admin/access' },
 ]
 </script>

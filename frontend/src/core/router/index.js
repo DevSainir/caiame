@@ -8,6 +8,11 @@ import homeRoutes from '@/features/home/routes'
 import { scrollToAnchor } from '@/core/scroll'
 import { useAuthStore } from '@/core/session/store'
 
+// Ступени те же, что в core/access.py на сервере: администрирование и «кто-то из
+// сотрудников». Список ролей на ступени написан здесь один раз, чтобы новый экран
+// преподавателя не потребовал ещё одного места, где его можно забыть.
+const ROLES_ON_RUNG = { admin: ['admin'], staff: ['admin', 'instructor'] }
+
 const RESTORE_TIMEOUT_MS = 1500
 const RESTORE_STEP_MS = 50
 
@@ -85,7 +90,9 @@ router.beforeEach(async (to) => {
   if (to.meta.requiresAuth && !auth.isAuthenticated) return { path: '/login' }
   // Ступень доступа: экран не показывается тому, кому сервер всё равно откажет. Это
   // избавляет от мигания чужой страницы, а не защищает — защита стоит на API.
-  if (to.meta.requiresRole && auth.user?.role !== to.meta.requiresRole) return { path: '/' }
+  if (to.meta.requiresRole && !ROLES_ON_RUNG[to.meta.requiresRole]?.includes(auth.user?.role)) {
+    return { path: '/' }
+  }
   return true
 })
 

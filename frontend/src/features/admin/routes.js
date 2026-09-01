@@ -14,6 +14,19 @@ export default [
     component: () => import('@/features/admin/views/AdminAccessView.vue'),
   },
   {
+    path: '/admin/submissions',
+    name: 'admin-submissions',
+    // Проверять работы может и преподаватель, не только администратор.
+    meta: { requiresAuth: true, requiresRole: 'staff', headerTitle: 'Проверка работ' },
+    component: () => import('@/features/admin/views/AdminSubmissionsView.vue'),
+  },
+  {
+    path: '/admin/submissions/:id',
+    name: 'admin-submission',
+    meta: { requiresAuth: true, requiresRole: 'staff', headerTitle: 'Работа студента' },
+    component: () => import('@/features/admin/views/AdminSubmissionView.vue'),
+  },
+  {
     path: '/admin/courses/:id',
     name: 'admin-course',
     meta: { requiresAuth: true, requiresRole: 'admin', headerTitle: 'Программа курса' },

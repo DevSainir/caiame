@@ -13,6 +13,12 @@ export default [
     component: () => import('@/features/learning/views/LessonView.vue'),
   },
   {
+    path: '/assignments/:id',
+    name: 'assignment',
+    meta: { headerTitle: 'Задание', requiresAuth: true },
+    component: () => import('@/features/learning/views/AssignmentView.vue'),
+  },
+  {
     path: '/tests/:id',
     name: 'test',
     meta: { headerTitle: 'Тестирование', requiresAuth: true },

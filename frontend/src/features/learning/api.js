@@ -1,4 +1,9 @@
+import axios from 'axios'
 import client from '@/core/api/client'
+
+// Отдельный экземпляр без наших перехватчиков: файл уходит в хранилище, а не к нам, и
+// заголовок авторизации там не нужен.
+const plainClient = axios.create()
 
 /** Один модуль с его лекциями и прогрессом того, кто спрашивает. */
 export async function fetchModule(id) {
@@ -42,4 +47,37 @@ export async function fetchTest(unitId) {
 export async function submitTest(unitId, answers) {
   const { data } = await client.post(`/tests/${unitId}/attempts`, { answers })
   return data
+}
+
+/** Задание с ручной проверкой: условие и все сдачи этого студента. */
+export async function fetchAssignment(unitId) {
+  const { data } = await client.get(`/assignments/${unitId}`)
+  return data
+}
+
+/** Отправить работу очередной попыткой. */
+export async function submitWork(unitId, payload) {
+  const { data } = await client.post(`/assignments/${unitId}/submissions`, payload)
+  return data
+}
+
+/**
+ * Загрузить файл к работе.
+ *
+ * Тот же путь, что и у материалов лекций: сервер выдаёт разрешение ровно на этот файл,
+ * браузер отправляет его прямо в хранилище. К работе файл прикрепляется отдельно — при
+ * отправке, по идентификатору.
+ */
+export async function uploadAttachment(file, onProgress) {
+  const { data: ticket } = await client.post('/attachments', {
+    file_name: file.name,
+    size_bytes: file.size,
+  })
+  await plainClient.put(ticket.url, file, {
+    headers: { 'Content-Type': ticket.content_type },
+    onUploadProgress: (event) => {
+      if (onProgress && event.total) onProgress(Math.round((event.loaded * 100) / event.total))
+    },
+  })
+  return { id: ticket.media_id, name: file.name, size_bytes: file.size }
 }

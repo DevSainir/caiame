@@ -110,3 +110,15 @@ class SubmissionDetailOut(BaseModel):
     is_late: bool
     attachments: list[AttachmentOut]
     history: list[SubmissionOut]
+
+
+class AttachmentStartIn(BaseModel):
+    """
+    What the browser tells the server before uploading a file to attach to work.
+
+    No «kind» here, unlike a lecture upload: what the file is follows from its own name and
+    is checked against its first bytes. A field the server ignores is a field that lies.
+    """
+
+    file_name: str = Field(min_length=1, max_length=255)
+    size_bytes: int = Field(gt=0)

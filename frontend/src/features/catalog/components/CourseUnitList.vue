@@ -6,9 +6,8 @@ const props = defineProps({
   units: { type: Array, default: () => [] },
 })
 
-// Куда ведёт строка. У задания страницы пока нет — такая строка остаётся текстом, а не
-// притворяется ссылкой, которая никуда не ведёт.
-const PAGES = { module: 'modules', test: 'tests' }
+// Куда ведёт строка плана курса.
+const PAGES = { module: 'modules', test: 'tests', assignment: 'assignments' }
 const linkFor = (unit) => (PAGES[unit.kind] ? `/${PAGES[unit.kind]}/${unit.id}` : null)
 
 // Тестирование выделено красным независимо от того, начато оно или нет: это не статус,
