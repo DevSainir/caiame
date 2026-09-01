@@ -278,3 +278,19 @@ class QuizEditorOut(BaseModel):
     max_attempts: int | None
     max_score: int
     questions: list[QuestionRowOut]
+
+
+class FaqIn(BaseModel):
+    """A question shown under a course, with the answer to it."""
+
+    question: str = Field(min_length=1, max_length=300)
+    answer: str = Field(min_length=1, max_length=5000)
+
+
+class FaqRowOut(BaseModel):
+    """One question of a course as the editor lists it."""
+
+    id: UUID
+    position: int
+    question: str
+    answer: str

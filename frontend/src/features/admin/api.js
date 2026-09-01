@@ -248,3 +248,27 @@ export async function reviewSubmission(submissionId, payload) {
   const { data } = await client.post(`/admin/submissions/${submissionId}/review`, payload)
   return data
 }
+
+/** Вопросы и ответы, которые видны под курсом на его странице. */
+export async function fetchFaq(courseId) {
+  const { data } = await client.get(`/admin/courses/${courseId}/questions`)
+  return data
+}
+
+/** Добавить вопрос с ответом в конец списка. */
+export async function addFaq(courseId, payload) {
+  const { data } = await client.post(`/admin/courses/${courseId}/questions`, payload)
+  return data
+}
+
+/** Изменить формулировку вопроса или ответ на него. */
+export async function updateFaq(courseId, questionId, payload) {
+  const { data } = await client.put(`/admin/courses/${courseId}/questions/${questionId}`, payload)
+  return data
+}
+
+/** Убрать вопрос со страницы курса. */
+export async function deleteFaq(courseId, questionId) {
+  const { data } = await client.delete(`/admin/courses/${courseId}/questions/${questionId}`)
+  return data
+}

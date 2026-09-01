@@ -6,6 +6,7 @@ from routers import (
     assignments,
     auth,
     courses,
+    faq,
     grading,
     health,
     learning,
@@ -27,4 +28,5 @@ api_router.include_router(grading.router)
 api_router.include_router(admin.router)
 api_router.include_router(access.router)
 api_router.include_router(quiz.router)
+api_router.include_router(faq.router)
 api_router.include_router(taxonomies.router)

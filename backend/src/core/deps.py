@@ -35,6 +35,7 @@ from services.auth import AuthService
 from services.billing import BillingService
 from services.course import CourseService
 from services.enrollment import EnrollmentService
+from services.faq import FaqService
 from services.grading import GradingService
 from services.health import HealthService
 from services.learning import LearningService
@@ -354,6 +355,14 @@ def get_sitemap_service(
     return SitemapService(course_repo=course_repo, site_url=get_settings().site_url)
 
 
+def get_faq_service(
+    admin_repo: Annotated[AdminRepo, Depends(get_admin_repo)],
+    question_repo: Annotated[QuestionRepo, Depends(get_question_repo)],
+) -> FaqService:
+    """Provide the editor of the questions shown under a course."""
+    return FaqService(course_repo=admin_repo, question_repo=question_repo)
+
+
 def get_taxonomy_service(
     specialization_repo: Annotated[SpecializationRepo, Depends(get_specialization_repo)],
     accreditation_repo: Annotated[AccreditationRepo, Depends(get_accreditation_repo)],
@@ -451,6 +460,7 @@ BillingSvc = Annotated[BillingService, Depends(get_billing_service)]
 HealthSvc = Annotated[HealthService, Depends(get_health_service)]
 TaxonomySvc = Annotated[TaxonomyService, Depends(get_taxonomy_service)]
 SitemapSvc = Annotated[SitemapService, Depends(get_sitemap_service)]
+FaqSvc = Annotated[FaqService, Depends(get_faq_service)]
 QuestionBankSvc = Annotated[QuestionBankService, Depends(get_question_bank_service)]
 AssignmentSvc = Annotated[AssignmentService, Depends(get_assignment_service)]
 GradingSvc = Annotated[GradingService, Depends(get_grading_service)]
