@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from models.enums import AccessSource, CourseStatus, CourseUnitKind, LessonKind
+from models.enums import AccessSource, CourseStatus, CourseUnitKind, LessonKind, QuestionKind
 
 
 class CourseRowOut(BaseModel):
@@ -215,3 +215,65 @@ class AccessPageOut(BaseModel):
 
     items: list[AccessRowOut]
     total: int
+
+
+class OptionIn(BaseModel):
+    """One answer option as the editor sends it."""
+
+    text: str = Field(min_length=1, max_length=500)
+    is_correct: bool = False
+
+
+class OptionRowOut(BaseModel):
+    """
+    One option as the editor shows it, answer key included.
+
+    Deliberately a different schema from the one a student receives: there the field simply
+    does not exist, so there is no filtering step to forget.
+    """
+
+    id: UUID
+    text: str
+    is_correct: bool
+
+
+class QuestionIn(BaseModel):
+    """A question with its options."""
+
+    text: str = Field(min_length=1, max_length=2000)
+    kind: QuestionKind
+    points: int = Field(default=1, ge=1, le=100)
+    options: list[OptionIn] = Field(min_length=2, max_length=10)
+
+
+class QuestionRowOut(BaseModel):
+    """One question of a test as the editor lists it."""
+
+    id: UUID
+    position: int
+    text: str
+    kind: QuestionKind
+    points: int
+    # Whether somebody has already answered it. Such a question is replaced rather than
+    # edited, and the screen has to know which of the two it is offering.
+    is_answered: bool
+    options: list[OptionRowOut]
+
+
+class QuizSettingsIn(BaseModel):
+    """What counts as a pass and how many attempts a student gets."""
+
+    passing_score: int = Field(ge=0, le=10000)
+    # Empty means «as many as they like».
+    max_attempts: int | None = Field(default=None, ge=1, le=100)
+
+
+class QuizEditorOut(BaseModel):
+    """The whole test as its editing screen shows it."""
+
+    unit_id: UUID
+    title: str
+    passing_score: int
+    max_attempts: int | None
+    max_score: int
+    questions: list[QuestionRowOut]

@@ -172,3 +172,50 @@ export async function fetchTaxonomies() {
   const { data } = await client.get('/catalog/filters')
   return data
 }
+
+/** Тест целиком: настройки, вопросы и — только здесь — отметки верных вариантов. */
+export async function fetchTest(courseId, unitId) {
+  const { data } = await client.get(`/admin/courses/${courseId}/tests/${unitId}`)
+  return data
+}
+
+/** Проходной балл и число попыток. */
+export async function updateTest(courseId, unitId, payload) {
+  const { data } = await client.put(`/admin/courses/${courseId}/tests/${unitId}`, payload)
+  return data
+}
+
+/** Добавить вопрос в конец теста. */
+export async function addQuestion(courseId, unitId, payload) {
+  const { data } = await client.post(
+    `/admin/courses/${courseId}/tests/${unitId}/questions`,
+    payload,
+  )
+  return data
+}
+
+/** Изменить вопрос. Сервер откажет, если на него уже отвечали. */
+export async function updateQuestion(courseId, unitId, questionId, payload) {
+  const { data } = await client.put(
+    `/admin/courses/${courseId}/tests/${unitId}/questions/${questionId}`,
+    payload,
+  )
+  return data
+}
+
+/** Заменить отвеченный вопрос новым: прошлые попытки остаются как были. */
+export async function replaceQuestion(courseId, unitId, questionId, payload) {
+  const { data } = await client.post(
+    `/admin/courses/${courseId}/tests/${unitId}/questions/${questionId}/replacement`,
+    payload,
+  )
+  return data
+}
+
+/** Убрать вопрос из теста. */
+export async function deleteQuestion(courseId, unitId, questionId) {
+  const { data } = await client.delete(
+    `/admin/courses/${courseId}/tests/${unitId}/questions/${questionId}`,
+  )
+  return data
+}

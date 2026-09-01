@@ -51,6 +51,13 @@ const KIND_LABELS = { module: 'модуль', assignment: 'задание', test
         >
           ↓
         </button>
+        <RouterLink
+          v-if="props.unit.kind === 'test'"
+          class="text-sm font-semibold text-accent"
+          :to="`/admin/courses/${props.courseId}/tests/${props.unit.id}`"
+        >
+          Вопросы
+        </RouterLink>
         <button
           class="text-sm font-semibold text-accent disabled:opacity-50"
           :disabled="props.isBusy"

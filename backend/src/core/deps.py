@@ -36,6 +36,7 @@ from services.health import HealthService
 from services.learning import LearningService
 from services.media import MediaService
 from services.question import QuestionService
+from services.question_bank import QuestionBankService
 from services.quiz import QuizService
 from services.rate_limit import RateLimitService
 from services.review import ReviewService
@@ -254,6 +255,14 @@ def get_question_service(
     return QuestionService(course_repo=course_repo, question_repo=question_repo)
 
 
+def get_question_bank_service(
+    syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
+    quiz_repo: Annotated[QuizRepo, Depends(get_quiz_repo)],
+) -> QuestionBankService:
+    """Provide the administration's side of a test: its settings and its questions."""
+    return QuestionBankService(unit_repo=syllabus_repo, quiz_repo=quiz_repo)
+
+
 def get_sitemap_service(
     course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
 ) -> SitemapService:
@@ -363,6 +372,7 @@ BillingSvc = Annotated[BillingService, Depends(get_billing_service)]
 HealthSvc = Annotated[HealthService, Depends(get_health_service)]
 TaxonomySvc = Annotated[TaxonomyService, Depends(get_taxonomy_service)]
 SitemapSvc = Annotated[SitemapService, Depends(get_sitemap_service)]
+QuestionBankSvc = Annotated[QuestionBankService, Depends(get_question_bank_service)]
 AuthSvc = Annotated[AuthService, Depends(get_auth_service)]
 UserSvc = Annotated[UserService, Depends(get_user_service)]
 ClientIp = Annotated[str, Depends(get_client_ip)]

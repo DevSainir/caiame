@@ -20,6 +20,12 @@ export default [
     component: () => import('@/features/admin/views/AdminCourseView.vue'),
   },
   {
+    path: '/admin/courses/:courseId/tests/:unitId',
+    name: 'admin-test',
+    meta: { requiresAuth: true, requiresRole: 'admin', headerTitle: 'Вопросы тестирования' },
+    component: () => import('@/features/admin/views/AdminTestView.vue'),
+  },
+  {
     path: '/admin/courses/:courseId/lessons/:lessonId',
     name: 'admin-lesson',
     meta: { requiresAuth: true, requiresRole: 'admin', headerTitle: 'Лекция' },

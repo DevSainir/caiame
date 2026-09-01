@@ -45,6 +45,73 @@ class QuizRepo:
         )
         return rows.all()
 
+    async def answered_question_ids(self, question_ids: Sequence[UUID]) -> set[UUID]:
+        """
+        Which of these questions somebody has already answered.
+
+        This is what decides whether a question may still be edited: once an answer points
+        at it, changing the wording turns a stored «wrong» into a verdict nobody can
+        explain afterwards.
+        """
+        if not question_ids:
+            return set()
+        rows = await self.session.scalars(
+            select(QuizAttemptAnswer.question_id).where(
+                QuizAttemptAnswer.question_id.in_(question_ids)
+            )
+        )
+        return set(rows.all())
+
+    async def add_question(self, question: QuizQuestion, options: Sequence[QuizOption]) -> None:
+        """Insert a question together with its options."""
+        self.session.add(question)
+        await self.session.flush()
+        for option in options:
+            option.question_id = question.id
+            self.session.add(option)
+        await self.session.flush()
+
+    async def replace_options(self, question: QuizQuestion, options: Sequence[QuizOption]) -> None:
+        """Swap the options of a question that nobody has answered yet."""
+        existing = await self.session.scalars(
+            select(QuizOption).where(QuizOption.question_id == question.id)
+        )
+        for option in existing.all():
+            await self.session.delete(option)
+        await self.session.flush()
+        for option in options:
+            option.question_id = question.id
+            self.session.add(option)
+        await self.session.flush()
+
+    async def next_question_position(self, quiz_id: UUID) -> int:
+        """The position a new question takes: after the last live one."""
+        last = await self.session.scalar(
+            select(func.max(QuizQuestion.position)).where(
+                QuizQuestion.quiz_id == quiz_id, QuizQuestion.deleted_at.is_(None)
+            )
+        )
+        return int(last or 0) + 1
+
+    async def get_question(self, question_id: UUID) -> QuizQuestion | None:
+        """One live question by its id."""
+        question: QuizQuestion | None = await self.session.scalar(
+            select(QuizQuestion).where(
+                QuizQuestion.id == question_id, QuizQuestion.deleted_at.is_(None)
+            )
+        )
+        return question
+
+    async def create_quiz(self, quiz: Quiz) -> Quiz:
+        """Attach a test to a line of the outline."""
+        self.session.add(quiz)
+        await self.session.flush()
+        return quiz
+
+    async def flush(self) -> None:
+        """Push pending changes so a constraint failure surfaces inside the request."""
+        await self.session.flush()
+
     async def latest_attempt(self, *, user_id: UUID, quiz_id: UUID) -> QuizAttempt | None:
         """The student's most recent attempt at this test, if there was one."""
         attempt: QuizAttempt | None = await self.session.scalar(
