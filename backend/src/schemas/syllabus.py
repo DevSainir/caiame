@@ -27,3 +27,7 @@ class SyllabusOut(BaseModel):
     modules: list[CourseUnitOut]
     activities: list[CourseUnitOut]
     progress_percent: int
+    # Whether the course is open to this visitor. The outline is shown to everybody — it is
+    # a shop window — but the button under it has to say different things to a guest, to an
+    # enrolled student, and to somebody who has signed up but not been let in yet.
+    has_access: bool

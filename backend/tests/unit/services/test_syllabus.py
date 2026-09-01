@@ -5,14 +5,18 @@ from uuid import UUID
 
 import pytest
 
-from models.base import uuid7
 from models.course_unit import CourseUnit
 from models.enums import CourseUnitKind, UnitStatus
 from models.lesson import Lesson
 from services.course import CourseNotFoundError
 from services.syllabus import SyllabusService
-from tests.support.factories import make_course, make_lesson, make_unit
-from tests.support.fakes import FakeCourseRepo, FakeLessonRepo, FakeSyllabusRepo
+from tests.support.factories import make_course, make_lesson, make_unit, make_user
+from tests.support.fakes import (
+    FakeBilling,
+    FakeCourseRepo,
+    FakeLessonRepo,
+    FakeSyllabusRepo,
+)
 
 
 def _service(
@@ -29,6 +33,7 @@ def _service(
         course_repo=FakeCourseRepo([course]),
         syllabus_repo=FakeSyllabusRepo(units, dict(unit_statuses) if unit_statuses else None),
         lesson_repo=FakeLessonRepo(lessons, dict(lesson_statuses) if lesson_statuses else None),
+        billing=FakeBilling(),
     )
 
 
@@ -42,7 +47,7 @@ async def test_modules_and_works_land_in_their_own_lists() -> None:
         ]
     )
 
-    syllabus = await service.get_syllabus(slug="therapy", user_id=None)
+    syllabus = await service.get_syllabus(slug="therapy", viewer=None)
 
     assert [item.title for item in syllabus.modules] == ["Module"]
     assert [item.title for item in syllabus.activities] == ["Assignment", "Test"]
@@ -61,7 +66,7 @@ async def test_a_module_is_finished_when_its_lectures_are() -> None:
         lesson_statuses={lessons[0].id: UnitStatus.DONE, lessons[1].id: UnitStatus.DONE},
     )
 
-    syllabus = await service.get_syllabus(slug="therapy", user_id=uuid7())
+    syllabus = await service.get_syllabus(slug="therapy", viewer=make_user())
 
     assert syllabus.modules[0].status is UnitStatus.DONE
     assert syllabus.progress_percent == 100
@@ -80,7 +85,7 @@ async def test_a_module_with_one_lecture_left_is_still_in_progress() -> None:
         lesson_statuses={lessons[0].id: UnitStatus.DONE, lessons[1].id: UnitStatus.DONE},
     )
 
-    syllabus = await service.get_syllabus(slug="therapy", user_id=uuid7())
+    syllabus = await service.get_syllabus(slug="therapy", viewer=make_user())
 
     assert syllabus.modules[0].status is UnitStatus.IN_PROGRESS
     assert syllabus.progress_percent == 67
@@ -98,7 +103,7 @@ async def test_lectures_and_works_are_counted_together() -> None:
         lesson_statuses={lesson.id: UnitStatus.DONE},
     )
 
-    syllabus = await service.get_syllabus(slug="therapy", user_id=uuid7())
+    syllabus = await service.get_syllabus(slug="therapy", viewer=make_user())
 
     assert syllabus.progress_percent == 100
 
@@ -112,7 +117,7 @@ async def test_an_optional_lecture_stays_out_of_the_denominator() -> None:
         [module], lessons=[required, optional], lesson_statuses={required.id: UnitStatus.DONE}
     )
 
-    syllabus = await service.get_syllabus(slug="therapy", user_id=uuid7())
+    syllabus = await service.get_syllabus(slug="therapy", viewer=make_user())
 
     assert syllabus.progress_percent == 100
 
@@ -125,7 +130,7 @@ async def test_a_lecture_in_progress_is_not_a_finished_one() -> None:
         [module], lessons=[lesson], lesson_statuses={lesson.id: UnitStatus.IN_PROGRESS}
     )
 
-    syllabus = await service.get_syllabus(slug="therapy", user_id=uuid7())
+    syllabus = await service.get_syllabus(slug="therapy", viewer=make_user())
 
     assert syllabus.progress_percent == 0
 
@@ -136,7 +141,7 @@ async def test_a_guest_sees_the_outline_with_nothing_started() -> None:
     lesson = make_lesson(title="Lecture", unit_id=module.id)
     service = _service([module], lessons=[lesson], lesson_statuses={lesson.id: UnitStatus.DONE})
 
-    syllabus = await service.get_syllabus(slug="therapy", user_id=None)
+    syllabus = await service.get_syllabus(slug="therapy", viewer=None)
 
     assert syllabus.modules[0].status is UnitStatus.NOT_STARTED
     assert syllabus.progress_percent == 0
@@ -148,7 +153,8 @@ async def test_an_unknown_course_has_no_outline() -> None:
         course_repo=FakeCourseRepo([]),
         syllabus_repo=FakeSyllabusRepo([]),
         lesson_repo=FakeLessonRepo(),
+        billing=FakeBilling(),
     )
 
     with pytest.raises(CourseNotFoundError):
-        await service.get_syllabus(slug="missing", user_id=None)
+        await service.get_syllabus(slug="missing", viewer=None)

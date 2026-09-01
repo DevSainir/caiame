@@ -9,6 +9,10 @@ import { useAuthStore } from '@/core/session/store'
 
 const props = defineProps({
   course: { type: Object, required: true },
+  // Что известно о доступе. Приходит вместе с планом курса и до его загрузки равно null —
+  // тогда кнопки нет вовсе: мигнуть «зарегистрируйтесь» вошедшему студенту хуже, чем
+  // подождать полсекунды.
+  access: { type: Object, default: null },
 })
 
 const auth = useAuthStore()
@@ -23,6 +27,16 @@ const facts = computed(() => [
   { value: formatHours(props.course.duration_hours), label: 'длительность обучения' },
   { value: LANGUAGE, label: 'язык курса' },
 ])
+
+// Три состояния вместо одного. Гостю — регистрация, как в макете. Вошедшему без доступа —
+// объяснение, а не кнопка: записывает на цикл учебная часть, и ссылки, которая бы это
+// сделала, не существует. Тому, у кого доступ есть, — вход в обучение.
+const isGuest = computed(() => auth.isReady && !auth.isAuthenticated)
+const hasAccess = computed(() => props.access?.has_access === true)
+const isEnrolledButClosed = computed(
+  () => auth.isReady && auth.isAuthenticated && props.access !== null && !hasAccess.value,
+)
+const firstModuleId = computed(() => props.access?.modules?.[0]?.id ?? null)
 
 // Строка над заголовком: в макете это издатель, которого у нас нет. Специализация — то же
 // самое по смыслу: она говорит, куда курс входит. Пока в ней один курс, строка повторяет
@@ -53,9 +67,20 @@ const eyebrow = computed(() => `Специализация: ${props.course.speci
         </div>
       </div>
 
-      <BaseButton v-if="auth.isReady && !auth.isAuthenticated" class="mt-5 w-full" to="/register">
-        Зарегистрироваться
+      <BaseButton v-if="isGuest" class="mt-5 w-full" to="/register">Зарегистрироваться</BaseButton>
+      <BaseButton
+        v-else-if="hasAccess && firstModuleId"
+        class="mt-5 w-full"
+        :to="`/modules/${firstModuleId}`"
+      >
+        Перейти к обучению
       </BaseButton>
+      <p
+        v-else-if="isEnrolledButClosed"
+        class="mt-5 text-xs font-medium leading-relaxed text-muted"
+      >
+        Материалы откроет учебная часть академии, когда запишет вас на цикл.
+      </p>
     </BaseContainer>
   </section>
 
@@ -83,13 +108,22 @@ const eyebrow = computed(() => `Специализация: ${props.course.speci
             :label="fact.label"
             :value="fact.value"
           />
-          <BaseButton
-            v-if="auth.isReady && !auth.isAuthenticated"
-            class="flex-1 rounded-xl"
-            to="/register"
-          >
+          <BaseButton v-if="isGuest" class="flex-1 rounded-xl" to="/register">
             Зарегистрироваться
           </BaseButton>
+          <BaseButton
+            v-else-if="hasAccess && firstModuleId"
+            class="flex-1 rounded-xl"
+            :to="`/modules/${firstModuleId}`"
+          >
+            Перейти к обучению
+          </BaseButton>
+          <p
+            v-else-if="isEnrolledButClosed"
+            class="flex-1 text-xs font-medium leading-relaxed text-muted"
+          >
+            Материалы откроет учебная часть академии, когда запишет вас на цикл.
+          </p>
         </div>
       </div>
     </BaseContainer>

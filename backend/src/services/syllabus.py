@@ -6,6 +6,7 @@ from models.course import Course
 from models.course_unit import CourseUnit
 from models.enums import CourseUnitKind, UnitStatus
 from models.lesson import Lesson
+from models.user import User
 from schemas.syllabus import CourseUnitOut, SyllabusOut
 from services.course import CourseNotFoundError
 from services.learning import completion_percent, module_status, status_of
@@ -43,6 +44,14 @@ class LessonReader(Protocol):
         ...
 
 
+class AccessGuard(Protocol):
+    """The one question about payment this service is allowed to ask."""
+
+    async def has_access(self, *, user: User | None, course_id: UUID) -> bool:
+        """Whether this account may open the material of this course."""
+        ...
+
+
 class SyllabusService:
     """The course outline and the progress derived from it."""
 
@@ -52,12 +61,14 @@ class SyllabusService:
         course_repo: CourseLookup,
         syllabus_repo: SyllabusReader,
         lesson_repo: LessonReader,
+        billing: AccessGuard,
     ) -> None:
         self.course_repo = course_repo
         self.syllabus_repo = syllabus_repo
         self.lesson_repo = lesson_repo
+        self.billing = billing
 
-    async def get_syllabus(self, *, slug: str, user_id: UUID | None) -> SyllabusOut:
+    async def get_syllabus(self, *, slug: str, viewer: User | None) -> SyllabusOut:
         """
         The outline of one course, with the asking account's own progress.
 
@@ -70,6 +81,7 @@ class SyllabusService:
 
         units = await self.syllabus_repo.list_units(course.id)
         lessons = await self.lesson_repo.list_for_course(course.id)
+        user_id = viewer.id if viewer else None
         unit_statuses = (
             await self.syllabus_repo.statuses_for(user_id=user_id, course_id=course.id)
             if user_id is not None
@@ -93,6 +105,7 @@ class SyllabusService:
             modules=[item for item in items if item.kind is CourseUnitKind.MODULE],
             activities=[item for item in items if item.kind is not CourseUnitKind.MODULE],
             progress_percent=self._percent(items, lessons, lesson_statuses),
+            has_access=await self.billing.has_access(user=viewer, course_id=course.id),
         )
 
     @staticmethod

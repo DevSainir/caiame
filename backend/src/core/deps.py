@@ -188,10 +188,14 @@ def get_syllabus_service(
     course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
     syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
     lesson_repo: Annotated[LessonRepo, Depends(get_lesson_repo)],
+    billing: Annotated[BillingService, Depends(get_billing_service)],
 ) -> SyllabusService:
-    """Provide the syllabus service with the course, outline and lesson repositories."""
+    """Provide the syllabus service with its repositories and the access check."""
     return SyllabusService(
-        course_repo=course_repo, syllabus_repo=syllabus_repo, lesson_repo=lesson_repo
+        course_repo=course_repo,
+        syllabus_repo=syllabus_repo,
+        lesson_repo=lesson_repo,
+        billing=billing,
     )
 
 

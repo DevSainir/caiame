@@ -75,7 +75,7 @@ async def get_course(
 async def get_syllabus(svc: SyllabusSvc, viewer: OptionalUser, slug: CourseSlug) -> SyllabusOut:
     """Return the outline of one course; a guest sees it with nothing started."""
     try:
-        return await svc.get_syllabus(slug=slug, user_id=viewer.id if viewer else None)
+        return await svc.get_syllabus(slug=slug, viewer=viewer)
     except CourseNotFoundError as error:
         raise _not_found() from error
 

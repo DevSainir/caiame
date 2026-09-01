@@ -113,7 +113,7 @@ watch(() => route.params.slug, load, { immediate: true })
     </div>
 
     <template v-else-if="course">
-      <CourseHero :course="course" />
+      <CourseHero :access="syllabus" :course="course" />
 
       <section class="pt-14 lg:pt-35">
         <BaseContainer>
