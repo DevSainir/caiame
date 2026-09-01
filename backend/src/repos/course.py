@@ -80,6 +80,19 @@ class CourseRepo:
         )
         return course
 
+    async def list_by_ids(self, course_ids: Sequence[UUID]) -> Sequence[Course]:
+        """
+        Several courses at once, whatever their status.
+
+        Archived and unpublished ones are included on purpose: a student who started a
+        course keeps it in their list even after it leaves the catalogue — the archive is
+        about selling, not about taking away what somebody is already studying.
+        """
+        if not course_ids:
+            return []
+        rows = await self.session.scalars(select(Course).where(Course.id.in_(course_ids)))
+        return rows.all()
+
     async def get_published_by_id(self, course_id: UUID) -> Course | None:
         """One published course by id — the way the lesson pages find their heading."""
         course: Course | None = await self.session.scalar(

@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import BaseButton from '@/core/components/BaseButton.vue'
 import BaseContainer from '@/core/components/BaseContainer.vue'
 import BaseInput from '@/core/components/BaseInput.vue'
+import ProfileCourses from '@/features/profile/components/ProfileCourses.vue'
 import ProfilePasswordForm from '@/features/profile/components/ProfilePasswordForm.vue'
 import { updateProfile } from '@/features/profile/api'
 import { initialsFor } from '@/core/initials'
@@ -90,6 +91,12 @@ async function save() {
             {{ isSaving ? 'Сохраняем…' : 'Обновить данные' }}
           </BaseButton>
         </form>
+      </div>
+
+      <hr class="my-10 border-subtle lg:my-14" />
+
+      <div class="lg:pl-50">
+        <ProfileCourses />
       </div>
 
       <hr class="my-10 border-subtle lg:my-14" />

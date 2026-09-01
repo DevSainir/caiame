@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from uuid import UUID
 
@@ -43,6 +44,15 @@ class EnrollmentRepo:
                 constraint="uq_enrollment_student", set_={"last_lesson_id": last_lesson_id}
             )
         )
+
+    async def list_for_user(self, user_id: UUID) -> Sequence[Enrollment]:
+        """Every course this student has started, most recently started first."""
+        rows = await self.session.scalars(
+            select(Enrollment)
+            .where(Enrollment.user_id == user_id)
+            .order_by(Enrollment.started_at.desc())
+        )
+        return rows.all()
 
     async def count_for_course(self, course_id: UUID) -> int:
         """How many students are taking one course. Shown in the administration list."""

@@ -34,6 +34,7 @@ from services.assignment import AssignmentService
 from services.auth import AuthService
 from services.billing import BillingService
 from services.course import CourseService
+from services.enrollment import EnrollmentService
 from services.grading import GradingService
 from services.health import HealthService
 from services.learning import LearningService
@@ -306,6 +307,23 @@ def get_grading_service(
     )
 
 
+def get_enrollment_service(
+    enrollment_repo: Annotated[EnrollmentRepo, Depends(get_enrollment_repo)],
+    course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
+    lesson_repo: Annotated[LessonRepo, Depends(get_lesson_repo)],
+    syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
+    billing: Annotated[BillingService, Depends(get_billing_service)],
+) -> EnrollmentService:
+    """Provide the student's own list of courses."""
+    return EnrollmentService(
+        enrollment_repo=enrollment_repo,
+        course_repo=course_repo,
+        lesson_repo=lesson_repo,
+        unit_repo=syllabus_repo,
+        billing=billing,
+    )
+
+
 def get_sitemap_service(
     course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
 ) -> SitemapService:
@@ -418,6 +436,7 @@ SitemapSvc = Annotated[SitemapService, Depends(get_sitemap_service)]
 QuestionBankSvc = Annotated[QuestionBankService, Depends(get_question_bank_service)]
 AssignmentSvc = Annotated[AssignmentService, Depends(get_assignment_service)]
 GradingSvc = Annotated[GradingService, Depends(get_grading_service)]
+EnrollmentSvc = Annotated[EnrollmentService, Depends(get_enrollment_service)]
 AuthSvc = Annotated[AuthService, Depends(get_auth_service)]
 UserSvc = Annotated[UserService, Depends(get_user_service)]
 ClientIp = Annotated[str, Depends(get_client_ip)]
