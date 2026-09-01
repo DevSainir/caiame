@@ -3,7 +3,14 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from models.enums import AccessSource, CourseStatus, CourseUnitKind, LessonKind, QuestionKind
+from models.enums import (
+    AccessSource,
+    CourseStatus,
+    CourseUnitKind,
+    LessonKind,
+    QuestionKind,
+    UserRole,
+)
 
 
 class CourseRowOut(BaseModel):
@@ -294,3 +301,19 @@ class FaqRowOut(BaseModel):
     position: int
     question: str
     answer: str
+
+
+class ReviewerRowOut(BaseModel):
+    """One person put on a course to check the work sent in for it."""
+
+    id: UUID
+    user_id: UUID
+    name: str
+    email: str
+    role: UserRole
+
+
+class ReviewerIn(BaseModel):
+    """Putting somebody on a course by the address they signed in with."""
+
+    email: str = Field(min_length=3, max_length=320)

@@ -14,7 +14,7 @@ from uuid import UUID
 from models.assignment import Assignment
 from models.course_unit import CourseUnit
 from models.enrollment import Enrollment
-from models.enums import ReviewDecision, SubmissionStatus, UnitStatus
+from models.enums import ReviewDecision, SubmissionStatus, UnitStatus, UserRole
 from models.media_file import MediaFile
 from models.submission import Submission
 from models.submission_review import SubmissionReview
@@ -38,6 +38,10 @@ class SelfReviewError(Exception):
     """A reviewer cannot mark their own work."""
 
 
+class NotAReviewerError(Exception):
+    """This member of staff was not put on the course this work belongs to."""
+
+
 class AlreadyDecidedError(Exception):
     """This attempt has already been marked; a further round is a new attempt."""
 
@@ -47,9 +51,16 @@ class GradingStore(Protocol):
 
     async def get_submission(self, submission_id: UUID) -> Submission | None: ...
     async def list_for_review(
-        self, *, course_id: UUID | None, limit: int, offset: int
+        self,
+        *,
+        course_id: UUID | None,
+        limit: int,
+        offset: int,
+        only_courses: Sequence[UUID] | None = None,
     ) -> Sequence[tuple[Submission, User, CourseUnit]]: ...
-    async def count_for_review(self, *, course_id: UUID | None) -> int: ...
+    async def count_for_review(
+        self, *, course_id: UUID | None, only_courses: Sequence[UUID] | None = None
+    ) -> int: ...
     async def list_files(
         self, submission_ids: Sequence[UUID]
     ) -> Sequence[tuple[UUID, MediaFile]]: ...
@@ -94,6 +105,12 @@ class StudentLookup(Protocol):
     async def get_by_id(self, user_id: UUID) -> User | None: ...
 
 
+class ReviewerAssignments(Protocol):
+    """Which courses a member of staff was put on."""
+
+    async def course_ids_for(self, user_id: UUID) -> list[UUID]: ...
+
+
 class GradingService:
     """The queue of work to look at, and what happens when somebody looks at it."""
 
@@ -105,19 +122,33 @@ class GradingService:
         completion: CompletionRecorder,
         media_service: MediaSigner,
         students: StudentLookup,
+        reviewers: ReviewerAssignments,
     ) -> None:
         self.assignment_repo = assignment_repo
         self.progress_repo = progress_repo
         self.completion = completion
         self.media_service = media_service
         self.students = students
+        self.reviewers = reviewers
 
-    async def queue(self, *, course_id: UUID | None, limit: int, offset: int) -> QueuePageOut:
-        """Work waiting for a reviewer, the one who has waited longest first."""
+    async def queue(
+        self, *, viewer: User, course_id: UUID | None, limit: int, offset: int
+    ) -> QueuePageOut:
+        """
+        Work waiting for a reviewer, the one who has waited longest first.
+
+        A teacher sees the courses they were put on and nothing else; an administrator sees
+        everything. Somebody who was put on nothing sees an empty queue rather than all of
+        it — «no courses» and «no narrowing» are different answers, and confusing them is
+        how a new teacher account ends up reading every student's work.
+        """
+        allowed = await self._courses_for(viewer)
         rows = await self.assignment_repo.list_for_review(
-            course_id=course_id, limit=limit, offset=offset
+            course_id=course_id, limit=limit, offset=offset, only_courses=allowed
         )
-        total = await self.assignment_repo.count_for_review(course_id=course_id)
+        total = await self.assignment_repo.count_for_review(
+            course_id=course_id, only_courses=allowed
+        )
         return QueuePageOut(
             items=[
                 QueueRowOut(
@@ -187,6 +218,12 @@ class GradingService:
         if enrollment.user_id == reviewer.id:
             raise SelfReviewError(submission_id)
 
+        assignment = await self.assignment_repo.get_assignment(submission.assignment_id)
+        unit = await self.assignment_repo.get_unit_of(assignment) if assignment else None
+        allowed = await self._courses_for(reviewer)
+        if unit is not None and allowed is not None and unit.course_id not in allowed:
+            raise NotAReviewerError(submission_id)
+
         await self.assignment_repo.add_review(
             SubmissionReview(
                 submission_id=submission.id,
@@ -203,19 +240,27 @@ class GradingService:
             status=SubmissionStatus.ACCEPTED if accepted else SubmissionStatus.NEEDS_REVISION,
         )
 
-        if accepted:
-            assignment = await self.assignment_repo.get_assignment(submission.assignment_id)
-            unit = await self.assignment_repo.get_unit_of(assignment) if assignment else None
-            if unit is not None:
-                await self.progress_repo.mark_unit(
-                    user_id=enrollment.user_id, unit_id=unit.id, status=UnitStatus.DONE
-                )
-                # Accepted work can be the last thing a course was waiting for, and the
-                # student is not here to notice it — so the check happens on their behalf.
-                student = await self.students.get_by_id(enrollment.user_id)
-                if student is not None:
-                    await self.completion.note_progress(viewer=student, course_id=unit.course_id)
+        if accepted and unit is not None:
+            await self.progress_repo.mark_unit(
+                user_id=enrollment.user_id, unit_id=unit.id, status=UnitStatus.DONE
+            )
+            # Accepted work can be the last thing a course was waiting for, and the
+            # student is not here to notice it — so the check happens on their behalf.
+            student = await self.students.get_by_id(enrollment.user_id)
+            if student is not None:
+                await self.completion.note_progress(viewer=student, course_id=unit.course_id)
         return await self.get_submission(submission_id)
+
+    async def _courses_for(self, viewer: User) -> list[UUID] | None:
+        """
+        The courses this person may look into, or nothing when they may look into all.
+
+        An administrator is the «nothing» case: their rung is the whole academy, and putting
+        them on courses one by one would be a list somebody has to maintain for no gain.
+        """
+        if viewer.role is UserRole.ADMIN:
+            return None
+        return await self.reviewers.course_ids_for(viewer.id)
 
     async def _submission(self, submission_id: UUID) -> Submission:
         """One submission, or a refusal that says nothing about what exists."""

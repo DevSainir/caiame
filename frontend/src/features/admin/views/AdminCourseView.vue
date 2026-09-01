@@ -6,6 +6,7 @@ import BaseButton from '@/core/components/BaseButton.vue'
 import { useNotificationStore } from '@/core/notifications/store'
 import AdminCourseForm from '@/features/admin/components/AdminCourseForm.vue'
 import AdminFaqSection from '@/features/admin/components/AdminFaqSection.vue'
+import AdminReviewers from '@/features/admin/components/AdminReviewers.vue'
 import AdminLessonForm from '@/features/admin/components/AdminLessonForm.vue'
 import AdminProgramme from '@/features/admin/components/AdminProgramme.vue'
 import AdminShell from '@/features/admin/components/AdminShell.vue'
@@ -209,6 +210,8 @@ watch(courseId, load, { immediate: true })
           )
       "
     />
+
+    <AdminReviewers v-if="course" :course-id="courseId" />
 
     <AdminFaqSection v-if="course" :course-id="courseId" />
 

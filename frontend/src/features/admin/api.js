@@ -272,3 +272,21 @@ export async function deleteFaq(courseId, questionId) {
   const { data } = await client.delete(`/admin/courses/${courseId}/questions/${questionId}`)
   return data
 }
+
+/** Кто проверяет работы этого курса. */
+export async function fetchReviewers(courseId) {
+  const { data } = await client.get(`/admin/courses/${courseId}/reviewers`)
+  return data
+}
+
+/** Поставить сотрудника на курс. Студента сервер не примет. */
+export async function addReviewer(courseId, email) {
+  const { data } = await client.post(`/admin/courses/${courseId}/reviewers`, { email })
+  return data
+}
+
+/** Снять сотрудника с курса. Написанные им рецензии остаются на месте. */
+export async function removeReviewer(courseId, assignmentId) {
+  const { data } = await client.delete(`/admin/courses/${courseId}/reviewers/${assignmentId}`)
+  return data
+}

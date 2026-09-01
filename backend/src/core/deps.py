@@ -25,6 +25,7 @@ from repos.question import QuestionRepo
 from repos.quiz import QuizRepo
 from repos.refresh_token import RefreshTokenRepo
 from repos.review import ReviewRepo
+from repos.reviewer import ReviewerRepo
 from repos.syllabus import SyllabusRepo
 from repos.taxonomy import AccreditationRepo, SpecializationRepo
 from repos.user import UserRepo
@@ -45,6 +46,7 @@ from services.question_bank import QuestionBankService
 from services.quiz import QuizService
 from services.rate_limit import RateLimitService
 from services.review import ReviewService
+from services.reviewers import ReviewerService
 from services.sitemap import SitemapService
 from services.syllabus import SyllabusService
 from services.taxonomy import TaxonomyService
@@ -181,6 +183,11 @@ def get_question_repo(session: SessionDep) -> QuestionRepo:
 def get_user_repo(session: SessionDep) -> UserRepo:
     """Provide the user repository bound to the request session."""
     return UserRepo(session)
+
+
+def get_reviewer_repo(session: SessionDep) -> ReviewerRepo:
+    """Provide the repository of «who checks which course» bound to the request session."""
+    return ReviewerRepo(session)
 
 
 def get_refresh_token_repo(session: SessionDep) -> RefreshTokenRepo:
@@ -337,6 +344,7 @@ def get_grading_service(
     media_service: Annotated[MediaService, Depends(get_media_service)],
     completion: Annotated[EnrollmentService, Depends(get_enrollment_service)],
     user_repo: Annotated[UserRepo, Depends(get_user_repo)],
+    reviewer_repo: Annotated[ReviewerRepo, Depends(get_reviewer_repo)],
 ) -> GradingService:
     """Provide the reviewer's side; the outline repository is where unit progress is written."""
     return GradingService(
@@ -345,7 +353,17 @@ def get_grading_service(
         completion=completion,
         media_service=media_service,
         students=user_repo,
+        reviewers=reviewer_repo,
     )
+
+
+def get_reviewer_service(
+    admin_repo: Annotated[AdminRepo, Depends(get_admin_repo)],
+    user_repo: Annotated[UserRepo, Depends(get_user_repo)],
+    reviewer_repo: Annotated[ReviewerRepo, Depends(get_reviewer_repo)],
+) -> ReviewerService:
+    """Provide the administration side of «who checks which course»."""
+    return ReviewerService(course_repo=admin_repo, people=user_repo, assignments=reviewer_repo)
 
 
 def get_sitemap_service(
@@ -461,6 +479,7 @@ HealthSvc = Annotated[HealthService, Depends(get_health_service)]
 TaxonomySvc = Annotated[TaxonomyService, Depends(get_taxonomy_service)]
 SitemapSvc = Annotated[SitemapService, Depends(get_sitemap_service)]
 FaqSvc = Annotated[FaqService, Depends(get_faq_service)]
+ReviewerSvc = Annotated[ReviewerService, Depends(get_reviewer_service)]
 QuestionBankSvc = Annotated[QuestionBankService, Depends(get_question_bank_service)]
 AssignmentSvc = Annotated[AssignmentService, Depends(get_assignment_service)]
 GradingSvc = Annotated[GradingService, Depends(get_grading_service)]

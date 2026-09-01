@@ -16,6 +16,7 @@ from models.base import Base
 from models.course import Course
 from models.course_benefit import CourseBenefit
 from models.course_question import CourseQuestion
+from models.course_reviewer import CourseReviewer
 from models.course_unit import CourseUnit
 from models.enrollment import Enrollment
 from models.entitlement import Entitlement
@@ -40,6 +41,7 @@ __all__ = [
     "Course",
     "CourseBenefit",
     "CourseQuestion",
+    "CourseReviewer",
     "CourseUnit",
     "Enrollment",
     "Entitlement",

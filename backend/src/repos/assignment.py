@@ -119,7 +119,12 @@ class AssignmentRepo:
         return review
 
     async def list_for_review(
-        self, *, course_id: UUID | None, limit: int, offset: int
+        self,
+        *,
+        course_id: UUID | None,
+        limit: int,
+        offset: int,
+        only_courses: Sequence[UUID] | None = None,
     ) -> Sequence[tuple[Submission, User, CourseUnit]]:
         """
         Work waiting to be looked at, oldest first.
@@ -140,10 +145,17 @@ class AssignmentRepo:
         )
         if course_id is not None:
             statement = statement.where(CourseUnit.course_id == course_id)
+        if only_courses is not None:
+            # `None` means «no narrowing», an empty list means «no courses at all». They are
+            # different answers, and collapsing them would show a teacher every student's
+            # work the moment nobody put them on a course.
+            statement = statement.where(CourseUnit.course_id.in_(only_courses))
         rows = await self.session.execute(statement)
         return [(submission, student, unit) for submission, student, unit in rows.all()]
 
-    async def count_for_review(self, *, course_id: UUID | None) -> int:
+    async def count_for_review(
+        self, *, course_id: UUID | None, only_courses: Sequence[UUID] | None = None
+    ) -> int:
         """How long the queue is in total."""
         statement = (
             select(func.count(Submission.id))
@@ -153,6 +165,8 @@ class AssignmentRepo:
         )
         if course_id is not None:
             statement = statement.where(CourseUnit.course_id == course_id)
+        if only_courses is not None:
+            statement = statement.where(CourseUnit.course_id.in_(only_courses))
         return int(await self.session.scalar(statement) or 0)
 
     async def get_assignment(self, assignment_id: UUID) -> Assignment | None:
