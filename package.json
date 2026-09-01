@@ -1,0 +1,12 @@
+{
+  "name": "caiame-end-to-end",
+  "private": true,
+  "type": "module",
+  "description": "Сценарии, которые проходят через браузер, приложение, API и базу. Живут в корне, а не во фронтенде, потому что проверяют продукт целиком, а не одну его половину.",
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
+  }
+}

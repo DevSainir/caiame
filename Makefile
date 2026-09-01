@@ -4,7 +4,7 @@ PY := backend/.venv/bin
 
 .PHONY: help figma-extract tokens tailwind design covers lint-tokens db migrate seed api web \
         backup-verify test-fast test-integration lint typecheck audit hooks \
-        reset-catalog reseed admin
+        reset-catalog reseed admin test-e2e
 
 help: ## Показать список целей
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -55,6 +55,9 @@ lint-tokens: ## Проверить вёрстку на произвольные 
 test-fast: ## Юнит и компонентные тесты бэкенда, юнит фронтенда — гейт перед коммитом
 	cd backend && .venv/bin/pytest -q -m "unit or component"
 	npm test --prefix frontend
+
+test-e2e: ## Сценарии через браузер: нужен поднятый API (make api) и база
+	npx playwright test
 
 test-integration: ## Тесты против настоящего Postgres
 	cd backend && .venv/bin/pytest -q -m integration

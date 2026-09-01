@@ -36,3 +36,7 @@ uploads/
 
 # Артефакт editable-установки пакета
 *.egg-info/
+
+# Артефакты end-to-end: следы и снимки падений живут только на машине, где тест упал.
+/test-results/
+/playwright-report/

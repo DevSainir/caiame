@@ -102,3 +102,78 @@ jobs:
 
       - name: Сборка
         run: npm run build
+
+  end-to-end:
+    name: Сценарии через браузер
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: caiame
+          POSTGRES_PASSWORD: caiame
+          POSTGRES_DB: caiame
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U caiame"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL: postgresql+asyncpg://caiame:caiame@localhost:5432/caiame
+      REDIS_URL: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      - name: Установить зависимости бэкенда
+        working-directory: backend
+        env:
+          VIRTUAL_ENV: ${{ github.workspace }}/backend/.venv
+        run: |
+          uv venv --python 3.12 "$VIRTUAL_ENV"
+          uv pip install -e . --group dev
+
+      # База со всем каталогом и демо-аккаунтами: сценарии ходят теми же аккаунтами,
+      # что и человек на своей машине.
+      - name: Накатить миграции и засеять каталог
+        working-directory: backend
+        run: |
+          .venv/bin/alembic upgrade head
+          .venv/bin/python scripts/seed.py
+
+      - name: Поднять API
+        working-directory: backend
+        run: |
+          PYTHONPATH=src .venv/bin/uvicorn main:app --port 8001 &
+          for _ in $(seq 1 30); do
+            curl -sf http://localhost:8001/api/v1/health && break
+            sleep 1
+          done
+
+      - name: Установить зависимости фронтенда
+        run: npm ci --prefix frontend
+
+      - name: Установить Playwright
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Сценарии
+        run: npx playwright test
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-trace
+          path: test-results/
+          retention-days: 7
