@@ -15,8 +15,25 @@ mkdir -p /opt/caiame
 закоммиченные файлы, без `node_modules`, `.venv` и локального `.env`:
 
 ```bash
-git archive main | ssh caiame-hetzner 'tar -x -C /opt/caiame'
+git archive main -o /tmp/caiame-deploy.tar && scp /tmp/caiame-deploy.tar caiame-hetzner:/tmp/
+ssh caiame-hetzner 'set -e
+rm -rf /tmp/caiame-new && mkdir -p /tmp/caiame-new
+tar -xf /tmp/caiame-deploy.tar -C /tmp/caiame-new
+rsync -a --delete \
+  --exclude ".env" --exclude ".env.bak-*" --exclude "acme-webroot/" --exclude "backup-age.key" \
+  /tmp/caiame-new/ /opt/caiame/
+rm -rf /tmp/caiame-new /tmp/caiame-deploy.tar'
 ```
+
+**Через промежуточный каталог и `rsync --delete`, а не `tar -x` прямо в `/opt/caiame`.**
+Распаковка поверх только добавляет и перезаписывает: файл, удалённый из репозитория,
+остаётся на сервере навсегда. Так там прожили полтора десятка обложек от старого каталога
+и — что хуже — фотография, которую убрали из-за водяного знака: в базе стоял новый адрес,
+а по старому сервер продолжал её отдавать.
+
+Исключения — это то, что живёт только на сервере: секреты, их резервные копии, каталог
+челленджа Let's Encrypt и ключ шифрования бэкапов. Всё остальное приводится к тому, что
+лежит в `main`.
 
 Секреты создаются **на сервере** и в репозиторий не попадают:
 
