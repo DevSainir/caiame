@@ -112,15 +112,33 @@ def _restore(dump: Path) -> None:
     )
 
 
+# Tables the restored database must be able to answer for. The first four must hold rows —
+# a catalogue without courses is not a restored catalogue. The rest may legitimately be
+# empty on a young server, and they are here for a different reason: a table that a
+# migration renamed or dropped makes this query fail, and a backup of a schema the
+# application no longer matches is the kind of thing that is discovered on the worst day.
+REQUIRED_TABLES = ("courses", "specializations", "accreditations", "users")
+STUDENT_TABLES = (
+    "enrollments",
+    "entitlements",
+    "lesson_progress",
+    "media_files",
+    "submissions",
+    "submission_reviews",
+    "quiz_attempts",
+)
+
+
 def _count_rows() -> dict[str, int]:
     """
-    Count rows in the tables that must not be empty.
+    Count rows in the tables the restored database must be able to answer for.
 
     A successful pg_restore does not mean a working backup: a dump of an empty schema
-    restores without a single error. This checks the data is actually there.
+    restores without a single error. This checks the data is actually there — and that
+    every table the application needs still exists under the name it expects.
     """
     counts: dict[str, int] = {}
-    for table in ("courses", "specializations", "accreditations", "users"):
+    for table in (*REQUIRED_TABLES, *STUDENT_TABLES):
         result = subprocess.run(
             [
                 "docker",
