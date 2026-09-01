@@ -126,6 +126,10 @@ jobs:
     env:
       DATABASE_URL: postgresql+asyncpg://caiame:caiame@localhost:5432/caiame
       REDIS_URL: redis://localhost:6379/0
+      # Куда dev-сервер vite проксирует /api. На машине разработчика это лежит в
+      # frontend/.env, которого в репозитории нет: без этой строки прокси идёт на 8000,
+      # а API поднят на 8001, и все сценарии падают на входе.
+      VITE_API_PROXY_TARGET: http://localhost:8001
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

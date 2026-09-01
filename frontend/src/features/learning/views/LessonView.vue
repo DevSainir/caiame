@@ -5,6 +5,7 @@ import BaseButton from '@/core/components/BaseButton.vue'
 import BaseContainer from '@/core/components/BaseContainer.vue'
 import IconFile from '@/core/components/icons/IconFile.vue'
 import { describeError } from '@/core/api/messages'
+import { setPageTitle } from '@/core/page'
 import AccessNotice from '@/features/learning/components/AccessNotice.vue'
 import LearningCrumbs from '@/features/learning/components/LearningCrumbs.vue'
 import { createPlaybackTracker } from '@/features/learning/playback'
@@ -29,6 +30,7 @@ async function load(id) {
   error.value = null
   try {
     lesson.value = await fetchLesson(id)
+    setPageTitle(lesson.value.title)
   } catch (failure) {
     error.value = failure
     lesson.value = null

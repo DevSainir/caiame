@@ -1,4 +1,12 @@
-<script setup></script>
+<script setup>
+import { onBeforeUnmount, onMounted } from 'vue'
+import { setNoIndex } from '@/core/page'
+
+// Адрес существует и отвечает двумястами — страницу рисует приложение, — поэтому от
+// поисковика её закрывает метка, а не код ответа.
+onMounted(() => setNoIndex(true))
+onBeforeUnmount(() => setNoIndex(false))
+</script>
 
 <template>
   <section

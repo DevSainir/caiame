@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BaseContainer from '@/core/components/BaseContainer.vue'
 import { describeError } from '@/core/api/messages'
+import { setPageTitle } from '@/core/page'
 import LearningCrumbs from '@/features/learning/components/LearningCrumbs.vue'
 import LessonRow from '@/features/learning/components/LessonRow.vue'
 import { fetchModule } from '@/features/learning/api'
@@ -18,6 +19,7 @@ async function load(id) {
   error.value = null
   try {
     module.value = await fetchModule(id)
+    setPageTitle(module.value.title)
   } catch (failure) {
     error.value = failure
     module.value = null

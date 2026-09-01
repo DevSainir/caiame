@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BaseContainer from '@/core/components/BaseContainer.vue'
 import { describeError } from '@/core/api/messages'
+import { setPageTitle } from '@/core/page'
 import CourseBenefits from '@/features/catalog/components/CourseBenefits.vue'
 import CourseDiscussion from '@/features/catalog/components/CourseDiscussion.vue'
 import CourseHero from '@/features/catalog/components/CourseHero.vue'
@@ -70,6 +71,7 @@ async function load(slug) {
       fetchReviews(slug, { page: 1, size: REVIEWS_PER_PAGE }),
     ])
     course.value = detail
+    setPageTitle(detail.title)
     syllabus.value = outline
     questions.value = discussion.items
     reviews.value = firstReviews

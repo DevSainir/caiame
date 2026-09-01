@@ -5,6 +5,7 @@ import catalogRoutes from '@/features/catalog/routes'
 import learningRoutes from '@/features/learning/routes'
 import profileRoutes from '@/features/profile/routes'
 import homeRoutes from '@/features/home/routes'
+import { setPageTitle } from '@/core/page'
 import { scrollToAnchor } from '@/core/scroll'
 import { useAuthStore } from '@/core/session/store'
 
@@ -94,6 +95,16 @@ router.beforeEach(async (to) => {
     return { path: '/' }
   }
   return true
+})
+
+/**
+ * Заголовок вкладки по названию страницы.
+ *
+ * Страницы, у которых название приходит с сервера — курс, модуль, лекция, — ставят его сами
+ * поверх этого, когда данные загрузились: до загрузки его всё равно неоткуда взять.
+ */
+router.afterEach((to) => {
+  setPageTitle(to.meta.headerTitle ?? '')
 })
 
 /**
