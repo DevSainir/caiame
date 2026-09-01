@@ -17,6 +17,7 @@ from repos.benefit import BenefitRepo
 from repos.course import CourseRepo
 from repos.enrollment import EnrollmentRepo
 from repos.entitlement import EntitlementRepo
+from repos.health import HealthRepo
 from repos.lesson import LessonRepo
 from repos.media import MediaRepo
 from repos.question import QuestionRepo
@@ -31,6 +32,7 @@ from services.administration import AdministrationService
 from services.auth import AuthService
 from services.billing import BillingService
 from services.course import CourseService
+from services.health import HealthService
 from services.learning import LearningService
 from services.media import MediaService
 from services.question import QuestionService
@@ -89,6 +91,11 @@ def get_entitlement_repo(session: SessionDep) -> EntitlementRepo:
 def get_enrollment_repo(session: SessionDep) -> EnrollmentRepo:
     """Provide the enrollment repository bound to the request session."""
     return EnrollmentRepo(session)
+
+
+def get_health_service(session: SessionDep) -> HealthService:
+    """Provide the readiness check with the two dependencies it asks about."""
+    return HealthService(database=HealthRepo(session), cache=get_redis())
 
 
 def get_object_storage() -> ObjectStorage:
@@ -345,6 +352,7 @@ AdministrationSvc = Annotated[AdministrationService, Depends(get_administration_
 AccessSvc = Annotated[AccessService, Depends(get_access_service)]
 MediaSvc = Annotated[MediaService, Depends(get_media_service)]
 BillingSvc = Annotated[BillingService, Depends(get_billing_service)]
+HealthSvc = Annotated[HealthService, Depends(get_health_service)]
 TaxonomySvc = Annotated[TaxonomyService, Depends(get_taxonomy_service)]
 AuthSvc = Annotated[AuthService, Depends(get_auth_service)]
 UserSvc = Annotated[UserService, Depends(get_user_service)]
