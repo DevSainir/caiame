@@ -5,21 +5,13 @@ from uuid import UUID
 from core.text import slugify
 from models.course import Course
 from models.course_unit import CourseUnit
-from models.enums import CourseStatus, CourseUnitKind, MediaStatus
+from models.enums import CourseStatus, CourseUnitKind
 from models.lesson import Lesson
 from models.media_file import MediaFile
 from schemas.admin import (
     CourseDetailOut,
     CourseIn,
     CourseRowOut,
-    CourseTreeOut,
-    LessonDetailOut,
-    LessonIn,
-    LessonRowOut,
-    MaterialOut,
-    UnitIn,
-    UnitRowOut,
-    UnitUpdateIn,
 )
 
 
@@ -164,25 +156,6 @@ class AdministrationService:
             for course in courses
         ]
 
-    async def get_tree(self, course_id: UUID) -> CourseTreeOut:
-        """The programme of one course: modules with their lectures, then the works."""
-        course = await self._course(course_id)
-        units = await self.unit_repo.list_units(course.id)
-        lessons = await self.lesson_repo.list_for_course(course.id)
-        by_unit: dict[UUID, list[Lesson]] = {}
-        for lesson in lessons:
-            by_unit.setdefault(lesson.unit_id, []).append(lesson)
-
-        rows = [self._unit_row(unit, by_unit.get(unit.id, [])) for unit in units]
-        return CourseTreeOut(
-            id=course.id,
-            slug=course.slug,
-            title=course.title,
-            status=course.status,
-            modules=[row for row in rows if row.kind is CourseUnitKind.MODULE],
-            activities=[row for row in rows if row.kind is not CourseUnitKind.MODULE],
-        )
-
     async def create_course(self, payload: CourseIn) -> CourseDetailOut:
         """
         Start a new course as a draft.
@@ -244,39 +217,6 @@ class AdministrationService:
             raise CourseInUseError(course_id)
         await self.admin_repo.delete_course(course)
 
-    async def get_lesson_detail(self, *, course_id: UUID, lesson_id: UUID) -> LessonDetailOut:
-        """One lecture with the file behind it, as its editing screen shows it."""
-        lesson = await self._lesson(course_id, lesson_id)
-        return LessonDetailOut(
-            id=lesson.id,
-            unit_id=lesson.unit_id,
-            position=lesson.position,
-            title=lesson.title,
-            description=lesson.description,
-            kind=lesson.kind,
-            duration_minutes=lesson.duration_minutes,
-            is_required=lesson.is_required,
-            material=await self._material(lesson),
-        )
-
-    async def attach_material(
-        self, *, course_id: UUID, lesson_id: UUID, media_id: UUID
-    ) -> LessonDetailOut:
-        """
-        Point a lecture at a file that has finished uploading.
-
-        Only a confirmed file may be attached: a lecture pointing at an upload that broke
-        halfway shows a player that fails, which is worse than a lecture that honestly has
-        no material yet.
-        """
-        lesson = await self._lesson(course_id, lesson_id)
-        media = await self.media_repo.get(media_id)
-        if media is None or media.status is not MediaStatus.READY:
-            raise MaterialNotReadyError(media_id)
-        lesson.media_file_id = media.id
-        await self.admin_repo.flush()
-        return await self.get_lesson_detail(course_id=course_id, lesson_id=lesson_id)
-
     async def _free_slug(self, base: str) -> str:
         """The address for a new course: the transliterated title, or the next free number."""
         if not await self.admin_repo.slug_taken(base):
@@ -286,22 +226,6 @@ class AdministrationService:
             if not await self.admin_repo.slug_taken(candidate):
                 return candidate
         raise SlugTakenError(base)
-
-    async def _material(self, lesson: Lesson) -> MaterialOut | None:
-        """The file behind a lecture, if there is one and it really arrived."""
-        if lesson.media_file_id is None:
-            return None
-        media = await self.media_repo.get(lesson.media_file_id)
-        if media is None or media.status is not MediaStatus.READY:
-            return None
-        return MaterialOut(
-            id=media.id,
-            original_name=media.original_name,
-            size_bytes=media.size_bytes,
-            duration_seconds=media.duration_seconds,
-            content_type=media.content_type,
-            uploaded_at=media.updated_at,
-        )
 
     @staticmethod
     def _course_detail(course: Course, *, students: int) -> CourseDetailOut:
@@ -322,108 +246,17 @@ class AdministrationService:
             students=students,
         )
 
-    async def set_status(self, *, course_id: UUID, status: CourseStatus) -> CourseTreeOut:
-        """Publish a course or take it out of the catalogue."""
+    async def set_status(self, *, course_id: UUID, status: CourseStatus) -> CourseDetailOut:
+        """
+        Publish a course or take it out of the catalogue.
+
+        Answers with the course, not with its programme: the outline belongs to another
+        service now, and the screen re-reads it anyway after any change.
+        """
         course = await self._course(course_id)
         await self.admin_repo.set_status(course, status)
-        return await self.get_tree(course_id)
-
-    async def add_unit(self, *, course_id: UUID, payload: UnitIn) -> UnitRowOut:
-        """Add a module, an assignment or a test to the end of its own kind."""
-        course = await self._course(course_id)
-        position = await self.admin_repo.next_position(course_id=course.id, kind=payload.kind)
-        unit = await self.admin_repo.add_unit(
-            CourseUnit(
-                course_id=course.id,
-                kind=payload.kind,
-                position=position,
-                title=payload.title,
-                summary=payload.summary,
-            )
-        )
-        return self._unit_row(unit, [])
-
-    async def update_unit(
-        self, *, course_id: UUID, unit_id: UUID, payload: UnitUpdateIn
-    ) -> UnitRowOut:
-        """Rename a line of the programme. Its kind never changes — that would be a new line."""
-        unit = await self._unit(course_id, unit_id)
-        unit.title = payload.title
-        unit.summary = payload.summary
-        lessons = await self.admin_repo.lesson_siblings(unit.id)
-        return self._unit_row(unit, list(lessons))
-
-    async def move_unit(self, *, course_id: UUID, unit_id: UUID, direction: int) -> None:
-        """
-        Move a line one step within its own kind.
-
-        A swap of two positions in one transaction, not a rewrite of the whole order:
-        a partial reorder leaves two rows on the same position, and the list starts
-        changing its shape between requests.
-        """
-        unit = await self._unit(course_id, unit_id)
-        siblings = list(await self.admin_repo.siblings(unit))
-        _swap(siblings, unit.id, direction)
-        await self.admin_repo.flush()
-
-    async def delete_unit(self, *, course_id: UUID, unit_id: UUID) -> None:
-        """Remove an empty line of the programme; a module with lectures is refused."""
-        unit = await self._unit(course_id, unit_id)
-        if unit.kind is CourseUnitKind.MODULE:
-            lessons = await self.admin_repo.lesson_siblings(unit.id)
-            if lessons:
-                raise ModuleNotEmptyError(unit_id)
-        await self.admin_repo.delete_unit(unit)
-
-    async def add_lesson(
-        self, *, course_id: UUID, unit_id: UUID, payload: LessonIn
-    ) -> LessonRowOut:
-        """Add a lecture to the end of a module."""
-        unit = await self._unit(course_id, unit_id)
-        if unit.kind is not CourseUnitKind.MODULE:
-            raise UnitNotFoundError(unit_id)
-        position = await self.admin_repo.next_lesson_position(unit.id)
-        lesson = await self.admin_repo.add_lesson(
-            Lesson(
-                unit_id=unit.id,
-                position=position,
-                title=payload.title,
-                description=payload.description,
-                kind=payload.kind,
-                duration_minutes=payload.duration_minutes,
-                is_required=payload.is_required,
-            )
-        )
-        return _lesson_row(lesson)
-
-    async def update_lesson(
-        self, *, course_id: UUID, lesson_id: UUID, payload: LessonIn
-    ) -> LessonRowOut:
-        """Change a lecture. Replacing the material is a separate step."""
-        lesson = await self._lesson(course_id, lesson_id)
-        lesson.title = payload.title
-        lesson.description = payload.description
-        lesson.kind = payload.kind
-        lesson.duration_minutes = payload.duration_minutes
-        lesson.is_required = payload.is_required
-        return _lesson_row(lesson)
-
-    async def move_lesson(self, *, course_id: UUID, lesson_id: UUID, direction: int) -> None:
-        """Move a lecture one step inside its module."""
-        lesson = await self._lesson(course_id, lesson_id)
-        siblings = list(await self.admin_repo.lesson_siblings(lesson.unit_id))
-        _swap(siblings, lesson.id, direction)
-        await self.admin_repo.flush()
-
-    async def delete_lesson(self, *, course_id: UUID, lesson_id: UUID) -> None:
-        """
-        Retire a lecture.
-
-        Soft: a student who finished eight of ten lectures must see 100 % after two
-        unfinished ones are removed — the lecture leaves the denominator, not the history.
-        """
-        lesson = await self._lesson(course_id, lesson_id)
-        await self.admin_repo.soft_delete_lesson(lesson)
+        students = await self.admin_repo.count_students([course.id])
+        return self._course_detail(course, students=students.get(course.id, 0))
 
     async def _course(self, course_id: UUID) -> Course:
         """The course, or a refusal that says nothing about what exists."""
@@ -431,61 +264,3 @@ class AdministrationService:
         if course is None:
             raise CourseNotFoundForAdminError(course_id)
         return course
-
-    async def _unit(self, course_id: UUID, unit_id: UUID) -> CourseUnit:
-        """A line of the programme that belongs to this very course."""
-        unit = await self.unit_repo.get_unit(unit_id)
-        if unit is None or unit.course_id != course_id:
-            raise UnitNotFoundError(unit_id)
-        return unit
-
-    async def _lesson(self, course_id: UUID, lesson_id: UUID) -> Lesson:
-        """A lecture that belongs to a module of this very course."""
-        lesson = await self.lesson_repo.get(lesson_id)
-        if lesson is None:
-            raise LessonNotFoundError(lesson_id)
-        unit = await self.unit_repo.get_unit(lesson.unit_id)
-        if unit is None or unit.course_id != course_id:
-            raise LessonNotFoundError(lesson_id)
-        return lesson
-
-    def _unit_row(self, unit: CourseUnit, lessons: Sequence[Lesson]) -> UnitRowOut:
-        """One line of the programme with the lectures under it."""
-        return UnitRowOut(
-            id=unit.id,
-            kind=unit.kind,
-            position=unit.position,
-            title=unit.title,
-            summary=unit.summary,
-            lessons=[_lesson_row(lesson) for lesson in lessons],
-        )
-
-
-def _lesson_row(lesson: Lesson) -> LessonRowOut:
-    """One lecture as the editor lists it."""
-    return LessonRowOut(
-        id=lesson.id,
-        position=lesson.position,
-        title=lesson.title,
-        kind=lesson.kind,
-        duration_minutes=lesson.duration_minutes,
-        is_required=lesson.is_required,
-        has_material=lesson.media_file_id is not None,
-    )
-
-
-def _swap(rows: Sequence[Positioned], row_id: UUID, direction: int) -> None:
-    """
-    Exchange the positions of a row and its neighbour.
-
-    Both rows are written in the same transaction, so no request ever observes two rows
-    claiming one position. A move past either end does nothing rather than failing: the
-    button at the top of a list is not an error.
-    """
-    index = next((i for i, row in enumerate(rows) if row.id == row_id), None)
-    if index is None:
-        return
-    target = index + (1 if direction > 0 else -1)
-    if target < 0 or target >= len(rows):
-        return
-    rows[index].position, rows[target].position = rows[target].position, rows[index].position

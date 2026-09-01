@@ -1,4 +1,4 @@
-"""Editing a course: ownership of the identifier, order, and what deletion means."""
+"""Editing the outline of a course: ownership of the identifier, order, and what deletion means."""
 
 from collections.abc import Sequence
 
@@ -10,10 +10,10 @@ from models.course_unit import CourseUnit
 from models.enums import CourseUnitKind, LessonKind
 from models.lesson import Lesson
 from schemas.admin import LessonIn, UnitIn, UnitUpdateIn
-from services.administration import (
-    AdministrationService,
+from services.programme import (
     LessonNotFoundError,
     ModuleNotEmptyError,
+    ProgrammeService,
     UnitNotFoundError,
 )
 from tests.support.factories import make_course, make_lesson, make_unit
@@ -27,7 +27,7 @@ from tests.support.fakes import (
 
 def _service(
     units: Sequence[CourseUnit] = (), lessons: Sequence[Lesson] = ()
-) -> tuple[AdministrationService, Course]:
+) -> tuple[ProgrammeService, Course]:
     """A service over one course with the outline handed in."""
     course = make_course(slug="therapy")
     for unit in units:
@@ -35,7 +35,7 @@ def _service(
     syllabus = FakeSyllabusRepo(list(units))
     lesson_repo = FakeLessonRepo(list(lessons))
     return (
-        AdministrationService(
+        ProgrammeService(
             admin_repo=FakeAdminRepo([course], list(units), list(lessons)),
             unit_repo=syllabus,
             lesson_repo=lesson_repo,

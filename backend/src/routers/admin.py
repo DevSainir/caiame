@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, Path, Query, status
 
 from core.access import AdminUser
-from core.deps import AdministrationSvc, MediaSvc
+from core.deps import AdministrationSvc, MediaSvc, ProgrammeSvc
 from models.enums import CourseStatus
 from schemas.admin import (
     CourseDetailOut,
@@ -23,18 +23,18 @@ from schemas.admin import (
     UploadStartIn,
     UploadTicketOut,
 )
-from services.administration import (
-    CourseInUseError,
-    CourseNotFoundForAdminError,
-    LessonNotFoundError,
-    MaterialNotReadyError,
-    ModuleNotEmptyError,
-    UnitNotFoundError,
-)
+from services.administration import CourseInUseError, CourseNotFoundForAdminError
 from services.media import (
     MediaNotFoundError,
     UploadNotFinishedError,
     UploadRejectedError,
+)
+from services.programme import (
+    CourseNotFoundForProgrammeError,
+    LessonNotFoundError,
+    MaterialNotReadyError,
+    ModuleNotEmptyError,
+    UnitNotFoundError,
 )
 from services.rate_limit import RateLimitExceededError
 
@@ -87,24 +87,22 @@ async def list_courses(
 @router.get(
     "/courses/{course_id}", response_model=CourseTreeOut, responses={**FORBIDDEN, **NOT_FOUND}
 )
-async def get_course(
-    svc: AdministrationSvc, admin: AdminUser, course_id: CourseId
-) -> CourseTreeOut:
+async def get_course(svc: ProgrammeSvc, admin: AdminUser, course_id: CourseId) -> CourseTreeOut:
     """The whole programme of one course."""
     try:
         return await svc.get_tree(course_id)
-    except CourseNotFoundForAdminError as error:
+    except CourseNotFoundForProgrammeError as error:
         raise _missing("course_not_found") from error
 
 
 @router.put(
     "/courses/{course_id}/status",
-    response_model=CourseTreeOut,
+    response_model=CourseDetailOut,
     responses={**FORBIDDEN, **NOT_FOUND},
 )
 async def set_status(
     svc: AdministrationSvc, admin: AdminUser, course_id: CourseId, payload: CourseStatusIn
-) -> CourseTreeOut:
+) -> CourseDetailOut:
     """Publish a course or take it out of the catalogue."""
     try:
         return await svc.set_status(course_id=course_id, status=payload.status)
@@ -116,12 +114,12 @@ async def set_status(
     "/courses/{course_id}/units", response_model=UnitRowOut, responses={**FORBIDDEN, **NOT_FOUND}
 )
 async def add_unit(
-    svc: AdministrationSvc, admin: AdminUser, course_id: CourseId, payload: UnitIn
+    svc: ProgrammeSvc, admin: AdminUser, course_id: CourseId, payload: UnitIn
 ) -> UnitRowOut:
     """Add a module, an assignment or a test to a course."""
     try:
         return await svc.add_unit(course_id=course_id, payload=payload)
-    except CourseNotFoundForAdminError as error:
+    except CourseNotFoundForProgrammeError as error:
         raise _missing("course_not_found") from error
 
 
@@ -131,7 +129,7 @@ async def add_unit(
     responses={**FORBIDDEN, **NOT_FOUND},
 )
 async def update_unit(
-    svc: AdministrationSvc,
+    svc: ProgrammeSvc,
     admin: AdminUser,
     course_id: CourseId,
     unit_id: UnitId,
@@ -150,7 +148,7 @@ async def update_unit(
     responses={**FORBIDDEN, **NOT_FOUND},
 )
 async def move_unit(
-    svc: AdministrationSvc,
+    svc: ProgrammeSvc,
     admin: AdminUser,
     course_id: CourseId,
     unit_id: UnitId,
@@ -173,7 +171,7 @@ async def move_unit(
     },
 )
 async def delete_unit(
-    svc: AdministrationSvc, admin: AdminUser, course_id: CourseId, unit_id: UnitId
+    svc: ProgrammeSvc, admin: AdminUser, course_id: CourseId, unit_id: UnitId
 ) -> None:
     """Remove an empty line of the programme."""
     try:
@@ -192,7 +190,7 @@ async def delete_unit(
     responses={**FORBIDDEN, **NOT_FOUND},
 )
 async def add_lesson(
-    svc: AdministrationSvc,
+    svc: ProgrammeSvc,
     admin: AdminUser,
     course_id: CourseId,
     unit_id: UnitId,
@@ -211,7 +209,7 @@ async def add_lesson(
     responses={**FORBIDDEN, **NOT_FOUND},
 )
 async def update_lesson(
-    svc: AdministrationSvc,
+    svc: ProgrammeSvc,
     admin: AdminUser,
     course_id: CourseId,
     lesson_id: LessonId,
@@ -230,7 +228,7 @@ async def update_lesson(
     responses={**FORBIDDEN, **NOT_FOUND},
 )
 async def move_lesson(
-    svc: AdministrationSvc,
+    svc: ProgrammeSvc,
     admin: AdminUser,
     course_id: CourseId,
     lesson_id: LessonId,
@@ -249,7 +247,7 @@ async def move_lesson(
     responses={**FORBIDDEN, **NOT_FOUND},
 )
 async def delete_lesson(
-    svc: AdministrationSvc, admin: AdminUser, course_id: CourseId, lesson_id: LessonId
+    svc: ProgrammeSvc, admin: AdminUser, course_id: CourseId, lesson_id: LessonId
 ) -> None:
     """Retire a lecture without erasing anybody's history."""
     try:
@@ -324,7 +322,7 @@ async def delete_course(svc: AdministrationSvc, admin: AdminUser, course_id: Cou
     responses={**FORBIDDEN, **NOT_FOUND},
 )
 async def get_lesson(
-    svc: AdministrationSvc, admin: AdminUser, course_id: CourseId, lesson_id: LessonId
+    svc: ProgrammeSvc, admin: AdminUser, course_id: CourseId, lesson_id: LessonId
 ) -> LessonDetailOut:
     """One lecture with the file behind it."""
     try:
@@ -384,7 +382,7 @@ async def start_upload(svc: MediaSvc, admin: AdminUser, payload: UploadStartIn) 
     },
 )
 async def confirm_material(
-    svc: AdministrationSvc,
+    svc: ProgrammeSvc,
     media_svc: MediaSvc,
     admin: AdminUser,
     course_id: CourseId,
