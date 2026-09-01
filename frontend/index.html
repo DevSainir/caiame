@@ -6,8 +6,45 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>ЦАИДМО — Центрально-Азиатский Институт Дополнительного Медицинского Образования</title>
 
+    <!-- Описание и карточка для ссылки. Всё это должно лежать в самом файле, а не
+         выставляться скриптом: и поисковый робот, и превью в мессенджере читают ответ
+         сервера, а не то, что нарисует приложение после загрузки. -->
+    <meta
+      name="description"
+      content="Циклы повышения квалификации для врачей и медсестёр: терапия, хирургия, офтальмология, фармакология и другие направления. Обучение с сертификатом."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ЦАИДМО" />
+    <meta
+      property="og:title"
+      content="ЦАИДМО — Центрально-Азиатский Институт Дополнительного Медицинского Образования"
+    />
+    <meta
+      property="og:description"
+      content="Циклы повышения квалификации для врачей и медсестёр: терапия, хирургия, офтальмология, фармакология и другие направления."
+    />
+    <meta property="og:url" content="https://caiame.org/" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta name="twitter:card" content="summary_large_image" />
+
     <!-- Manrope лежит в репозитории: внешний хост шрифтов — это ещё два рукопожатия
-         DNS+TCP+TLS на критическом пути, и таблица стилей блокирует отрисовку. -->
+         DNS+TCP+TLS на критическом пути, и таблица стилей блокирует отрисовку.
+         Начертания, которыми набрана первая же страница, просим заранее: иначе браузер
+         узнаёт о них только после разбора CSS и текст успевает моргнуть подстановкой. -->
+    <link
+      rel="preload"
+      href="/src/assets/fonts/manrope-cyrillic.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/src/assets/fonts/manrope-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
   </head>
   <body>
     <div id="app"></div>

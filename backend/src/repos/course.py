@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import ColumnElement, Select, func, select
@@ -57,6 +58,20 @@ class CourseRepo:
             .offset(offset)
         )
         return rows.all(), total or 0
+
+    async def list_published_slugs(self) -> Sequence[tuple[str, datetime]]:
+        """
+        Addresses of published courses and when each was last changed.
+
+        Drafts and archived courses are left out: a sitemap is an invitation to visit, not
+        an inventory of everything in the database.
+        """
+        rows = await self.session.execute(
+            select(Course.slug, Course.updated_at)
+            .where(Course.status == CourseStatus.PUBLISHED)
+            .order_by(Course.title)
+        )
+        return [(slug, updated_at) for slug, updated_at in rows.all()]
 
     async def get_published_by_slug(self, slug: str) -> Course | None:
         """Return one published course with both taxonomies loaded, or nothing."""

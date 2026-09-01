@@ -39,6 +39,7 @@ from services.question import QuestionService
 from services.quiz import QuizService
 from services.rate_limit import RateLimitService
 from services.review import ReviewService
+from services.sitemap import SitemapService
 from services.syllabus import SyllabusService
 from services.taxonomy import TaxonomyService
 from services.user import UserService
@@ -253,6 +254,13 @@ def get_question_service(
     return QuestionService(course_repo=course_repo, question_repo=question_repo)
 
 
+def get_sitemap_service(
+    course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
+) -> SitemapService:
+    """Provide the sitemap builder with the catalogue and the address of the site."""
+    return SitemapService(course_repo=course_repo, site_url=get_settings().site_url)
+
+
 def get_taxonomy_service(
     specialization_repo: Annotated[SpecializationRepo, Depends(get_specialization_repo)],
     accreditation_repo: Annotated[AccreditationRepo, Depends(get_accreditation_repo)],
@@ -354,6 +362,7 @@ MediaSvc = Annotated[MediaService, Depends(get_media_service)]
 BillingSvc = Annotated[BillingService, Depends(get_billing_service)]
 HealthSvc = Annotated[HealthService, Depends(get_health_service)]
 TaxonomySvc = Annotated[TaxonomyService, Depends(get_taxonomy_service)]
+SitemapSvc = Annotated[SitemapService, Depends(get_sitemap_service)]
 AuthSvc = Annotated[AuthService, Depends(get_auth_service)]
 UserSvc = Annotated[UserService, Depends(get_user_service)]
 ClientIp = Annotated[str, Depends(get_client_ip)]

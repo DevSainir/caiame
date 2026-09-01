@@ -17,6 +17,10 @@ class Settings(BaseSettings):
         alias="DATABASE_URL",
     )
     cors_origins: list[str] = Field(default=["http://localhost:5173"], alias="CORS_ORIGINS")
+    # Адрес, по которому сайт открывают люди. Нужен там, где ссылку строит сервер:
+    # карта сайта состоит из абсолютных адресов, и взять их из заголовка запроса нельзя —
+    # заголовок пишет тот, кто запрашивает.
+    site_url: str = Field(default="http://localhost:5173", alias="SITE_URL")
     environment: Literal["development", "production"] = Field(
         default="development", alias="ENVIRONMENT"
     )

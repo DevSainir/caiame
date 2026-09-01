@@ -40,6 +40,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       COOKIE_SECURE: ${COOKIE_SECURE:-true}
       CORS_ORIGINS: ${CORS_ORIGINS:-[]}
+      SITE_URL: https://${DOMAIN}
       # Хранилище материалов. Ссылки на загрузку подписывает приложение, а сам файл идёт
       # из браузера прямо в хранилище — эти значения должны указывать на адрес, доступный
       # из браузера, а не только изнутри сети.

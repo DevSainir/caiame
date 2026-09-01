@@ -1,0 +1,14 @@
+# Что имеет смысл показывать поиску: каталог и страницы курсов. Всё остальное — либо за
+# входом, либо личное, и в выдаче ему делать нечего.
+User-agent: *
+Allow: /$
+Allow: /courses/
+Disallow: /admin
+Disallow: /profile
+Disallow: /lessons/
+Disallow: /modules/
+Disallow: /tests/
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://caiame.org/sitemap.xml
