@@ -2,21 +2,16 @@
 import AnchorLink from '@/core/components/AnchorLink.vue'
 import BaseContainer from '@/core/components/BaseContainer.vue'
 
+// Только то, что действительно открывается. Ссылка на страницу, которой нет, хуже её
+// отсутствия: человек по ней уходит и возвращается ни с чем.
 const COLUMNS = [
   [
     { label: 'Курсы', anchor: 'courses' },
-    { label: 'Форум и чат', to: '/support' },
-    { label: 'Контакты', to: '/support' },
-  ],
-  [
     { label: 'Личный кабинет', to: '/profile' },
-    { label: 'Администрирование', to: '/admin' },
-    { label: 'О нас', to: '/support' },
   ],
   [
     { label: 'Регистрация', to: '/register' },
     { label: 'Войти', to: '/login' },
-    { label: 'Техподдержка', to: '/support' },
   ],
 ]
 </script>
@@ -30,10 +25,10 @@ const COLUMNS = [
           Центрально-Азиатский Институт Дополнительного Медицинского Образования
         </p>
 
-        <!-- Две колонки, а не три: на 360px в треть ширины не помещается
-             «Администрирование», и оно наезжает на соседнюю колонку. -->
+        <!-- Название занимает половину ширины на десктопе, ссылки — по колонке на
+             каждую группу. -->
         <div class="grid grid-cols-2 gap-x-5 gap-y-6 pt-8 lg:grid-cols-4 lg:gap-0 lg:pt-0">
-          <p class="hidden text-xl font-bold lg:block">
+          <p class="hidden text-xl font-bold lg:col-span-2 lg:block">
             Центрально-Азиатский Институт Дополнительного Медицинского Образования
           </p>
 

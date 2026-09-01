@@ -8,14 +8,6 @@ import homeRoutes from '@/features/home/routes'
 import { scrollToAnchor } from '@/core/scroll'
 import { useAuthStore } from '@/core/session/store'
 
-// Screens that are drawn but not built yet. Each one moves into its own feature as soon as
-// that feature exists; until then the links must not break the app.
-const stubRoutes = ['/support'].map((path) => ({
-  path,
-  name: path.slice(1),
-  component: () => import('@/core/views/StubView.vue'),
-}))
-
 const RESTORE_TIMEOUT_MS = 1500
 const RESTORE_STEP_MS = 50
 
@@ -47,8 +39,13 @@ const router = createRouter({
     ...catalogRoutes,
     ...learningRoutes,
     ...profileRoutes,
-    ...stubRoutes,
-    { path: '/:pathMatch(.*)*', redirect: '/' },
+    // Неизвестный адрес показывает, что страницы нет, а не молча уводит на главную:
+    // «я нажал на ссылку и оказался на главной» читается как поломка.
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/core/views/NotFoundView.vue'),
+    },
   ],
   /**
    * There is no catalogue page in the design: «Изучить курсы» is an anchor to the listing

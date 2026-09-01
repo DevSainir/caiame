@@ -77,9 +77,9 @@ async function submit() {
       <p v-if="errors.form" class="text-sm font-semibold text-danger-600">{{ errors.form }}</p>
 
       <div class="flex items-center justify-between gap-5 lg:gap-8">
-        <RouterLink class="text-2xs font-medium text-subtle" to="/support">
-          *Забыли пароль?
-        </RouterLink>
+        <span class="text-2xs font-medium text-subtle">
+          Забыли пароль? Напишите в учебную часть — вам его сменят
+        </span>
         <BaseButton
           class="shrink-0"
           :disabled="!canSubmit"

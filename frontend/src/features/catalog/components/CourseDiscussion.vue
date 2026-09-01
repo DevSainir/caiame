@@ -57,9 +57,9 @@ const toggle = (id) => {
           <IconQuestionCircle class="w-6 shrink-0 text-ink" />
           <div class="flex flex-col gap-2">
             <p class="text-base font-semibold text-ink lg:text-lg">Остались ещё вопросы?</p>
-            <RouterLink class="text-sm font-medium text-accent" to="/support">
-              Задайте свой вопрос
-            </RouterLink>
+            <p class="text-sm font-medium text-muted">
+              Задайте их в учебной части академии — там же записывают на цикл
+            </p>
           </div>
         </div>
       </div>
