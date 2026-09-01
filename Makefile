@@ -57,6 +57,7 @@ test-fast: ## Юнит и компонентные тесты бэкенда, ю
 	npm test --prefix frontend
 
 test-e2e: ## Сценарии через браузер: нужен поднятый API (make api) и база
+	@echo 'Сценарии входят по-настоящему; четвёртый прогон подряд упрётся в лимит попыток входа.'
 	npx playwright test
 
 test-integration: ## Тесты против настоящего Postgres

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test'
 import {
   ADMIN,
   STUDENT,
@@ -7,7 +7,7 @@ import {
   revokeAccessFor,
   signIn,
   tokenFor,
-} from "./support.js";
+} from './support.js'
 
 /**
  * Платный доступ к материалам, целиком: браузер, приложение, API, база.
@@ -21,42 +21,42 @@ import {
  * Вход один на файл: он и так проверяется отдельным сценарием, а лишние входы упираются в
  * ограничитель попыток.
  */
-test.describe.configure({ mode: "serial" });
+test.describe.configure({ mode: 'serial' })
 
-test.describe("доступ к материалам курса", () => {
-  let admin;
-  let course;
-  let lessonId;
-  let page;
+test.describe('доступ к материалам курса', () => {
+  let admin
+  let course
+  let lessonId
+  let page
 
   test.beforeAll(async ({ browser }) => {
-    admin = await tokenFor(ADMIN);
-    course = await firstCourse(admin);
-    lessonId = course.tree.modules[0].lessons[0].id;
-    await revokeAccessFor(admin, STUDENT.email);
+    admin = await tokenFor(ADMIN)
+    course = await firstCourse(admin)
+    lessonId = course.tree.modules[0].lessons[0].id
+    await revokeAccessFor(admin, STUDENT.email)
 
-    page = await browser.newPage();
-    await signIn(page, STUDENT);
-  });
+    page = await browser.newPage()
+    await signIn(page, STUDENT)
+  })
 
   test.afterAll(async () => {
-    await revokeAccessFor(admin, STUDENT.email);
-    await page.close();
-  });
+    await revokeAccessFor(admin, STUDENT.email)
+    await page.close()
+  })
 
-  test("без доступа лекция не открывается, а объясняет почему", async () => {
-    await page.goto(`/lessons/${lessonId}`);
+  test('без доступа лекция не открывается, а объясняет почему', async () => {
+    await page.goto(`/lessons/${lessonId}`)
 
-    await expect(page.getByText("Материалы курса пока закрыты")).toBeVisible();
-    await expect(page.locator("video")).toHaveCount(0);
-  });
+    await expect(page.getByText('Материалы курса пока закрыты')).toBeVisible()
+    await expect(page.locator('video')).toHaveCount(0)
+  })
 
-  test("после выдачи доступа та же лекция открывается", async () => {
-    await grantAccess(admin, course.id, STUDENT.email);
+  test('после выдачи доступа та же лекция открывается', async () => {
+    await grantAccess(admin, course.id, STUDENT.email)
 
-    await page.goto(`/lessons/${lessonId}`);
+    await page.goto(`/lessons/${lessonId}`)
 
-    await expect(page.getByText("Материалы курса пока закрыты")).toHaveCount(0);
-    await expect(page.getByRole("heading").first()).toBeVisible();
-  });
-});
+    await expect(page.getByText('Материалы курса пока закрыты')).toHaveCount(0)
+    await expect(page.getByRole('heading').first()).toBeVisible()
+  })
+})
