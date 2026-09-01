@@ -63,6 +63,9 @@ class AdminStore(Protocol):
     async def get_course(self, course_id: UUID) -> Course | None: ...
     async def count_units(self, course_ids: Sequence[UUID]) -> dict[UUID, int]: ...
     async def count_lessons(self, course_ids: Sequence[UUID]) -> dict[UUID, int]: ...
+    async def count_lessons_without_material(
+        self, course_ids: Sequence[UUID]
+    ) -> dict[UUID, int]: ...
     async def count_students(self, course_ids: Sequence[UUID]) -> dict[UUID, int]: ...
     async def slug_taken(self, slug: str, *, except_id: UUID | None = None) -> bool: ...
     async def add_course(self, course: Course) -> Course: ...
@@ -140,6 +143,7 @@ class AdministrationService:
         ids = [course.id for course in courses]
         modules = await self.admin_repo.count_units(ids)
         lessons = await self.admin_repo.count_lessons(ids)
+        empty = await self.admin_repo.count_lessons_without_material(ids)
         students = await self.admin_repo.count_students(ids)
         return [
             CourseRowOut(
@@ -151,6 +155,7 @@ class AdministrationService:
                 specialization=course.specialization.name,
                 modules=modules.get(course.id, 0),
                 lessons=lessons.get(course.id, 0),
+                lessons_without_material=empty.get(course.id, 0),
                 students=students.get(course.id, 0),
             )
             for course in courses

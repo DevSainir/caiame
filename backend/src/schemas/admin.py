@@ -26,6 +26,9 @@ class CourseRowOut(BaseModel):
     specialization: str
     modules: int
     lessons: int
+    # How many of those lectures are still waiting for a file. Zero is the finished state,
+    # and it is the number somebody filling the catalogue works against.
+    lessons_without_material: int
     students: int
 
 

@@ -85,6 +85,27 @@ class AdminRepo:
         )
         return {course_id: int(count) for course_id, count in rows.all()}
 
+    async def count_lessons_without_material(self, course_ids: Sequence[UUID]) -> dict[UUID, int]:
+        """
+        How many live lectures of each course still have no file attached.
+
+        The number the administration actually works against right now: a course with a
+        full programme and empty lectures looks finished in every other column.
+        """
+        if not course_ids:
+            return {}
+        rows = await self.session.execute(
+            select(CourseUnit.course_id, func.count(Lesson.id))
+            .join(Lesson, Lesson.unit_id == CourseUnit.id)
+            .where(
+                CourseUnit.course_id.in_(course_ids),
+                Lesson.deleted_at.is_(None),
+                Lesson.media_file_id.is_(None),
+            )
+            .group_by(CourseUnit.course_id)
+        )
+        return {course_id: int(count) for course_id, count in rows.all()}
+
     async def count_students(self, course_ids: Sequence[UUID]) -> dict[UUID, int]:
         """How many students are taking each course — one query for the whole list."""
         if not course_ids:

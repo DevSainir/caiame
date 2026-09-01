@@ -158,6 +158,16 @@ class FakeAdminRepo:
         """Erase a course."""
         self.courses.remove(course)
 
+    async def count_lessons_without_material(self, course_ids: Sequence[UUID]) -> dict[UUID, int]:
+        """Live lectures without a file, per course."""
+        units = {unit.id: unit.course_id for unit in self.units}
+        counts: dict[UUID, int] = dict.fromkeys(course_ids, 0)
+        for lesson in self.lessons:
+            course_id = units.get(lesson.unit_id)
+            if course_id in counts and lesson.deleted_at is None and lesson.media_file_id is None:
+                counts[course_id] += 1
+        return counts
+
     async def count_lessons(self, course_ids: Sequence[UUID]) -> dict[UUID, int]:
         """Live lectures per course."""
         units = {unit.id: unit.course_id for unit in self.units}

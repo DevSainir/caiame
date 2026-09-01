@@ -140,6 +140,12 @@ onMounted(async () => {
               {{ course.modules }} модулей, {{ course.lessons }} лекций
             </span>
             <span
+              v-if="course.lessons_without_material"
+              class="text-2xs font-semibold text-danger-500"
+            >
+              без материала: {{ course.lessons_without_material }}
+            </span>
+            <span
               class="self-start rounded-sm px-3 py-2 text-2xs font-semibold"
               :class="
                 course.status === 'published'
@@ -171,8 +177,19 @@ onMounted(async () => {
               <p class="pt-2 text-2xs font-medium text-subtle">{{ course.specialization }}</p>
             </td>
             <td class="px-4 py-5 text-sm font-medium text-muted">{{ course.credit_hours }}</td>
-            <td class="px-4 py-5 text-sm font-medium text-muted">
-              {{ course.modules }} модулей · {{ course.lessons }} лекций
+            <td class="px-4 py-5">
+              <p class="text-sm font-medium text-muted">
+                {{ course.modules }} модулей · {{ course.lessons }} лекций
+              </p>
+              <p
+                v-if="course.lessons_without_material"
+                class="pt-1 text-2xs font-semibold text-danger-500"
+              >
+                без материала: {{ course.lessons_without_material }}
+              </p>
+              <p v-else-if="course.lessons" class="pt-1 text-2xs font-medium text-success-600">
+                материалы загружены
+              </p>
             </td>
             <td class="px-4 py-5 text-sm font-medium text-muted">{{ course.students }}</td>
             <td class="px-4 py-5">
