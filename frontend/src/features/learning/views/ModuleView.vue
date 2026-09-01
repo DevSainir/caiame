@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BaseContainer from '@/core/components/BaseContainer.vue'
+import { describeError } from '@/core/api/messages'
 import LearningCrumbs from '@/features/learning/components/LearningCrumbs.vue'
 import LessonRow from '@/features/learning/components/LessonRow.vue'
 import { fetchModule } from '@/features/learning/api'
@@ -37,7 +38,11 @@ watch(() => route.params.id, load, { immediate: true })
 
       <div v-else-if="error" class="flex flex-col items-center gap-5 py-24">
         <p class="text-center text-sm font-semibold text-subtle lg:text-lg">
-          {{ error.status === 404 ? 'Такого модуля нет' : 'Не удалось загрузить модуль' }}
+          {{
+            error.status === 404
+              ? 'Такого модуля нет'
+              : describeError(error, 'Не удалось открыть модуль')
+          }}
         </p>
         <RouterLink class="text-base font-bold text-accent" to="/">Ко всем курсам</RouterLink>
       </div>
@@ -72,6 +77,15 @@ watch(() => route.params.id, load, { immediate: true })
           Лекции модуля:
         </h2>
 
+        <!-- Список лекций открыт всем: это часть того, что курс предлагает. Закрыт сам
+             материал, и строка говорит об этом прямо, а не ведёт в отказ. -->
+        <p
+          v-if="!module.has_access"
+          class="mt-4 rounded-lg bg-page px-4 py-4 text-sm font-medium leading-relaxed text-muted lg:mt-6 lg:px-15 lg:py-6"
+        >
+          Лекции откроются, когда учебная часть запишет вас на цикл.
+        </p>
+
         <p
           v-if="module.lessons.length === 0"
           class="py-12 text-center text-sm font-semibold text-subtle"
@@ -89,7 +103,7 @@ watch(() => route.params.id, load, { immediate: true })
             :key="lesson.id"
             :class="index > 0 ? 'lg:border-t lg:border-subtle' : ''"
           >
-            <LessonRow :lesson="lesson" />
+            <LessonRow :has-access="module.has_access" :lesson="lesson" />
           </li>
         </ul>
       </template>

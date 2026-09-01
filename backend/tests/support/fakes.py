@@ -5,7 +5,7 @@ A MagicMock accepts any call and returns another mock, so a renamed repository m
 leaves the test green while production breaks. These raise AttributeError instead.
 """
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
 from uuid import UUID
 
@@ -15,8 +15,18 @@ from models.course import Course
 from models.course_benefit import CourseBenefit
 from models.course_question import CourseQuestion
 from models.course_unit import CourseUnit
-from models.enums import Audience, CourseStatus, CourseUnitKind, UnitStatus, UserRole
+from models.entitlement import Entitlement
+from models.enums import (
+    AccessSource,
+    Audience,
+    CourseStatus,
+    CourseUnitKind,
+    MediaStatus,
+    UnitStatus,
+    UserRole,
+)
 from models.lesson import Lesson
+from models.media_file import MediaFile
 from models.quiz import Quiz
 from models.quiz_attempt import QuizAttempt, QuizAttemptAnswer
 from models.quiz_question import QuizOption, QuizQuestion
@@ -24,6 +34,7 @@ from models.refresh_token import RefreshToken
 from models.review import Review
 from models.specialization import Specialization
 from models.user import User
+from services.billing import AccessRequiredError
 
 
 class FakeCourseRepo:
@@ -87,10 +98,12 @@ class FakeAdminRepo:
         courses: Sequence[Course] = (),
         units: Sequence[CourseUnit] = (),
         lessons: Sequence[Lesson] = (),
+        students: Mapping[UUID, int] | None = None,
     ) -> None:
         self.courses = list(courses)
         self.units = list(units)
         self.lessons = list(lessons)
+        self.students = dict(students or {})
         self.flushes = 0
 
     async def list_courses(self) -> Sequence[Course]:
@@ -113,6 +126,23 @@ class FakeAdminRepo:
             )
             for course_id in course_ids
         }
+
+    async def count_students(self, course_ids: Sequence[UUID]) -> dict[UUID, int]:
+        """Students per course. The fake counts whatever it was handed."""
+        return {course_id: self.students.get(course_id, 0) for course_id in course_ids}
+
+    async def slug_taken(self, slug: str, *, except_id: UUID | None = None) -> bool:
+        """Whether another course already lives at this address."""
+        return any(course.slug == slug and course.id != except_id for course in self.courses)
+
+    async def add_course(self, course: Course) -> Course:
+        """Insert a course."""
+        self.courses.append(course)
+        return course
+
+    async def delete_course(self, course: Course) -> None:
+        """Erase a course."""
+        self.courses.remove(course)
 
     async def count_lessons(self, course_ids: Sequence[UUID]) -> dict[UUID, int]:
         """Live lectures per course."""
@@ -450,3 +480,135 @@ class FakeCounterStore:
             raise ConnectionError("counter store is down")
         self.counts[key] = self.counts.get(key, 0) + 1
         return self.counts[key], window_seconds
+
+
+class FakeMediaRepo:
+    """In-memory storage for uploaded files."""
+
+    def __init__(self, files: Sequence[MediaFile] = ()) -> None:
+        self.files = list(files)
+
+    async def get(self, media_id: UUID) -> MediaFile | None:
+        """One media row."""
+        return next((media for media in self.files if media.id == media_id), None)
+
+    async def create(
+        self,
+        *,
+        bucket: str,
+        key: str,
+        is_public: bool,
+        original_name: str,
+        content_type: str,
+        size_bytes: int,
+        uploaded_by_id: UUID | None,
+    ) -> MediaFile:
+        """Write down an upload about to start."""
+        media = MediaFile(
+            id=uuid7(),
+            bucket=bucket,
+            key=key,
+            is_public=is_public,
+            original_name=original_name,
+            content_type=content_type,
+            size_bytes=size_bytes,
+            status=MediaStatus.PENDING,
+            uploaded_by_id=uploaded_by_id,
+        )
+        self.files.append(media)
+        return media
+
+    async def mark_ready(
+        self, media: MediaFile, *, size_bytes: int, duration_seconds: int
+    ) -> MediaFile:
+        """Record that the object arrived."""
+        media.size_bytes = size_bytes
+        media.duration_seconds = duration_seconds
+        media.status = MediaStatus.READY
+        return media
+
+
+class FakeEnrollmentRepo:
+    """In-memory study records."""
+
+    def __init__(self) -> None:
+        self.records: dict[tuple[UUID, UUID], UUID | None] = {}
+
+    async def ensure(self, *, user_id: UUID, course_id: UUID, last_lesson_id: UUID | None) -> None:
+        """Enrol, or move the «continue» marker of an existing record."""
+        self.records[(user_id, course_id)] = last_lesson_id
+
+
+class FakeBilling:
+    """
+    A billing service that says yes or no, and remembers what it was asked.
+
+    Handwritten rather than a mock: what matters in a test is that the question was asked
+    at all, and a mock that answers every call the same way cannot tell that apart from a
+    route that never asked.
+    """
+
+    def __init__(self, *, allowed: bool = True) -> None:
+        self.allowed = allowed
+        self.asked: list[UUID] = []
+
+    async def has_access(self, *, user: User | None, course_id: UUID) -> bool:
+        """The prepared answer, and a note that the question was put."""
+        self.asked.append(course_id)
+        return self.allowed and user is not None
+
+    async def require_access(self, *, user: User | None, course_id: UUID) -> None:
+        """The same, refusing instead of answering False."""
+        if not await self.has_access(user=user, course_id=course_id):
+            raise AccessRequiredError(course_id)
+
+
+class FakeEntitlementRepo:
+    """In-memory rights of access."""
+
+    def __init__(self, entitlements: Sequence[Entitlement] = ()) -> None:
+        self.entitlements = list(entitlements)
+
+    async def has_live(self, *, user_id: UUID, course_id: UUID, at: datetime) -> bool:
+        """Whether an unrevoked, unexpired right covers this course."""
+        return any(
+            entitlement.user_id == user_id
+            and entitlement.course_id in (course_id, None)
+            and entitlement.revoked_at is None
+            and entitlement.starts_at <= at
+            and (entitlement.ends_at is None or entitlement.ends_at > at)
+            for entitlement in self.entitlements
+        )
+
+    async def get(self, entitlement_id: UUID) -> Entitlement | None:
+        """One grant by its id."""
+        return next((item for item in self.entitlements if item.id == entitlement_id), None)
+
+    async def create(
+        self,
+        *,
+        user_id: UUID,
+        course_id: UUID | None,
+        source: AccessSource,
+        granted_by_id: UUID | None,
+        reason: str,
+        ends_at: datetime | None,
+    ) -> Entitlement:
+        """Grant a right."""
+        entitlement = Entitlement(
+            id=uuid7(),
+            user_id=user_id,
+            course_id=course_id,
+            source=source,
+            starts_at=datetime.now(UTC),
+            ends_at=ends_at,
+            granted_by_id=granted_by_id,
+            reason=reason,
+        )
+        self.entitlements.append(entitlement)
+        return entitlement
+
+    async def revoke(self, entitlement: Entitlement, *, at: datetime) -> Entitlement:
+        """Withdraw a right, keeping the row."""
+        entitlement.revoked_at = at
+        return entitlement

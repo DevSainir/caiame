@@ -1,40 +1,55 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { describeError } from '@/core/api/messages'
 import BaseButton from '@/core/components/BaseButton.vue'
-import BaseContainer from '@/core/components/BaseContainer.vue'
-import AdminUnitRow from '@/features/admin/components/AdminUnitRow.vue'
+import { useNotificationStore } from '@/core/notifications/store'
+import AdminCourseForm from '@/features/admin/components/AdminCourseForm.vue'
+import AdminLessonForm from '@/features/admin/components/AdminLessonForm.vue'
+import AdminProgramme from '@/features/admin/components/AdminProgramme.vue'
+import AdminShell from '@/features/admin/components/AdminShell.vue'
+import AdminUnitForm from '@/features/admin/components/AdminUnitForm.vue'
 import {
   addLesson,
   addUnit,
+  deleteCourse,
   deleteLesson,
   deleteUnit,
   fetchCourse,
+  fetchCourseCard,
+  fetchTaxonomies,
   moveLesson,
   moveUnit,
   setCourseStatus,
-  updateLesson,
+  updateCourse,
   updateUnit,
 } from '@/features/admin/api'
 
 const route = useRoute()
+const router = useRouter()
+const notifications = useNotificationStore()
 
 const course = ref(null)
+const card = ref(null)
+const taxonomies = ref({ specializations: [], accreditations: [] })
 const isLoading = ref(true)
 const isBusy = ref(false)
-const error = ref(null)
-const notice = ref('')
+const loadError = ref('')
+const formError = ref('')
+
+// Одна форма на экране за раз: {kind: 'course' | 'unit' | 'lesson', ...}
+const dialog = ref(null)
 
 const courseId = computed(() => route.params.id)
 const isPublished = computed(() => course.value?.status === 'published')
 
 async function load() {
   isLoading.value = true
-  error.value = null
+  loadError.value = ''
   try {
     course.value = await fetchCourse(courseId.value)
   } catch (failure) {
-    error.value = failure
+    loadError.value = describeError(failure, 'Не удалось открыть курс')
   } finally {
     isLoading.value = false
   }
@@ -49,68 +64,56 @@ async function load() {
 async function step(action, message = '') {
   if (isBusy.value) return
   isBusy.value = true
-  notice.value = ''
   try {
     await action()
     course.value = await fetchCourse(courseId.value)
-    notice.value = message
+    dialog.value = null
+    if (message) notifications.notify(message)
   } catch (failure) {
-    notice.value =
-      failure.status === 409
-        ? 'Сначала уберите из модуля лекции — вместе с ним они бы исчезли'
-        : 'Не удалось сохранить. Проверьте соединение и попробуйте ещё раз'
+    formError.value = describeError(failure, 'Не удалось сохранить')
+    if (!dialog.value) notifications.notify(formError.value, 'error')
   } finally {
     isBusy.value = false
   }
 }
 
-const ask = (question, fallback) => window.prompt(question, fallback)?.trim()
-
-function createUnit(kind) {
-  const title = ask(`Название (${kind === 'module' ? 'модуль' : 'работа'})`, '')
-  if (!title) return
-  step(() => addUnit(courseId.value, { title, summary: '', kind }), 'Добавлено')
+async function openCourseForm() {
+  formError.value = ''
+  try {
+    card.value = await fetchCourseCard(courseId.value)
+    if (!taxonomies.value.specializations.length) taxonomies.value = await fetchTaxonomies()
+    dialog.value = { kind: 'course' }
+  } catch (failure) {
+    notifications.notify(describeError(failure, 'Не удалось открыть карточку курса'), 'error')
+  }
 }
 
-function renameUnit(unit) {
-  const title = ask('Название', unit.title)
-  if (!title) return
-  const summary = ask('Короткое описание', unit.summary) ?? unit.summary
-  step(() => updateUnit(courseId.value, unit.id, { title, summary }), 'Сохранено')
+function openUnitForm(unit, kind) {
+  formError.value = ''
+  dialog.value = { kind: 'unit', unit, unitKind: kind }
 }
 
-function createLesson(unit) {
-  const title = ask('Название лекции', '')
-  if (!title) return
-  const kind = ask('Тип: video или pdf', 'video')
-  step(
-    () =>
-      addLesson(courseId.value, unit.id, {
-        title,
-        description: '',
-        kind: kind === 'pdf' ? 'pdf' : 'video',
-        duration_minutes: 0,
-        is_required: true,
-      }),
-    'Лекция добавлена',
-  )
+function openLessonForm(unit) {
+  formError.value = ''
+  dialog.value = { kind: 'lesson', unit }
 }
 
-function editLesson(lesson) {
-  const title = ask('Название лекции', lesson.title)
-  if (!title) return
-  const minutes = Number(ask('Длительность, мин', String(lesson.duration_minutes)) ?? 0)
-  step(
-    () =>
-      updateLesson(courseId.value, lesson.id, {
-        title,
-        description: '',
-        kind: lesson.kind,
-        duration_minutes: Number.isFinite(minutes) ? minutes : 0,
-        is_required: lesson.is_required,
-      }),
-    'Сохранено',
-  )
+function saveUnit(payload) {
+  const { unit, unitKind } = dialog.value
+  if (unit) {
+    step(() => updateUnit(courseId.value, unit.id, payload), 'Сохранено')
+    return
+  }
+  step(() => addUnit(courseId.value, { ...payload, kind: unitKind }), 'Добавлено')
+}
+
+function saveLesson(payload) {
+  const { unit } = dialog.value
+  step(() => addLesson(courseId.value, unit.id, payload), 'Лекция добавлена')
+}
+
+function saveCourse(payload) {
+  step(() => updateCourse(courseId.value, payload), 'Курс сохранён')
 }
 
 function removeLesson(lesson) {
@@ -118,137 +121,122 @@ function removeLesson(lesson) {
   step(() => deleteLesson(courseId.value, lesson.id), 'Лекция убрана из программы')
 }
 
+async function removeCourse() {
+  if (!window.confirm('Удалить курс целиком? Это нельзя отменить')) return
+  isBusy.value = true
+  try {
+    await deleteCourse(courseId.value)
+    notifications.notify('Курс удалён')
+    router.push('/admin')
+  } catch (failure) {
+    notifications.notify(describeError(failure, 'Не удалось удалить курс'), 'error')
+  } finally {
+    isBusy.value = false
+  }
+}
+
 watch(courseId, load, { immediate: true })
 </script>
 
 <template>
-  <div class="py-8 lg:py-14">
-    <BaseContainer>
-      <p v-if="isLoading" class="py-24 text-center text-sm font-semibold text-subtle">
-        Загружаем программу…
-      </p>
+  <AdminShell
+    :subtitle="isPublished ? 'Опубликован — правки видны студентам сразу' : 'Черновик'"
+    :title="course?.title ?? 'Курс'"
+  >
+    <template #breadcrumb>
+      <RouterLink class="text-2xs font-medium text-subtle" to="/admin">← Курсы</RouterLink>
+    </template>
 
-      <div v-else-if="error" class="flex flex-col items-center gap-5 py-24">
-        <p class="text-sm font-semibold text-subtle">
-          {{ error.status === 404 ? 'Такого курса нет' : 'Не удалось загрузить курс' }}
-        </p>
-        <RouterLink class="text-base font-bold text-accent" to="/admin">К списку курсов</RouterLink>
-      </div>
+    <template #actions>
+      <button
+        class="text-sm font-semibold text-accent disabled:opacity-50"
+        :disabled="isBusy || isLoading"
+        type="button"
+        @click="openCourseForm"
+      >
+        Карточка курса
+      </button>
+      <button
+        v-if="!isPublished"
+        class="text-sm font-semibold text-danger-500 disabled:opacity-50"
+        :disabled="isBusy || isLoading"
+        type="button"
+        @click="removeCourse"
+      >
+        Удалить
+      </button>
+      <BaseButton
+        :disabled="isBusy || isLoading"
+        size="sm"
+        :variant="isPublished ? 'dark' : 'primary'"
+        @click="
+          step(
+            () => setCourseStatus(courseId, isPublished ? 'draft' : 'published'),
+            isPublished ? 'Курс убран из каталога' : 'Курс опубликован',
+          )
+        "
+      >
+        {{ isPublished ? 'Снять с публикации' : 'Опубликовать' }}
+      </BaseButton>
+    </template>
 
-      <div v-else-if="course" class="overflow-hidden rounded-xl border border-subtle bg-page">
-        <header class="border-b border-subtle px-5 py-5">
-          <RouterLink class="text-2xs font-medium text-subtle" to="/admin">← Курсы</RouterLink>
-          <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
-            <h1 class="text-2xl font-bold text-ink">{{ course.title }}</h1>
-            <BaseButton
-              :disabled="isBusy"
-              size="sm"
-              :variant="isPublished ? 'dark' : 'primary'"
-              @click="
-                step(
-                  () => setCourseStatus(courseId, isPublished ? 'draft' : 'published'),
-                  isPublished ? 'Курс убран из каталога' : 'Курс опубликован',
-                )
-              "
-            >
-              {{ isPublished ? 'Снять с публикации' : 'Опубликовать' }}
-            </BaseButton>
-          </div>
-          <p class="pt-3 text-xs font-medium text-subtle">
-            {{ isPublished ? 'Опубликован — правки видны студентам сразу' : 'Черновик' }}
-          </p>
-        </header>
+    <p v-if="isLoading" class="py-24 text-center text-sm font-semibold text-subtle">
+      Загружаем программу…
+    </p>
 
-        <p
-          v-if="notice"
-          class="border-b border-subtle bg-subtle px-5 py-3 text-xs font-semibold text-ink"
-        >
-          {{ notice }}
-        </p>
+    <div v-else-if="loadError" class="flex flex-col items-center gap-5 py-24">
+      <p class="text-sm font-semibold text-subtle">{{ loadError }}</p>
+      <RouterLink class="text-base font-bold text-accent" to="/admin">К списку курсов</RouterLink>
+    </div>
 
-        <section class="p-4 lg:p-5">
-          <div class="flex items-center justify-between gap-4 pb-4">
-            <h2 class="text-lg font-bold text-ink">Модули</h2>
-            <button
-              class="text-sm font-semibold text-accent disabled:opacity-50"
-              :disabled="isBusy"
-              type="button"
-              @click="createUnit('module')"
-            >
-              + Модуль
-            </button>
-          </div>
+    <AdminProgramme
+      v-else-if="course"
+      :course="course"
+      :course-id="courseId"
+      :is-busy="isBusy"
+      @add-lesson="openLessonForm"
+      @add-unit="openUnitForm(null, $event)"
+      @edit-unit="openUnitForm"
+      @move-lesson="(lesson, direction) => step(() => moveLesson(courseId, lesson.id, direction))"
+      @move-unit="(unit, direction) => step(() => moveUnit(courseId, unit.id, direction))"
+      @remove-lesson="removeLesson"
+      @remove-unit="
+        (unit) =>
+          step(
+            () => deleteUnit(courseId, unit.id),
+            unit.kind === 'module' ? 'Модуль удалён' : 'Работа удалена',
+          )
+      "
+    />
 
-          <div class="rounded-lg border border-subtle">
-            <AdminUnitRow
-              v-for="unit in course.modules"
-              :key="unit.id"
-              :is-busy="isBusy"
-              :unit="unit"
-              @add-lesson="createLesson(unit)"
-              @edit-lesson="editLesson"
-              @move="step(() => moveUnit(courseId, unit.id, $event))"
-              @move-lesson="
-                (lesson, direction) => step(() => moveLesson(courseId, lesson.id, direction))
-              "
-              @remove="step(() => deleteUnit(courseId, unit.id), 'Модуль удалён')"
-              @remove-lesson="removeLesson"
-              @rename="renameUnit(unit)"
-            />
-            <p
-              v-if="course.modules.length === 0"
-              class="px-5 py-8 text-center text-sm font-medium text-subtle"
-            >
-              В курсе пока нет модулей
-            </p>
-          </div>
+    <p class="border-t border-subtle px-5 py-4 text-xs font-medium leading-relaxed text-subtle">
+      Убранная лекция исчезает из программы и из подсчёта процента, но остаётся у тех, кто её уже
+      прошёл: их прогресс не откатится.
+    </p>
 
-          <div class="flex items-center justify-between gap-4 pb-4 pt-8">
-            <h2 class="text-lg font-bold text-ink">Работы курса</h2>
-            <div class="flex gap-4">
-              <button
-                class="text-sm font-semibold text-accent disabled:opacity-50"
-                :disabled="isBusy"
-                type="button"
-                @click="createUnit('assignment')"
-              >
-                + Задание
-              </button>
-              <button
-                class="text-sm font-semibold text-accent disabled:opacity-50"
-                :disabled="isBusy"
-                type="button"
-                @click="createUnit('test')"
-              >
-                + Тестирование
-              </button>
-            </div>
-          </div>
-
-          <div class="rounded-lg border border-subtle">
-            <AdminUnitRow
-              v-for="unit in course.activities"
-              :key="unit.id"
-              :is-busy="isBusy"
-              :unit="unit"
-              @move="step(() => moveUnit(courseId, unit.id, $event))"
-              @remove="step(() => deleteUnit(courseId, unit.id), 'Работа удалена')"
-              @rename="renameUnit(unit)"
-            />
-            <p
-              v-if="course.activities.length === 0"
-              class="px-5 py-8 text-center text-sm font-medium text-subtle"
-            >
-              В курсе пока нет работ
-            </p>
-          </div>
-        </section>
-      </div>
-
-      <p class="max-w-xl pt-4 text-xs font-medium leading-relaxed text-subtle">
-        Убранная лекция исчезает из программы и из знаменателя процента, но остаётся в истории тех,
-        кто её прошёл: их прогресс не откатится.
-      </p>
-    </BaseContainer>
-  </div>
+    <AdminCourseForm
+      v-if="dialog?.kind === 'course'"
+      :accreditations="taxonomies.accreditations"
+      :course="card"
+      :error="formError"
+      :is-busy="isBusy"
+      :specializations="taxonomies.specializations"
+      @close="dialog = null"
+      @submit="saveCourse"
+    />
+    <AdminUnitForm
+      v-else-if="dialog?.kind === 'unit'"
+      :is-busy="isBusy"
+      :kind="dialog.unitKind"
+      :unit="dialog.unit"
+      @close="dialog = null"
+      @submit="saveUnit"
+    />
+    <AdminLessonForm
+      v-else-if="dialog?.kind === 'lesson'"
+      :is-busy="isBusy"
+      @close="dialog = null"
+      @submit="saveLesson"
+    />
+  </AdminShell>
 </template>

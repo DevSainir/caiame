@@ -41,6 +41,10 @@ class ModuleDetailOut(BaseModel):
     title: str
     summary: str
     description: str
+    # Whether this visitor may open the lectures. The list of them is shown either way —
+    # it is part of what the course offers — and this is what decides between a link and a
+    # closed lock next to each line.
+    has_access: bool
     course: CourseRefOut
     lessons: list[LessonRowOut]
 
@@ -49,9 +53,9 @@ class LessonDetailOut(BaseModel):
     """
     One lecture, with everything the page needs and nothing else.
 
-    The link to the material is a plain path today. When storage moves behind signed links
-    (see `media-video`), only this field changes shape — the page already treats it as
-    something it receives rather than something it builds.
+    The link to the material is signed and expires, so it is produced for this request and
+    for this account. Nothing here is built by the page: it receives an address or it
+    receives nothing, and nothing means the lecture is not ready yet.
     """
 
     id: UUID
@@ -59,7 +63,7 @@ class LessonDetailOut(BaseModel):
     description: str
     kind: LessonKind
     duration_minutes: int
-    asset_url: str
+    material_url: str | None
     status: UnitStatus
     course: CourseRefOut
     module: ModuleRefOut

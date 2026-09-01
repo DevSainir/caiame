@@ -3,6 +3,8 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BaseButton from '@/core/components/BaseButton.vue'
 import BaseContainer from '@/core/components/BaseContainer.vue'
+import { describeError } from '@/core/api/messages'
+import AccessNotice from '@/features/learning/components/AccessNotice.vue'
 import LearningCrumbs from '@/features/learning/components/LearningCrumbs.vue'
 import TestQuestion from '@/features/learning/components/TestQuestion.vue'
 import { fetchTest, submitTest } from '@/features/learning/api'
@@ -76,9 +78,15 @@ function formatAnswers() {
         Загружаем тестирование…
       </p>
 
+      <AccessNotice v-else-if="error?.status === 402" />
+
       <div v-else-if="error" class="flex flex-col items-center gap-5 py-24">
         <p class="text-center text-sm font-semibold text-subtle lg:text-lg">
-          {{ error.status === 404 ? 'Такого тестирования нет' : 'Не удалось загрузить тест' }}
+          {{
+            error.status === 404
+              ? 'Такого тестирования нет'
+              : describeError(error, 'Не удалось открыть тестирование')
+          }}
         </p>
         <RouterLink class="text-base font-bold text-accent" to="/">Ко всем курсам</RouterLink>
       </div>

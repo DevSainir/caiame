@@ -137,6 +137,7 @@ def make_lesson(
     position: int = 1,
     kind: LessonKind = LessonKind.VIDEO,
     is_required: bool = True,
+    media_file_id: UUID | None = None,
 ) -> Lesson:
     """One lecture inside a module."""
     return Lesson(
@@ -147,6 +148,6 @@ def make_lesson(
         description="One line about it.",
         kind=kind,
         duration_minutes=23,
-        asset_url="",
+        media_file_id=media_file_id,
         is_required=is_required,
     )

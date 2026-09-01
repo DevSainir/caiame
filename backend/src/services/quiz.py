@@ -9,6 +9,7 @@ from models.enums import CourseUnitKind, QuestionKind, UnitStatus
 from models.quiz import Quiz
 from models.quiz_attempt import QuizAttempt, QuizAttemptAnswer
 from models.quiz_question import QuizOption, QuizQuestion
+from models.user import User
 from schemas.learning import CourseRefOut
 from schemas.quiz import (
     AnswerIn,
@@ -71,6 +72,14 @@ class QuizReader(Protocol):
         ...
 
 
+class AccessGuard(Protocol):
+    """The one question about payment this service is allowed to ask."""
+
+    async def require_access(self, *, user: User | None, course_id: UUID) -> None:
+        """Raise unless this account may open the material of this course."""
+        ...
+
+
 class UnitProgressWriter(Protocol):
     """The one thing grading needs from the progress storage."""
 
@@ -89,36 +98,33 @@ class QuizService:
         unit_repo: UnitReader,
         quiz_repo: QuizReader,
         progress_repo: UnitProgressWriter,
+        billing: AccessGuard,
     ) -> None:
         self.course_repo = course_repo
         self.unit_repo = unit_repo
         self.quiz_repo = quiz_repo
         self.progress_repo = progress_repo
+        self.billing = billing
 
-    async def get_for_student(self, *, unit_id: UUID, user_id: UUID | None) -> QuizForStudentOut:
+    async def get_for_student(self, *, unit_id: UUID, viewer: User) -> QuizForStudentOut:
         """
         The test as a student may see it.
 
         Assembled into schemas that have no `is_correct` field at all, so no filtering step
-        exists to be forgotten later.
+        exists to be forgotten later. The questions are material like any other, so the same
+        right decides whether they are handed over.
         """
         unit, quiz, course = await self._resolve(unit_id)
+        await self.billing.require_access(user=viewer, course_id=course.id)
+        user_id = viewer.id
         questions = await self.quiz_repo.list_questions(quiz.id)
         options = await self.quiz_repo.list_options([question.id for question in questions])
         by_question: dict[UUID, list[QuizOption]] = {}
         for option in options:
             by_question.setdefault(option.question_id, []).append(option)
 
-        spent = (
-            await self.quiz_repo.count_attempts(user_id=user_id, quiz_id=quiz.id)
-            if user_id is not None
-            else 0
-        )
-        last = (
-            await self.quiz_repo.latest_attempt(user_id=user_id, quiz_id=quiz.id)
-            if user_id is not None
-            else None
-        )
+        spent = await self.quiz_repo.count_attempts(user_id=user_id, quiz_id=quiz.id)
+        last = await self.quiz_repo.latest_attempt(user_id=user_id, quiz_id=quiz.id)
         return QuizForStudentOut(
             unit_id=unit.id,
             title=unit.title,
@@ -146,7 +152,7 @@ class QuizService:
         )
 
     async def submit(
-        self, *, unit_id: UUID, user_id: UUID, answers: list[AnswerIn]
+        self, *, unit_id: UUID, viewer: User, answers: list[AnswerIn]
     ) -> AttemptResultOut:
         """
         Grade one attempt on the server and store it.
@@ -155,7 +161,11 @@ class QuizService:
         number of the attempt are all computed here from what is in the database. A `score`
         sent by the browser is not a shortcut, it is a student grading themselves.
         """
-        unit, quiz, _ = await self._resolve(unit_id)
+        unit, quiz, course = await self._resolve(unit_id)
+        # Asked on the attempt as well as on the questions: an account whose access ended
+        # between opening the test and sending it in is no longer taking this course.
+        await self.billing.require_access(user=viewer, course_id=course.id)
+        user_id = viewer.id
         spent = await self.quiz_repo.count_attempts(user_id=user_id, quiz_id=quiz.id)
         if quiz.max_attempts is not None and spent >= quiz.max_attempts:
             raise NoAttemptsLeftError(unit_id)

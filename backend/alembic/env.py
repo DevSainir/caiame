@@ -13,8 +13,11 @@ from models.course import Course  # noqa: F401  # imported so autogenerate sees 
 from models.course_benefit import CourseBenefit  # noqa: F401  # imported so autogenerate sees it
 from models.course_question import CourseQuestion  # noqa: F401  # imported so autogenerate sees it
 from models.course_unit import CourseUnit  # noqa: F401  # imported so autogenerate sees it
+from models.enrollment import Enrollment  # noqa: F401  # imported so autogenerate sees it
+from models.entitlement import Entitlement  # noqa: F401  # imported so autogenerate sees it
 from models.lesson import Lesson  # noqa: F401  # imported so autogenerate sees it
 from models.lesson_progress import LessonProgress  # noqa: F401  # imported so autogenerate sees it
+from models.media_file import MediaFile  # noqa: F401  # imported so autogenerate sees it
 from models.quiz import Quiz  # noqa: F401  # imported so autogenerate sees it
 from models.quiz_attempt import (  # noqa: F401  # imported so autogenerate sees it
     QuizAttempt,

@@ -9,8 +9,8 @@ from models.quiz import Quiz
 from models.quiz_question import QuizOption, QuizQuestion
 from schemas.quiz import AnswerIn
 from services.quiz import NoAttemptsLeftError, QuizNotFoundError, QuizService
-from tests.support.factories import make_course, make_unit
-from tests.support.fakes import FakeCourseRepo, FakeQuizRepo, FakeSyllabusRepo
+from tests.support.factories import make_course, make_unit, make_user
+from tests.support.fakes import FakeBilling, FakeCourseRepo, FakeQuizRepo, FakeSyllabusRepo
 
 
 def _question(*, kind: QuestionKind, points: int, correct: int, options: int = 3) -> QuizQuestion:
@@ -48,6 +48,7 @@ def _service(
             unit_repo=syllabus,
             quiz_repo=FakeQuizRepo(quiz, questions),
             progress_repo=syllabus,
+            billing=FakeBilling(),
         ),
         unit,
     )
@@ -58,7 +59,7 @@ async def test_the_answer_key_is_not_in_what_the_student_receives() -> None:
     question = _question(kind=QuestionKind.SINGLE, points=1, correct=1)
     service, unit = _service([question])
 
-    quiz = await service.get_for_student(unit_id=unit.id, user_id=uuid7())
+    quiz = await service.get_for_student(unit_id=unit.id, viewer=make_user())
 
     assert quiz.questions[0].options
     assert not any(hasattr(option, "is_correct") for option in quiz.questions[0].options)
@@ -71,7 +72,7 @@ async def test_the_server_decides_the_score() -> None:
 
     result = await service.submit(
         unit_id=unit.id,
-        user_id=uuid7(),
+        viewer=make_user(),
         answers=[AnswerIn(question_id=question.id, option_ids=[question.options[0].id])],  # type: ignore[attr-defined]
     )
 
@@ -87,7 +88,7 @@ async def test_a_wrong_pick_earns_nothing() -> None:
 
     result = await service.submit(
         unit_id=unit.id,
-        user_id=uuid7(),
+        viewer=make_user(),
         answers=[AnswerIn(question_id=question.id, option_ids=[question.options[2].id])],  # type: ignore[attr-defined]
     )
 
@@ -103,12 +104,12 @@ async def test_multiple_choice_is_all_or_nothing() -> None:
 
     partial = await service.submit(
         unit_id=unit.id,
-        user_id=uuid7(),
+        viewer=make_user(),
         answers=[AnswerIn(question_id=question.id, option_ids=[options[0].id, options[1].id])],
     )
     full = await service.submit(
         unit_id=unit.id,
-        user_id=uuid7(),
+        viewer=make_user(),
         answers=[
             AnswerIn(
                 question_id=question.id,
@@ -129,7 +130,7 @@ async def test_an_extra_option_spoils_a_multiple_answer() -> None:
 
     result = await service.submit(
         unit_id=unit.id,
-        user_id=uuid7(),
+        viewer=make_user(),
         answers=[
             AnswerIn(
                 question_id=question.id,
@@ -145,11 +146,11 @@ async def test_a_passed_test_closes_its_line_on_the_course_page() -> None:
     """The outline shows «finished» because grading said so, not because a page asked."""
     question = _question(kind=QuestionKind.SINGLE, points=2, correct=1)
     service, unit = _service([question], passing_score=2)
-    student = uuid7()
+    student = make_user()
 
     await service.submit(
         unit_id=unit.id,
-        user_id=student,
+        viewer=student,
         answers=[AnswerIn(question_id=question.id, option_ids=[question.options[0].id])],  # type: ignore[attr-defined]
     )
 
@@ -160,13 +161,13 @@ async def test_the_attempt_limit_is_enforced() -> None:
     """A test with one attempt gives one attempt, and says so instead of grading again."""
     question = _question(kind=QuestionKind.SINGLE, points=1, correct=1)
     service, unit = _service([question], max_attempts=1)
-    student = uuid7()
+    student = make_user()
     answers = [AnswerIn(question_id=question.id, option_ids=[question.options[0].id])]  # type: ignore[attr-defined]
 
-    await service.submit(unit_id=unit.id, user_id=student, answers=answers)
+    await service.submit(unit_id=unit.id, viewer=student, answers=answers)
 
     with pytest.raises(NoAttemptsLeftError):
-        await service.submit(unit_id=unit.id, user_id=student, answers=answers)
+        await service.submit(unit_id=unit.id, viewer=student, answers=answers)
 
 
 async def test_a_line_that_is_not_a_test_has_no_questions() -> None:
@@ -174,4 +175,4 @@ async def test_a_line_that_is_not_a_test_has_no_questions() -> None:
     service, _ = _service([_question(kind=QuestionKind.SINGLE, points=1, correct=1)])
 
     with pytest.raises(QuizNotFoundError):
-        await service.get_for_student(unit_id=uuid7(), user_id=uuid7())
+        await service.get_for_student(unit_id=uuid7(), viewer=make_user())

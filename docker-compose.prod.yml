@@ -40,6 +40,14 @@ services:
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       COOKIE_SECURE: ${COOKIE_SECURE:-true}
       CORS_ORIGINS: ${CORS_ORIGINS:-[]}
+      # Хранилище материалов. Ссылки на загрузку подписывает приложение, а сам файл идёт
+      # из браузера прямо в хранилище — эти значения должны указывать на адрес, доступный
+      # из браузера, а не только изнутри сети.
+      MEDIA_S3_ENDPOINT: ${MEDIA_S3_ENDPOINT:?MEDIA_S3_ENDPOINT is required}
+      MEDIA_S3_REGION: ${MEDIA_S3_REGION:-auto}
+      MEDIA_S3_ACCESS_KEY: ${MEDIA_S3_ACCESS_KEY:?MEDIA_S3_ACCESS_KEY is required}
+      MEDIA_S3_SECRET_KEY: ${MEDIA_S3_SECRET_KEY:?MEDIA_S3_SECRET_KEY is required}
+      MEDIA_BUCKET_PRIVATE: ${MEDIA_BUCKET_PRIVATE:-caiame-private}
     depends_on:
       db:
         condition: service_healthy

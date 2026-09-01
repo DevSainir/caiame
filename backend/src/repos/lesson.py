@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -58,6 +58,49 @@ class LessonRepo:
             .where(LessonProgress.user_id == user_id, CourseUnit.course_id == course_id)
         )
         return {lesson_id: str(status) for lesson_id, status in rows.all()}
+
+    async def required_totals(self, course_ids: Sequence[UUID]) -> dict[UUID, int]:
+        """How many required lectures each course has — the denominator of its percentage."""
+        if not course_ids:
+            return {}
+        rows = await self.session.execute(
+            select(CourseUnit.course_id, func.count(Lesson.id))
+            .join(Lesson, Lesson.unit_id == CourseUnit.id)
+            .where(
+                CourseUnit.course_id.in_(course_ids),
+                Lesson.deleted_at.is_(None),
+                Lesson.is_required.is_(True),
+            )
+            .group_by(CourseUnit.course_id)
+        )
+        return {course_id: int(count) for course_id, count in rows.all()}
+
+    async def done_by_student(
+        self, *, course_ids: Sequence[UUID], user_ids: Sequence[UUID]
+    ) -> dict[tuple[UUID, UUID], int]:
+        """
+        Finished required lectures per student and course, for a whole page of students.
+
+        One query rather than one per row: the administration list shows twenty students at
+        a time, and twenty round trips to draw one column is how a screen becomes slow for
+        no reason anybody can see.
+        """
+        if not course_ids or not user_ids:
+            return {}
+        rows = await self.session.execute(
+            select(LessonProgress.user_id, CourseUnit.course_id, func.count(LessonProgress.id))
+            .join(Lesson, Lesson.id == LessonProgress.lesson_id)
+            .join(CourseUnit, CourseUnit.id == Lesson.unit_id)
+            .where(
+                LessonProgress.user_id.in_(user_ids),
+                CourseUnit.course_id.in_(course_ids),
+                LessonProgress.status == UnitStatus.DONE,
+                Lesson.deleted_at.is_(None),
+                Lesson.is_required.is_(True),
+            )
+            .group_by(LessonProgress.user_id, CourseUnit.course_id)
+        )
+        return {(user_id, course_id): int(count) for user_id, course_id, count in rows.all()}
 
     async def mark_completed(self, *, user_id: UUID, lesson_id: UUID) -> None:
         """

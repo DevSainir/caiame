@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 from uuid import UUID
 
-from sqlalchemy import case, select
+from sqlalchemy import case, func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -74,3 +74,33 @@ class SyllabusRepo:
                 where=UnitProgress.status != UnitStatus.DONE,
             )
         )
+
+    async def work_totals(self, course_ids: Sequence[UUID]) -> dict[UUID, int]:
+        """How many works — assignments and tests — each course has."""
+        if not course_ids:
+            return {}
+        rows = await self.session.execute(
+            select(CourseUnit.course_id, func.count(CourseUnit.id))
+            .where(CourseUnit.course_id.in_(course_ids), CourseUnit.kind != CourseUnitKind.MODULE)
+            .group_by(CourseUnit.course_id)
+        )
+        return {course_id: int(count) for course_id, count in rows.all()}
+
+    async def done_works_by_student(
+        self, *, course_ids: Sequence[UUID], user_ids: Sequence[UUID]
+    ) -> dict[tuple[UUID, UUID], int]:
+        """Passed works per student and course, in one query for the whole page."""
+        if not course_ids or not user_ids:
+            return {}
+        rows = await self.session.execute(
+            select(UnitProgress.user_id, CourseUnit.course_id, func.count(UnitProgress.id))
+            .join(CourseUnit, CourseUnit.id == UnitProgress.unit_id)
+            .where(
+                UnitProgress.user_id.in_(user_ids),
+                CourseUnit.course_id.in_(course_ids),
+                UnitProgress.status == UnitStatus.DONE,
+                CourseUnit.kind != CourseUnitKind.MODULE,
+            )
+            .group_by(UnitProgress.user_id, CourseUnit.course_id)
+        )
+        return {(user_id, course_id): int(count) for user_id, course_id, count in rows.all()}

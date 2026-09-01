@@ -4,17 +4,10 @@ import { lessonKindLabel } from '@/features/learning/labels'
 const props = defineProps({
   unit: { type: Object, required: true },
   isBusy: { type: Boolean, default: false },
+  courseId: { type: String, default: '' },
 })
 
-const emit = defineEmits([
-  'move',
-  'rename',
-  'remove',
-  'add-lesson',
-  'edit-lesson',
-  'move-lesson',
-  'remove-lesson',
-])
+const emit = defineEmits(['move', 'rename', 'remove', 'add-lesson', 'move-lesson', 'remove-lesson'])
 
 const KIND_LABELS = { module: 'модуль', assignment: 'задание', test: 'тест' }
 </script>
@@ -97,7 +90,7 @@ const KIND_LABELS = { module: 'модуль', assignment: 'задание', test
           class="text-2xs font-semibold"
           :class="lesson.has_material ? 'text-success-600' : 'text-danger-500'"
         >
-          {{ lesson.has_material ? 'файл загружен' : 'нет файла' }}
+          {{ lesson.has_material ? 'материал загружен' : 'без материала' }}
         </span>
         <div class="flex items-center gap-2">
           <button
@@ -116,14 +109,12 @@ const KIND_LABELS = { module: 'модуль', assignment: 'задание', test
           >
             ↓
           </button>
-          <button
-            class="text-sm font-semibold text-accent disabled:opacity-50"
-            :disabled="props.isBusy"
-            type="button"
-            @click="emit('edit-lesson', lesson)"
+          <RouterLink
+            class="text-sm font-semibold text-accent"
+            :to="`/admin/courses/${props.courseId}/lessons/${lesson.id}`"
           >
-            Изменить
-          </button>
+            Открыть
+          </RouterLink>
           <button
             class="text-sm font-semibold text-danger-500 disabled:opacity-50"
             :disabled="props.isBusy"

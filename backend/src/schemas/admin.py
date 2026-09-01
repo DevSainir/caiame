@@ -1,8 +1,9 @@
+from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from models.enums import CourseStatus, CourseUnitKind, LessonKind
+from models.enums import AccessSource, CourseStatus, CourseUnitKind, LessonKind
 
 
 class CourseRowOut(BaseModel):
@@ -94,3 +95,123 @@ class CourseStatusIn(BaseModel):
     """Publishing or unpublishing a course."""
 
     status: CourseStatus
+
+
+class CourseIn(BaseModel):
+    """A course as the administration form sends it, new or changed."""
+
+    title: str = Field(min_length=1, max_length=200)
+    summary: str = Field(default="", max_length=300)
+    description: str = Field(default="", max_length=20000)
+    specialization_id: UUID
+    accreditation_id: UUID | None = None
+    credit_hours: int = Field(default=0, ge=0, le=10000)
+    duration_hours: int = Field(default=0, ge=0, le=10000)
+    # Money in minor units, never a fractional number: rounding errors in money show up in
+    # the reconciliation with the bank rather than in a test.
+    price_minor: int = Field(default=0, ge=0)
+
+
+class CourseDetailOut(BaseModel):
+    """Everything the course form shows, including what the catalogue never sends."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    slug: str
+    title: str
+    summary: str
+    description: str
+    status: CourseStatus
+    specialization_id: UUID
+    accreditation_id: UUID | None
+    credit_hours: int
+    duration_hours: int
+    price_minor: int
+    currency: str
+    students: int
+
+
+class MaterialOut(BaseModel):
+    """The file behind a lecture, as the editor lists it."""
+
+    id: UUID
+    original_name: str
+    size_bytes: int
+    duration_seconds: int
+    content_type: str
+    uploaded_at: datetime
+
+
+class LessonDetailOut(BaseModel):
+    """One lecture as its own editing screen shows it."""
+
+    id: UUID
+    unit_id: UUID
+    position: int
+    title: str
+    description: str
+    kind: LessonKind
+    duration_minutes: int
+    is_required: bool
+    material: MaterialOut | None
+
+
+class UploadStartIn(BaseModel):
+    """What the browser tells the server before uploading a file."""
+
+    file_name: str = Field(min_length=1, max_length=255)
+    size_bytes: int = Field(gt=0)
+    kind: LessonKind
+
+
+class UploadTicketOut(BaseModel):
+    """The one-file permission the browser uploads with."""
+
+    media_id: UUID
+    url: str
+    content_type: str
+    size_bytes: int
+
+
+class UploadConfirmIn(BaseModel):
+    """
+    What the browser reports once the upload finished.
+
+    The length is read from the file by the administrator's own browser, which holds the
+    whole file. The player a student watches in is never asked for it: there the number
+    decides whether a lecture counts as watched.
+    """
+
+    media_id: UUID
+    duration_seconds: int = Field(default=0, ge=0)
+
+
+class AccessGrantIn(BaseModel):
+    """Opening a course for one student by hand."""
+
+    email: str = Field(min_length=3, max_length=320)
+    course_id: UUID | None = None
+    reason: str = Field(default="", max_length=300)
+
+
+class AccessRowOut(BaseModel):
+    """One grant in the access list."""
+
+    id: UUID
+    student_name: str
+    student_email: str
+    course_id: UUID | None
+    course_title: str
+    source: AccessSource
+    granted_at: datetime
+    revoked_at: datetime | None
+    reason: str
+    progress_percent: int
+
+
+class AccessPageOut(BaseModel):
+    """A page of grants and whether there are more of them."""
+
+    items: list[AccessRowOut]
+    total: int

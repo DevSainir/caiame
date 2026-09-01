@@ -8,9 +8,21 @@ export default [
     component: () => import('@/features/admin/views/AdminCoursesView.vue'),
   },
   {
+    path: '/admin/access',
+    name: 'admin-access',
+    meta: { requiresAuth: true, requiresRole: 'admin', headerTitle: 'Студенты и доступ' },
+    component: () => import('@/features/admin/views/AdminAccessView.vue'),
+  },
+  {
     path: '/admin/courses/:id',
     name: 'admin-course',
     meta: { requiresAuth: true, requiresRole: 'admin', headerTitle: 'Программа курса' },
     component: () => import('@/features/admin/views/AdminCourseView.vue'),
+  },
+  {
+    path: '/admin/courses/:courseId/lessons/:lessonId',
+    name: 'admin-lesson',
+    meta: { requiresAuth: true, requiresRole: 'admin', headerTitle: 'Лекция' },
+    component: () => import('@/features/admin/views/AdminLessonView.vue'),
   },
 ]

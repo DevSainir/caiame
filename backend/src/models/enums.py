@@ -70,3 +70,25 @@ class QuestionKind(StrEnum):
 
     SINGLE = "single"
     MULTIPLE = "multiple"
+
+
+class MediaStatus(StrEnum):
+    """
+    Whether an object in storage may be shown.
+
+    A file exists only after the backend has asked the storage and been told it is there.
+    Between issuing an upload link and that answer the row is `pending`, and a lesson with
+    a `pending` file shows as having no material rather than as having a broken one.
+    """
+
+    PENDING = "pending"
+    READY = "ready"
+
+
+class AccessSource(StrEnum):
+    """Where a right to a course came from. Only `manual` is issued today."""
+
+    PURCHASE = "purchase"
+    SUBSCRIPTION = "subscription"
+    MANUAL = "manual"
+    PROMO = "promo"

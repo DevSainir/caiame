@@ -4,8 +4,10 @@ from uuid import UUID
 
 from models.course import Course
 from models.course_unit import CourseUnit
-from models.enums import CourseUnitKind, LessonKind, UnitStatus
+from models.enums import CourseUnitKind, LessonKind, MediaStatus, UnitStatus
 from models.lesson import Lesson
+from models.media_file import MediaFile
+from models.user import User
 from schemas.learning import (
     CourseRefOut,
     LessonDetailOut,
@@ -37,6 +39,42 @@ class UnitReader(Protocol):
 
     async def get_unit(self, unit_id: UUID) -> CourseUnit | None:
         """One line of the outline by its id."""
+        ...
+
+
+class AccessGuard(Protocol):
+    """The one question about payment this service is allowed to ask."""
+
+    async def has_access(self, *, user: User | None, course_id: UUID) -> bool:
+        """Whether this account may open the material of this course."""
+        ...
+
+    async def require_access(self, *, user: User | None, course_id: UUID) -> None:
+        """The same question, raising when the answer is no."""
+        ...
+
+
+class MaterialReader(Protocol):
+    """What the lecture page needs to hand out a file."""
+
+    async def get(self, media_id: UUID) -> MediaFile | None:
+        """One media row."""
+        ...
+
+
+class MaterialSigner(Protocol):
+    """Turning a stored object into a link that plays and then expires."""
+
+    def playback_url(self, media: MediaFile) -> str:
+        """A short-lived link to one object."""
+        ...
+
+
+class EnrolmentWriter(Protocol):
+    """Where the fact «this student is taking this course» is recorded."""
+
+    async def ensure(self, *, user_id: UUID, course_id: UUID, last_lesson_id: UUID | None) -> None:
+        """Enrol a student if they are not enrolled, and remember where they were."""
         ...
 
 
@@ -80,13 +118,27 @@ class LearningService:
         course_repo: CourseByIdReader,
         unit_repo: UnitReader,
         lesson_repo: LessonReader,
+        media_repo: MaterialReader,
+        media_service: MaterialSigner,
+        enrollment_repo: EnrolmentWriter,
+        billing: AccessGuard,
     ) -> None:
         self.course_repo = course_repo
         self.unit_repo = unit_repo
         self.lesson_repo = lesson_repo
+        self.media_repo = media_repo
+        self.media_service = media_service
+        self.enrollment_repo = enrollment_repo
+        self.billing = billing
 
-    async def get_module(self, *, unit_id: UUID, user_id: UUID | None) -> ModuleDetailOut:
-        """One module with its lectures and the asking student's progress in them."""
+    async def get_module(self, *, unit_id: UUID, viewer: User | None) -> ModuleDetailOut:
+        """
+        One module with its lectures and the asking student's progress in them.
+
+        Open to anybody, including a visitor without an account: the list of lectures is
+        part of what a course is selling. Opening a lecture is a different question, and it
+        is answered in `get_lesson`; this page only says which way that answer will go.
+        """
         unit = await self.unit_repo.get_unit(unit_id)
         if unit is None or unit.kind is not CourseUnitKind.MODULE:
             raise ModuleNotFoundError(unit_id)
@@ -95,12 +147,14 @@ class LearningService:
             raise ModuleNotFoundError(unit_id)
 
         lessons = await self.lesson_repo.list_for_unit(unit.id)
+        user_id = viewer.id if viewer else None
         statuses = await self._statuses(user_id=user_id, course_id=course.id)
         return ModuleDetailOut(
             id=unit.id,
             title=unit.title,
             summary=unit.summary,
             description=unit.summary,
+            has_access=await self.billing.has_access(user=viewer, course_id=course.id),
             course=CourseRefOut.model_validate(course),
             lessons=[
                 LessonRowOut(
@@ -115,8 +169,15 @@ class LearningService:
             ],
         )
 
-    async def get_lesson(self, *, lesson_id: UUID, user_id: UUID | None) -> LessonDetailOut:
-        """One lecture with the context the page shows above it."""
+    async def get_lesson(self, *, lesson_id: UUID, viewer: User) -> LessonDetailOut:
+        """
+        One lecture with the context the page shows above it.
+
+        The right to open it is checked here, on every request, and not once when the course
+        was entered: access ends between two page loads, and a check made at the door leaves
+        the whole course open behind it. The link to the file is signed only after that
+        check passes — the storage knows nothing about who paid.
+        """
         lesson = await self.lesson_repo.get(lesson_id)
         if lesson is None:
             raise LessonNotFoundError(lesson_id)
@@ -127,20 +188,27 @@ class LearningService:
         if course is None:
             raise LessonNotFoundError(lesson_id)
 
-        statuses = await self._statuses(user_id=user_id, course_id=course.id)
+        await self.billing.require_access(user=viewer, course_id=course.id)
+        # Enrolling happens at the first lecture a student is entitled to open, and the
+        # record then follows them: it is what the «continue» button reads.
+        await self.enrollment_repo.ensure(
+            user_id=viewer.id, course_id=course.id, last_lesson_id=lesson.id
+        )
+
+        statuses = await self._statuses(user_id=viewer.id, course_id=course.id)
         return LessonDetailOut(
             id=lesson.id,
             title=lesson.title,
             description=lesson.description,
             kind=lesson.kind,
             duration_minutes=lesson.duration_minutes,
-            asset_url=lesson.asset_url,
+            material_url=await self._material_url(lesson),
             status=status_of(lesson.id, statuses),
             course=CourseRefOut.model_validate(course),
             module=ModuleRefOut(id=unit.id, title=unit.title),
         )
 
-    async def complete_lesson(self, *, lesson_id: UUID, user_id: UUID) -> LessonStatusOut:
+    async def complete_lesson(self, *, lesson_id: UUID, viewer: User) -> LessonStatusOut:
         """
         Mark a lecture finished for this student.
 
@@ -151,14 +219,52 @@ class LearningService:
         lesson = await self.lesson_repo.get(lesson_id)
         if lesson is None:
             raise LessonNotFoundError(lesson_id)
-        await self.lesson_repo.mark_completed(user_id=user_id, lesson_id=lesson_id)
+        unit = await self.unit_repo.get_unit(lesson.unit_id)
+        if unit is None:
+            raise LessonNotFoundError(lesson_id)
+        # Asked again here: finishing a lecture is reading it, and a route that writes
+        # progress for material the account may not open is the same hole with a nicer name.
+        await self.billing.require_access(user=viewer, course_id=unit.course_id)
+        await self.lesson_repo.mark_completed(user_id=viewer.id, lesson_id=lesson_id)
         return LessonStatusOut(status=UnitStatus.DONE)
+
+    async def _material_url(self, lesson: Lesson) -> str | None:
+        """
+        A link to the file of this lecture, or nothing while it is still being prepared.
+
+        A file that has not been confirmed in storage counts as absent: the page then says
+        the material is not uploaded yet instead of showing a player that fails.
+        """
+        if lesson.media_file_id is None:
+            return None
+        media = await self.media_repo.get(lesson.media_file_id)
+        if media is None or media.status is not MediaStatus.READY:
+            return None
+        return self.media_service.playback_url(media)
 
     async def _statuses(self, *, user_id: UUID | None, course_id: UUID) -> dict[UUID, str]:
         """One student's lesson statuses, or nothing at all for a visitor without a session."""
         if user_id is None:
             return {}
         return await self.lesson_repo.statuses_for_course(user_id=user_id, course_id=course_id)
+
+
+def completion_percent(
+    *, lessons_done: int, lessons_total: int, works_done: int, works_total: int
+) -> int:
+    """
+    Share of a course that is finished.
+
+    The rule itself, in one place: lectures and works are the atoms, modules are not counted
+    again for containing lectures, a lecture in progress earns nothing, and optional
+    lectures never reach the denominator. The course page and the administration list both
+    call this — two implementations of one percentage disagree, and the disagreement is
+    found by a student who is shown two different numbers for the same course.
+    """
+    total = lessons_total + works_total
+    if total == 0:
+        return 0
+    return round((lessons_done + works_done) * 100 / total)
 
 
 def status_of(lesson_id: UUID, statuses: dict[UUID, str]) -> UnitStatus:

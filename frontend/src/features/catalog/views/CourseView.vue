@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BaseContainer from '@/core/components/BaseContainer.vue'
+import { describeError } from '@/core/api/messages'
 import CourseBenefits from '@/features/catalog/components/CourseBenefits.vue'
 import CourseDiscussion from '@/features/catalog/components/CourseDiscussion.vue'
 import CourseHero from '@/features/catalog/components/CourseHero.vue'
@@ -94,7 +95,7 @@ watch(() => route.params.slug, load, { immediate: true })
 
     <div v-else-if="error" class="flex flex-col items-center gap-5 py-24 lg:py-35">
       <p class="text-center text-sm font-semibold text-subtle lg:text-lg">
-        {{ isMissing ? 'Такого курса нет' : 'Не удалось загрузить курс' }}
+        {{ isMissing ? 'Такого курса нет' : describeError(error, 'Не удалось открыть курс') }}
       </p>
       <RouterLink v-if="isMissing" class="text-base font-bold text-accent" to="/">
         Ко всем курсам

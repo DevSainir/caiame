@@ -8,6 +8,7 @@ from sqlalchemy.orm import selectinload
 
 from models.course import Course
 from models.course_unit import CourseUnit
+from models.enrollment import Enrollment
 from models.enums import CourseStatus, CourseUnitKind
 from models.lesson import Lesson
 
@@ -65,6 +66,40 @@ class AdminRepo:
             .group_by(CourseUnit.course_id)
         )
         return {course_id: int(count) for course_id, count in rows.all()}
+
+    async def count_students(self, course_ids: Sequence[UUID]) -> dict[UUID, int]:
+        """How many students are taking each course — one query for the whole list."""
+        if not course_ids:
+            return {}
+        rows = await self.session.execute(
+            select(Enrollment.course_id, func.count(Enrollment.id))
+            .where(Enrollment.course_id.in_(course_ids))
+            .group_by(Enrollment.course_id)
+        )
+        return {course_id: int(count) for course_id, count in rows.all()}
+
+    async def slug_taken(self, slug: str, *, except_id: UUID | None = None) -> bool:
+        """Whether another course already lives at this address."""
+        statement = select(Course.id).where(Course.slug == slug)
+        if except_id is not None:
+            statement = statement.where(Course.id != except_id)
+        return await self.session.scalar(statement.limit(1)) is not None
+
+    async def add_course(self, course: Course) -> Course:
+        """Insert a course and hand it back with its id."""
+        self.session.add(course)
+        await self.session.flush()
+        return course
+
+    async def delete_course(self, course: Course) -> None:
+        """
+        Erase a course entirely.
+
+        Allowed by the service only for a draft nobody is taking. Everything below a course
+        is cascaded away by the foreign keys, which is precisely why the condition above is
+        not negotiable: on a published course this would take somebody's studying with it.
+        """
+        await self.session.delete(course)
 
     async def set_status(self, course: Course, status: CourseStatus) -> None:
         """Publish a course or take it out of the catalogue."""

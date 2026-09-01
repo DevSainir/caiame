@@ -17,7 +17,12 @@ from services.administration import (
     UnitNotFoundError,
 )
 from tests.support.factories import make_course, make_lesson, make_unit
-from tests.support.fakes import FakeAdminRepo, FakeLessonRepo, FakeSyllabusRepo
+from tests.support.fakes import (
+    FakeAdminRepo,
+    FakeLessonRepo,
+    FakeMediaRepo,
+    FakeSyllabusRepo,
+)
 
 
 def _service(
@@ -34,6 +39,7 @@ def _service(
             admin_repo=FakeAdminRepo([course], list(units), list(lessons)),
             unit_repo=syllabus,
             lesson_repo=lesson_repo,
+            media_repo=FakeMediaRepo(),
         ),
         course,
     )

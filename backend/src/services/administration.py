@@ -2,15 +2,21 @@ from collections.abc import Sequence
 from typing import Protocol
 from uuid import UUID
 
+from core.text import slugify
 from models.course import Course
 from models.course_unit import CourseUnit
-from models.enums import CourseStatus, CourseUnitKind
+from models.enums import CourseStatus, CourseUnitKind, MediaStatus
 from models.lesson import Lesson
+from models.media_file import MediaFile
 from schemas.admin import (
+    CourseDetailOut,
+    CourseIn,
     CourseRowOut,
     CourseTreeOut,
+    LessonDetailOut,
     LessonIn,
     LessonRowOut,
+    MaterialOut,
     UnitIn,
     UnitRowOut,
     UnitUpdateIn,
@@ -33,6 +39,18 @@ class ModuleNotEmptyError(Exception):
     """A module still holds lectures, and removing it would take them with it."""
 
 
+class CourseInUseError(Exception):
+    """The course is published or has students, so erasing it would erase their studying."""
+
+
+class SlugTakenError(Exception):
+    """Another course already lives at this address."""
+
+
+class MaterialNotReadyError(Exception):
+    """The file has not arrived in storage, so it cannot be attached to a lecture."""
+
+
 class Positioned(Protocol):
     """Anything the editor can reorder: it has an identity and a place in a list."""
 
@@ -47,6 +65,10 @@ class AdminStore(Protocol):
     async def get_course(self, course_id: UUID) -> Course | None: ...
     async def count_units(self, course_ids: Sequence[UUID]) -> dict[UUID, int]: ...
     async def count_lessons(self, course_ids: Sequence[UUID]) -> dict[UUID, int]: ...
+    async def count_students(self, course_ids: Sequence[UUID]) -> dict[UUID, int]: ...
+    async def slug_taken(self, slug: str, *, except_id: UUID | None = None) -> bool: ...
+    async def add_course(self, course: Course) -> Course: ...
+    async def delete_course(self, course: Course) -> None: ...
     async def set_status(self, course: Course, status: CourseStatus) -> None: ...
     async def add_unit(self, unit: CourseUnit) -> CourseUnit: ...
     async def next_position(self, *, course_id: UUID, kind: CourseUnitKind) -> int: ...
@@ -73,6 +95,12 @@ class LessonStore(Protocol):
     async def list_for_course(self, course_id: UUID) -> Sequence[Lesson]: ...
 
 
+class MediaStore(Protocol):
+    """Uploaded files, as the editor needs to show and attach them."""
+
+    async def get(self, media_id: UUID) -> MediaFile | None: ...
+
+
 class AdministrationService:
     """
     What an administrator does to a course: build its programme and publish it.
@@ -83,11 +111,17 @@ class AdministrationService:
     """
 
     def __init__(
-        self, *, admin_repo: AdminStore, unit_repo: UnitStore, lesson_repo: LessonStore
+        self,
+        *,
+        admin_repo: AdminStore,
+        unit_repo: UnitStore,
+        lesson_repo: LessonStore,
+        media_repo: MediaStore,
     ) -> None:
         self.admin_repo = admin_repo
         self.unit_repo = unit_repo
         self.lesson_repo = lesson_repo
+        self.media_repo = media_repo
 
     async def list_courses(self) -> list[CourseRowOut]:
         """Every course of the academy with the size of its programme."""
@@ -126,6 +160,145 @@ class AdministrationService:
             status=course.status,
             modules=[row for row in rows if row.kind is CourseUnitKind.MODULE],
             activities=[row for row in rows if row.kind is not CourseUnitKind.MODULE],
+        )
+
+    async def create_course(self, payload: CourseIn) -> CourseDetailOut:
+        """
+        Start a new course as a draft.
+
+        A draft and not a published course, always: a course appears in the catalogue when
+        somebody decides it is ready, never as a side effect of creating it. The address is
+        made from the title once, here, and then belongs to the course — renaming the course
+        later leaves it alone, because links to it are already in people's hands.
+        """
+        slug = await self._free_slug(slugify(payload.title, fallback="course"))
+        course = await self.admin_repo.add_course(
+            Course(
+                slug=slug,
+                title=payload.title,
+                summary=payload.summary,
+                description=payload.description,
+                status=CourseStatus.DRAFT,
+                specialization_id=payload.specialization_id,
+                accreditation_id=payload.accreditation_id,
+                credit_hours=payload.credit_hours,
+                duration_hours=payload.duration_hours,
+                price_minor=payload.price_minor,
+            )
+        )
+        return self._course_detail(course, students=0)
+
+    async def get_course_detail(self, course_id: UUID) -> CourseDetailOut:
+        """One course as its own form shows it."""
+        course = await self._course(course_id)
+        students = await self.admin_repo.count_students([course.id])
+        return self._course_detail(course, students=students.get(course.id, 0))
+
+    async def update_course(self, *, course_id: UUID, payload: CourseIn) -> CourseDetailOut:
+        """Change the description of a course. Its address stays where it is."""
+        course = await self._course(course_id)
+        course.title = payload.title
+        course.summary = payload.summary
+        course.description = payload.description
+        course.specialization_id = payload.specialization_id
+        course.accreditation_id = payload.accreditation_id
+        course.credit_hours = payload.credit_hours
+        course.duration_hours = payload.duration_hours
+        course.price_minor = payload.price_minor
+        await self.admin_repo.flush()
+        students = await self.admin_repo.count_students([course.id])
+        return self._course_detail(course, students=students.get(course.id, 0))
+
+    async def delete_course(self, course_id: UUID) -> None:
+        """
+        Erase a draft nobody is taking.
+
+        Anything else is refused. A course that has been published has been in front of
+        people, and a course with students holds their progress under it; the way to retire
+        those is to take them out of the catalogue, which keeps everything and shows nothing.
+        """
+        course = await self._course(course_id)
+        students = await self.admin_repo.count_students([course.id])
+        if course.status is not CourseStatus.DRAFT or students.get(course.id, 0) > 0:
+            raise CourseInUseError(course_id)
+        await self.admin_repo.delete_course(course)
+
+    async def get_lesson_detail(self, *, course_id: UUID, lesson_id: UUID) -> LessonDetailOut:
+        """One lecture with the file behind it, as its editing screen shows it."""
+        lesson = await self._lesson(course_id, lesson_id)
+        return LessonDetailOut(
+            id=lesson.id,
+            unit_id=lesson.unit_id,
+            position=lesson.position,
+            title=lesson.title,
+            description=lesson.description,
+            kind=lesson.kind,
+            duration_minutes=lesson.duration_minutes,
+            is_required=lesson.is_required,
+            material=await self._material(lesson),
+        )
+
+    async def attach_material(
+        self, *, course_id: UUID, lesson_id: UUID, media_id: UUID
+    ) -> LessonDetailOut:
+        """
+        Point a lecture at a file that has finished uploading.
+
+        Only a confirmed file may be attached: a lecture pointing at an upload that broke
+        halfway shows a player that fails, which is worse than a lecture that honestly has
+        no material yet.
+        """
+        lesson = await self._lesson(course_id, lesson_id)
+        media = await self.media_repo.get(media_id)
+        if media is None or media.status is not MediaStatus.READY:
+            raise MaterialNotReadyError(media_id)
+        lesson.media_file_id = media.id
+        await self.admin_repo.flush()
+        return await self.get_lesson_detail(course_id=course_id, lesson_id=lesson_id)
+
+    async def _free_slug(self, base: str) -> str:
+        """The address for a new course: the transliterated title, or the next free number."""
+        if not await self.admin_repo.slug_taken(base):
+            return base
+        for suffix in range(2, 100):
+            candidate = f"{base}-{suffix}"
+            if not await self.admin_repo.slug_taken(candidate):
+                return candidate
+        raise SlugTakenError(base)
+
+    async def _material(self, lesson: Lesson) -> MaterialOut | None:
+        """The file behind a lecture, if there is one and it really arrived."""
+        if lesson.media_file_id is None:
+            return None
+        media = await self.media_repo.get(lesson.media_file_id)
+        if media is None or media.status is not MediaStatus.READY:
+            return None
+        return MaterialOut(
+            id=media.id,
+            original_name=media.original_name,
+            size_bytes=media.size_bytes,
+            duration_seconds=media.duration_seconds,
+            content_type=media.content_type,
+            uploaded_at=media.updated_at,
+        )
+
+    @staticmethod
+    def _course_detail(course: Course, *, students: int) -> CourseDetailOut:
+        """One course as the form reads it."""
+        return CourseDetailOut(
+            id=course.id,
+            slug=course.slug,
+            title=course.title,
+            summary=course.summary,
+            description=course.description,
+            status=course.status,
+            specialization_id=course.specialization_id,
+            accreditation_id=course.accreditation_id,
+            credit_hours=course.credit_hours,
+            duration_hours=course.duration_hours,
+            price_minor=course.price_minor,
+            currency=course.currency,
+            students=students,
         )
 
     async def set_status(self, *, course_id: UUID, status: CourseStatus) -> CourseTreeOut:
@@ -198,7 +371,6 @@ class AdministrationService:
                 kind=payload.kind,
                 duration_minutes=payload.duration_minutes,
                 is_required=payload.is_required,
-                asset_url="",
             )
         )
         return _lesson_row(lesson)
@@ -277,7 +449,7 @@ def _lesson_row(lesson: Lesson) -> LessonRowOut:
         kind=lesson.kind,
         duration_minutes=lesson.duration_minutes,
         is_required=lesson.is_required,
-        has_material=bool(lesson.asset_url),
+        has_material=lesson.media_file_id is not None,
     )
 
 

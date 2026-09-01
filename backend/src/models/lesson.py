@@ -45,9 +45,12 @@ class Lesson(UUIDMixin, TimeStampMixin, Base):
         SAEnum(LessonKind, name="lesson_kind", native_enum=False, length=20), nullable=False
     )
     duration_minutes: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    # Where the material lives. A signed link from private storage replaces this the day
-    # media-video lands; until then it is a public path.
-    asset_url: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    # The material, or nothing while a lecture is still being prepared. A row in storage
+    # rather than a URL: the address of a private object is signed and expires, so it is
+    # produced per request and cannot be stored.
+    media_file_id: Mapped[UUID | None] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("media_files.id", ondelete="SET NULL"), nullable=True
+    )
     # An optional lesson stays out of the denominator, which is the safe way to add
     # material to a course people are already taking.
     is_required: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)

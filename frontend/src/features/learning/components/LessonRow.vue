@@ -7,15 +7,18 @@ import { formatMinutes } from '@/core/format'
 
 const props = defineProps({
   lesson: { type: Object, required: true },
+  hasAccess: { type: Boolean, default: true },
 })
 </script>
 
 <template>
   <!-- Телефон: карточка со статусом сверху и синей кнопкой-стрелкой в углу.
        Десктоп: строка, где длительность, тип и статус выстроены в колонки. -->
-  <RouterLink
+  <component
+    :is="props.hasAccess ? 'RouterLink' : 'div'"
     class="flex flex-col gap-3 rounded-lg bg-page p-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:rounded-none lg:bg-transparent lg:p-0 lg:py-8"
-    :to="`/lessons/${props.lesson.id}`"
+    :class="props.hasAccess ? '' : 'opacity-60'"
+    :to="props.hasAccess ? `/lessons/${props.lesson.id}` : undefined"
   >
     <span class="text-2xs font-semibold lg:hidden" :class="STATUS_TONE[props.lesson.status]">
       {{ statusLabel(props.lesson.status) }}
@@ -49,5 +52,5 @@ const props = defineProps({
         <IconArrowRight class="w-6" />
       </span>
     </span>
-  </RouterLink>
+  </component>
 </template>

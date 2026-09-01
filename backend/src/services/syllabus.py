@@ -8,7 +8,7 @@ from models.enums import CourseUnitKind, UnitStatus
 from models.lesson import Lesson
 from schemas.syllabus import CourseUnitOut, SyllabusOut
 from services.course import CourseNotFoundError
-from services.learning import module_status, status_of
+from services.learning import completion_percent, module_status, status_of
 
 
 class CourseLookup(Protocol):
@@ -130,21 +130,18 @@ class SyllabusService:
         lesson_statuses: dict[UUID, str],
     ) -> int:
         """
-        Share of the course that is finished.
+        Share of the course that is finished, counted on every call from the facts.
 
-        Counted on every call from the facts, never stored. Lectures and works are the
-        atoms; modules are not counted twice for containing them. A lecture in progress
-        earns nothing: half-watched is not passed, and half a point is how a course reaches
-        100 % without being finished. Optional lectures stay out of the denominator, which
-        is the safe way to add material to a course people are already taking.
+        What counts and what does not is decided by `completion_percent` in the learning
+        service; this method only feeds it the four numbers.
         """
         required = [lesson for lesson in lessons if lesson.is_required]
         works = [item for item in items if item.kind is not CourseUnitKind.MODULE]
-        total = len(required) + len(works)
-        if total == 0:
-            return 0
-        done = sum(
-            1 for lesson in required if status_of(lesson.id, lesson_statuses) is UnitStatus.DONE
+        return completion_percent(
+            lessons_done=sum(
+                1 for lesson in required if status_of(lesson.id, lesson_statuses) is UnitStatus.DONE
+            ),
+            lessons_total=len(required),
+            works_done=sum(1 for work in works if work.status is UnitStatus.DONE),
+            works_total=len(works),
         )
-        done += sum(1 for work in works if work.status is UnitStatus.DONE)
-        return round(done * 100 / total)

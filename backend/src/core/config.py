@@ -36,6 +36,22 @@ class Settings(BaseSettings):
 
     redis_url: str = Field(default="redis://localhost:6380/0", alias="REDIS_URL")
 
+    # Object storage for lecture material. Defaults point at the MinIO in docker-compose, so
+    # a fresh clone can upload a file without an account anywhere; production overrides all
+    # five. Two buckets rather than two prefixes: the access policy is set on the bucket,
+    # and one wrong line in a shared policy would open the paid material.
+    media_endpoint: str = Field(default="http://localhost:9100", alias="MEDIA_S3_ENDPOINT")
+    media_region: str = Field(default="us-east-1", alias="MEDIA_S3_REGION")
+    media_access_key: str = Field(default="caiame", alias="MEDIA_S3_ACCESS_KEY")
+    media_secret_key: str = Field(default="caiame-dev-secret", alias="MEDIA_S3_SECRET_KEY")
+    media_bucket_private: str = Field(default="caiame-private", alias="MEDIA_BUCKET_PRIVATE")
+    media_bucket_public: str = Field(default="caiame-public", alias="MEDIA_BUCKET_PUBLIC")
+
+    # An upload link is used once, right away; a playback link has to outlive the lecture
+    # itself, because the browser re-requests byte ranges of a video on the same URL.
+    upload_link_ttl_seconds: int = 60 * 60
+    playback_link_ttl_seconds: int = 12 * 60 * 60
+
     # Windows are generous enough that a person mistyping a password never notices them,
     # and tight enough that guessing is pointless.
     login_attempts_per_ip: int = 20

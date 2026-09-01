@@ -4,7 +4,7 @@ PY := backend/.venv/bin
 
 .PHONY: help figma-extract tokens tailwind design covers lint-tokens db migrate seed api web \
         backup-verify test-fast test-integration lint typecheck audit hooks \
-        reset-catalog reseed
+        reset-catalog reseed admin
 
 help: ## Показать список целей
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -34,6 +34,9 @@ backup-verify: ## Проверить восстановлением послед
 
 seed: ## Заполнить базу каталогом
 	cd backend && .venv/bin/python scripts/seed.py
+
+admin: ## Завести администратора: make admin EMAIL=you@example.org (пароль спросит)
+	cd backend && .venv/bin/python scripts/grant_admin.py $(EMAIL)
 
 reset-catalog: ## Стереть каталог целиком (курсы, программы, отзывы, прогресс)
 	cd backend && .venv/bin/python scripts/reset_catalog.py

@@ -6,14 +6,19 @@ from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.config import get_settings
 from core.db import get_db_session
 from core.security import decode_access_token
 from integrations.redis import RedisCounterStore, get_redis
+from integrations.storage import ObjectStorage
 from models.user import User
 from repos.admin import AdminRepo
 from repos.benefit import BenefitRepo
 from repos.course import CourseRepo
+from repos.enrollment import EnrollmentRepo
+from repos.entitlement import EntitlementRepo
 from repos.lesson import LessonRepo
+from repos.media import MediaRepo
 from repos.question import QuestionRepo
 from repos.quiz import QuizRepo
 from repos.refresh_token import RefreshTokenRepo
@@ -21,10 +26,13 @@ from repos.review import ReviewRepo
 from repos.syllabus import SyllabusRepo
 from repos.taxonomy import AccreditationRepo, SpecializationRepo
 from repos.user import UserRepo
+from services.access import AccessService
 from services.administration import AdministrationService
 from services.auth import AuthService
+from services.billing import BillingService
 from services.course import CourseService
 from services.learning import LearningService
+from services.media import MediaService
 from services.question import QuestionService
 from services.quiz import QuizService
 from services.rate_limit import RateLimitService
@@ -66,6 +74,41 @@ def get_benefit_repo(session: SessionDep) -> BenefitRepo:
 def get_lesson_repo(session: SessionDep) -> LessonRepo:
     """Provide the lesson repository bound to the request session."""
     return LessonRepo(session)
+
+
+def get_media_repo(session: SessionDep) -> MediaRepo:
+    """Provide the media repository bound to the request session."""
+    return MediaRepo(session)
+
+
+def get_entitlement_repo(session: SessionDep) -> EntitlementRepo:
+    """Provide the entitlement repository bound to the request session."""
+    return EntitlementRepo(session)
+
+
+def get_enrollment_repo(session: SessionDep) -> EnrollmentRepo:
+    """Provide the enrollment repository bound to the request session."""
+    return EnrollmentRepo(session)
+
+
+def get_object_storage() -> ObjectStorage:
+    """Provide the storage client. It holds keys and no connection, so it is cheap to build."""
+    return ObjectStorage(get_settings())
+
+
+def get_media_service(
+    media_repo: Annotated[MediaRepo, Depends(get_media_repo)],
+    storage: Annotated[ObjectStorage, Depends(get_object_storage)],
+) -> MediaService:
+    """Provide the media service with its repository and the storage it signs links for."""
+    return MediaService(media_repo=media_repo, storage=storage, settings=get_settings())
+
+
+def get_billing_service(
+    entitlement_repo: Annotated[EntitlementRepo, Depends(get_entitlement_repo)],
+) -> BillingService:
+    """Provide the one service that decides whether an account may open a course."""
+    return BillingService(entitlement_repo=entitlement_repo)
 
 
 def get_quiz_repo(session: SessionDep) -> QuizRepo:
@@ -121,10 +164,31 @@ def get_administration_service(
     admin_repo: Annotated[AdminRepo, Depends(get_admin_repo)],
     syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
     lesson_repo: Annotated[LessonRepo, Depends(get_lesson_repo)],
+    media_repo: Annotated[MediaRepo, Depends(get_media_repo)],
 ) -> AdministrationService:
-    """Provide the administration service with the three repositories the editor needs."""
+    """Provide the administration service with the repositories the editor needs."""
     return AdministrationService(
-        admin_repo=admin_repo, unit_repo=syllabus_repo, lesson_repo=lesson_repo
+        admin_repo=admin_repo,
+        unit_repo=syllabus_repo,
+        lesson_repo=lesson_repo,
+        media_repo=media_repo,
+    )
+
+
+def get_access_service(
+    entitlement_repo: Annotated[EntitlementRepo, Depends(get_entitlement_repo)],
+    billing: Annotated[BillingService, Depends(get_billing_service)],
+    user_repo: Annotated[UserRepo, Depends(get_user_repo)],
+    lesson_repo: Annotated[LessonRepo, Depends(get_lesson_repo)],
+    syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
+) -> AccessService:
+    """Provide the administration view of access; the rights themselves belong to billing."""
+    return AccessService(
+        entitlement_repo=entitlement_repo,
+        billing=billing,
+        user_repo=user_repo,
+        lesson_repo=lesson_repo,
+        unit_repo=syllabus_repo,
     )
 
 
@@ -132,10 +196,21 @@ def get_learning_service(
     course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
     syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
     lesson_repo: Annotated[LessonRepo, Depends(get_lesson_repo)],
+    media_repo: Annotated[MediaRepo, Depends(get_media_repo)],
+    media_service: Annotated[MediaService, Depends(get_media_service)],
+    enrollment_repo: Annotated[EnrollmentRepo, Depends(get_enrollment_repo)],
+    billing: Annotated[BillingService, Depends(get_billing_service)],
 ) -> LearningService:
-    """Provide the learning service with the course, outline and lesson repositories."""
+    """Provide the learning service, including the two things a lecture page needs: the
+    right to open it and a link to its file."""
     return LearningService(
-        course_repo=course_repo, unit_repo=syllabus_repo, lesson_repo=lesson_repo
+        course_repo=course_repo,
+        unit_repo=syllabus_repo,
+        lesson_repo=lesson_repo,
+        media_repo=media_repo,
+        media_service=media_service,
+        enrollment_repo=enrollment_repo,
+        billing=billing,
     )
 
 
@@ -143,6 +218,7 @@ def get_quiz_service(
     course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
     syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
     quiz_repo: Annotated[QuizRepo, Depends(get_quiz_repo)],
+    billing: Annotated[BillingService, Depends(get_billing_service)],
 ) -> QuizService:
     """Provide the quiz service; the outline repository is also where progress is written."""
     return QuizService(
@@ -150,6 +226,7 @@ def get_quiz_service(
         unit_repo=syllabus_repo,
         quiz_repo=quiz_repo,
         progress_repo=syllabus_repo,
+        billing=billing,
     )
 
 
@@ -265,6 +342,9 @@ QuestionSvc = Annotated[QuestionService, Depends(get_question_service)]
 LearningSvc = Annotated[LearningService, Depends(get_learning_service)]
 QuizSvc = Annotated[QuizService, Depends(get_quiz_service)]
 AdministrationSvc = Annotated[AdministrationService, Depends(get_administration_service)]
+AccessSvc = Annotated[AccessService, Depends(get_access_service)]
+MediaSvc = Annotated[MediaService, Depends(get_media_service)]
+BillingSvc = Annotated[BillingService, Depends(get_billing_service)]
 TaxonomySvc = Annotated[TaxonomyService, Depends(get_taxonomy_service)]
 AuthSvc = Annotated[AuthService, Depends(get_auth_service)]
 UserSvc = Annotated[UserService, Depends(get_user_service)]

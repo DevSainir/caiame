@@ -13,6 +13,9 @@ dependencies = [
     "argon2-cffi>=23.1",
     "pyjwt>=2.10",
     "redis>=5.2",
+    # The application talks to object storage over plain HTTP: it signs the requests
+    # itself, so this is the whole storage client.
+    "httpx>=0.28",
 ]
 
 [dependency-groups]
@@ -21,7 +24,6 @@ dev = [
     "mypy>=1.14",
     "pytest>=8.3",
     "pytest-asyncio>=0.25",
-    "httpx>=0.28",
 ]
 
 [tool.ruff]
@@ -36,6 +38,10 @@ select = ["E", "F", "I", "N", "UP", "B", "C4", "ASYNC", "S", "RUF", "SIM", "RET"
 ignore = ["B008", "S101"]
 
 [tool.ruff.lint.per-file-ignores]
+# RUF001 warns about letters that look Latin but are not — the rule that keeps a Cyrillic
+# `с` out of an identifier. A transliteration table is a page of exactly those letters and
+# cannot be written without them, so the rule is off for that one file and nowhere else.
+"src/core/text.py" = ["RUF001"]
 # A fixture without a literal password is not a fixture. Scoped to tests on purpose:
 # the same rules stay on for src/ and scripts/, where a literal password is a finding.
 "tests/**" = ["S105", "S106", "S107"]

@@ -166,7 +166,6 @@ async def seed_lessons(
                     duration_minutes=int(template["minutes"]),
                     # No storage yet: the page shows the material inline and the link is a
                     # plain path. Signed links from private storage replace it later.
-                    asset_url="",
                 )
             )
             created += 1
