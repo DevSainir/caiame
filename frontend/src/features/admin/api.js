@@ -1,9 +1,20 @@
 import axios from 'axios'
 import client from '@/core/api/client'
 
-/** Все курсы академии, включая черновики. Роль проверяет сервер, не эта функция. */
-export async function fetchCourses() {
-  const { data } = await client.get('/admin/courses')
+/**
+ * Все курсы академии, включая черновики. Роль проверяет сервер, не эта функция.
+ *
+ * Фильтры уходят на сервер, а не применяются к загруженному списку: на семи курсах разницы
+ * нет, но фильтровать список, который ещё не догрузился, — способ показать не то.
+ */
+export async function fetchCourses({ status = '', specializationId = '', query = '' } = {}) {
+  const { data } = await client.get('/admin/courses', {
+    params: {
+      status: status || undefined,
+      specialization_id: specializationId || undefined,
+      query: query || undefined,
+    },
+  })
   return data
 }
 

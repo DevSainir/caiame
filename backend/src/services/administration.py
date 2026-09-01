@@ -61,7 +61,13 @@ class Positioned(Protocol):
 class AdminStore(Protocol):
     """Everything the administration needs from storage."""
 
-    async def list_courses(self) -> Sequence[Course]: ...
+    async def list_courses(
+        self,
+        *,
+        status: CourseStatus | None = None,
+        specialization_id: UUID | None = None,
+        query: str = "",
+    ) -> Sequence[Course]: ...
     async def get_course(self, course_id: UUID) -> Course | None: ...
     async def count_units(self, course_ids: Sequence[UUID]) -> dict[UUID, int]: ...
     async def count_lessons(self, course_ids: Sequence[UUID]) -> dict[UUID, int]: ...
@@ -123,12 +129,26 @@ class AdministrationService:
         self.lesson_repo = lesson_repo
         self.media_repo = media_repo
 
-    async def list_courses(self) -> list[CourseRowOut]:
-        """Every course of the academy with the size of its programme."""
-        courses = await self.admin_repo.list_courses()
+    async def list_courses(
+        self,
+        *,
+        status: CourseStatus | None = None,
+        specialization_id: UUID | None = None,
+        query: str = "",
+    ) -> list[CourseRowOut]:
+        """
+        Courses of the academy with the size of the programme and how many are taking them.
+
+        The student count is what tells a draft nobody has seen from a course that is being
+        studied right now — and it is the reason the same course cannot simply be deleted.
+        """
+        courses = await self.admin_repo.list_courses(
+            status=status, specialization_id=specialization_id, query=query
+        )
         ids = [course.id for course in courses]
         modules = await self.admin_repo.count_units(ids)
         lessons = await self.admin_repo.count_lessons(ids)
+        students = await self.admin_repo.count_students(ids)
         return [
             CourseRowOut(
                 id=course.id,
@@ -139,6 +159,7 @@ class AdministrationService:
                 specialization=course.specialization.name,
                 modules=modules.get(course.id, 0),
                 lessons=lessons.get(course.id, 0),
+                students=students.get(course.id, 0),
             )
             for course in courses
         ]

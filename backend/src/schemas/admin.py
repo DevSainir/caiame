@@ -19,6 +19,7 @@ class CourseRowOut(BaseModel):
     specialization: str
     modules: int
     lessons: int
+    students: int
 
 
 class LessonRowOut(BaseModel):

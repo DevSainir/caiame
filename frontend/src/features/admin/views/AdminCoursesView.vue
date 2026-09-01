@@ -1,9 +1,10 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { describeError } from '@/core/api/messages'
 import BaseButton from '@/core/components/BaseButton.vue'
 import { useNotificationStore } from '@/core/notifications/store'
+import AdminCourseFilters from '@/features/admin/components/AdminCourseFilters.vue'
 import AdminCourseForm from '@/features/admin/components/AdminCourseForm.vue'
 import AdminShell from '@/features/admin/components/AdminShell.vue'
 import { createCourse, fetchCourses, fetchTaxonomies } from '@/features/admin/api'
@@ -13,6 +14,7 @@ const notifications = useNotificationStore()
 
 const STATUS_LABELS = { draft: 'Черновик', published: 'Опубликован', archived: 'В архиве' }
 
+const filters = reactive({ status: '', specializationId: '', query: '' })
 const courses = ref([])
 const specializations = ref([])
 const accreditations = ref([])
@@ -27,11 +29,15 @@ const subtitle = computed(
   () => `${courses.value.length} курсов, из них черновиков: ${drafts.value.length}`,
 )
 
+// Поиск ждёт паузы в наборе: запрос на каждую букву — это запрос на каждую букву.
+const SEARCH_PAUSE_MS = 300
+let searchTimer = null
+
 async function load() {
   isLoading.value = true
   loadError.value = ''
   try {
-    courses.value = await fetchCourses()
+    courses.value = await fetchCourses(filters)
   } catch (failure) {
     loadError.value = describeError(failure, 'Не удалось загрузить курсы')
   } finally {
@@ -73,7 +79,28 @@ async function openForm() {
   }
 }
 
-onMounted(load)
+watch(
+  () => [filters.status, filters.specializationId],
+  () => load(),
+)
+
+watch(
+  () => filters.query,
+  () => {
+    clearTimeout(searchTimer)
+    searchTimer = setTimeout(load, SEARCH_PAUSE_MS)
+  },
+)
+
+onMounted(async () => {
+  await load()
+  // Справочник направлений нужен только фильтру: без него он просто не предложит выбора.
+  try {
+    specializations.value = (await fetchTaxonomies()).specializations
+  } catch {
+    // Фильтр по направлению останется пустым, остальное работает.
+  }
+})
 </script>
 
 <template>
@@ -81,6 +108,8 @@ onMounted(load)
     <template #actions>
       <BaseButton :disabled="isBusy" size="sm" @click="openForm">Новый курс</BaseButton>
     </template>
+
+    <AdminCourseFilters v-model="filters" :specializations="specializations" />
 
     <p v-if="isLoading" class="py-24 text-center text-sm font-semibold text-subtle">
       Загружаем курсы…
@@ -94,6 +123,10 @@ onMounted(load)
     </div>
 
     <!-- Телефон: карточки. Десктоп: таблица. -->
+    <p v-else-if="courses.length === 0" class="py-24 text-center text-sm font-medium text-subtle">
+      По этим условиям курсов нет
+    </p>
+
     <template v-else>
       <ul class="flex flex-col gap-3 p-4 lg:hidden">
         <li v-for="course in courses" :key="course.id">
@@ -126,6 +159,7 @@ onMounted(load)
             <th class="px-5 py-3 text-2xs font-semibold uppercase text-subtle">Курс</th>
             <th class="px-4 py-3 text-2xs font-semibold uppercase text-subtle">Часы</th>
             <th class="px-4 py-3 text-2xs font-semibold uppercase text-subtle">Программа</th>
+            <th class="px-4 py-3 text-2xs font-semibold uppercase text-subtle">Студенты</th>
             <th class="px-4 py-3 text-2xs font-semibold uppercase text-subtle">Статус</th>
             <th class="px-5 py-3"></th>
           </tr>
@@ -140,6 +174,7 @@ onMounted(load)
             <td class="px-4 py-5 text-sm font-medium text-muted">
               {{ course.modules }} модулей · {{ course.lessons }} лекций
             </td>
+            <td class="px-4 py-5 text-sm font-medium text-muted">{{ course.students }}</td>
             <td class="px-4 py-5">
               <span
                 class="rounded-sm px-3 py-2 text-2xs font-semibold"

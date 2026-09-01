@@ -107,9 +107,22 @@ class FakeAdminRepo:
         self.students = dict(students or {})
         self.flushes = 0
 
-    async def list_courses(self) -> Sequence[Course]:
-        """Every course the fake was built with."""
-        return self.courses
+    async def list_courses(
+        self,
+        *,
+        status: CourseStatus | None = None,
+        specialization_id: UUID | None = None,
+        query: str = "",
+    ) -> Sequence[Course]:
+        """Courses the fake was built with, filtered the way the SQL filters them."""
+        found = self.courses
+        if status is not None:
+            found = [course for course in found if course.status is status]
+        if specialization_id is not None:
+            found = [course for course in found if course.specialization_id == specialization_id]
+        if query:
+            found = [course for course in found if query.lower() in course.title.lower()]
+        return found
 
     async def get_course(self, course_id: UUID) -> Course | None:
         """One course by id, whatever its status."""

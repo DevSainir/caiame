@@ -25,16 +25,34 @@ class AdminRepo:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def list_courses(self) -> Sequence[Course]:
+    async def list_courses(
+        self,
+        *,
+        status: CourseStatus | None = None,
+        specialization_id: UUID | None = None,
+        query: str = "",
+    ) -> Sequence[Course]:
         """
         Every course of the academy, drafts included, in display order.
 
         The specialization is loaded up front: relations are declared `lazy="raise"`, so a
         missing eager load fails here rather than firing a query inside the serializer.
+
+        Filtering happens in the database rather than in the page. Seven courses would
+        survive either way, but the moment there are two hundred the page is filtering a
+        list it has not finished loading.
         """
-        rows = await self.session.scalars(
-            select(Course).options(selectinload(Course.specialization)).order_by(Course.title)
-        )
+        statement = select(Course).options(selectinload(Course.specialization))
+        if status is not None:
+            statement = statement.where(Course.status == status)
+        if specialization_id is not None:
+            statement = statement.where(Course.specialization_id == specialization_id)
+        if query:
+            # Case-insensitive substring, escaped: a course called «100 %» must not turn
+            # the search into a pattern that matches everything.
+            escaped = query.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            statement = statement.where(Course.title.ilike(f"%{escaped}%"))
+        rows = await self.session.scalars(statement.order_by(Course.title))
         return rows.all()
 
     async def get_course(self, course_id: UUID) -> Course | None:

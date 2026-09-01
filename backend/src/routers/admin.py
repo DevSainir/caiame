@@ -1,10 +1,11 @@
 from typing import Annotated, Any
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Path, status
+from fastapi import APIRouter, HTTPException, Path, Query, status
 
 from core.access import AdminUser
 from core.deps import AdministrationSvc, MediaSvc
+from models.enums import CourseStatus
 from schemas.admin import (
     CourseDetailOut,
     CourseIn,
@@ -65,9 +66,21 @@ def _conflict(detail: str) -> HTTPException:
 
 
 @router.get("/courses", response_model=list[CourseRowOut], responses={**FORBIDDEN})
-async def list_courses(svc: AdministrationSvc, admin: AdminUser) -> list[CourseRowOut]:
-    """Every course of the academy, drafts included."""
-    return await svc.list_courses()
+async def list_courses(
+    svc: AdministrationSvc,
+    admin: AdminUser,
+    status_filter: Annotated[
+        CourseStatus | None, Query(alias="status", description="Only courses in this state.")
+    ] = None,
+    specialization_id: Annotated[
+        UUID | None, Query(description="Only courses of this field of practice.")
+    ] = None,
+    query: Annotated[str, Query(max_length=200, description="Substring of the title.")] = "",
+) -> list[CourseRowOut]:
+    """Every course of the academy, drafts included, narrowed by the filters if given."""
+    return await svc.list_courses(
+        status=status_filter, specialization_id=specialization_id, query=query.strip()
+    )
 
 
 @router.get(
