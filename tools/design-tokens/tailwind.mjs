@@ -115,6 +115,14 @@ ${scale('borderRadius')}
     borderWidth: {
 ${scale('borderWidth')}
     },
+    // Слоёв ровно два, и порядок между ними — решение, а не случайность: сообщение о том,
+    // что сохранить не удалось, должно быть видно поверх окна, в котором сохраняли.
+    zIndex: {
+      auto: 'auto',
+      base: '0',
+      overlay: '40',
+      notice: '50',
+    },
     extend: {
       // Semantic roles. Names never collide with a ramp name, so \`text-muted\`
       // and \`text-neutral-500\` both keep working.

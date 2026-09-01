@@ -8,6 +8,7 @@ const SPACING_CEILING = 160
  * height of an element rather than the distance between two. Every entry needs a reason.
  */
 const MANUAL_SPACING = [
+  { value: 4, reason: 'наименьший шаг сетки: расстояние между значком и подписью рядом' },
   { value: 80, reason: 'высота шапки и строки фильтров на главной' },
   { value: 1, reason: 'толщина разделителя между ссылками в шапке' },
   { value: 14, reason: 'высота разделителя между ссылками в шапке на десктопе' },

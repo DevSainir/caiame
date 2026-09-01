@@ -108,6 +108,7 @@ export default {
     },
     spacing: {
       '0': '0px',
+      '1': '4px',
       '2': '8px',
       '3': '12px',
       '4': '16px',
@@ -141,6 +142,14 @@ export default {
       '0': '0px',
       '2': '2px',
       'DEFAULT': '1px',
+    },
+    // Слоёв ровно два, и порядок между ними — решение, а не случайность: сообщение о том,
+    // что сохранить не удалось, должно быть видно поверх окна, в котором сохраняли.
+    zIndex: {
+      auto: 'auto',
+      base: '0',
+      overlay: '40',
+      notice: '50',
     },
     extend: {
       // Semantic roles. Names never collide with a ramp name, so `text-muted`

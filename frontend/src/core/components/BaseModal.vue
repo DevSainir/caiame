@@ -18,7 +18,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
 
 <template>
   <div
-    class="fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-neutral-900/50 p-4 lg:items-center"
+    class="fixed inset-0 z-overlay flex items-end justify-center overflow-y-auto bg-neutral-900/50 p-4 lg:items-center"
     role="presentation"
     @click.self="emit('close')"
   >

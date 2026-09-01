@@ -11,7 +11,7 @@ const TONES = {
 </script>
 
 <template>
-  <div class="pointer-events-none fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+  <div class="pointer-events-none fixed bottom-6 right-6 z-notice flex flex-col gap-3">
     <TransitionGroup
       enter-active-class="transition"
       enter-from-class="translate-y-3 opacity-0"

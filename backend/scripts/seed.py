@@ -37,6 +37,7 @@ from core.security import hash_password
 from models.accreditation import Accreditation
 from models.course import Course
 from models.enums import Audience, CourseStatus, UserRole
+from models.registry import Base  # noqa: F401  # imports every table before the mapper runs
 from models.specialization import Specialization
 from models.user import User
 

@@ -15,7 +15,15 @@ from main import app
 from models.enums import UserRole
 from services.rate_limit import RateLimitService
 from tests.support.factories import make_user
-from tests.support.fakes import FakeCounterStore, FakeRefreshTokenRepo, FakeUserRepo
+from tests.support.fakes import (
+    FakeAdminRepo,
+    FakeCounterStore,
+    FakeLessonRepo,
+    FakeMediaRepo,
+    FakeRefreshTokenRepo,
+    FakeSyllabusRepo,
+    FakeUserRepo,
+)
 
 PASSWORD = "correct-horse-battery"
 ADMIN_PATHS = ("/api/v1/admin/courses",)
@@ -36,6 +44,14 @@ def client() -> Iterator[TestClient]:
     app.dependency_overrides[deps.get_rate_limit_service] = lambda: RateLimitService(
         store=FakeCounterStore()
     )
+    # The repositories are stood in for as well, or the route behind the rung reaches a
+    # real database. On a laptop that goes unnoticed — there is a database next door and it
+    # is migrated — and on a clean machine the test fails with a 500 that looks like a
+    # broken access ladder, which is not what is broken.
+    app.dependency_overrides[deps.get_admin_repo] = lambda: FakeAdminRepo()
+    app.dependency_overrides[deps.get_syllabus_repo] = lambda: FakeSyllabusRepo([])
+    app.dependency_overrides[deps.get_lesson_repo] = lambda: FakeLessonRepo()
+    app.dependency_overrides[deps.get_media_repo] = lambda: FakeMediaRepo()
 
     with TestClient(app) as test_client:
         yield test_client

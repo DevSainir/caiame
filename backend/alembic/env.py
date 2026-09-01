@@ -7,39 +7,10 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from core.config import get_settings
-from models.accreditation import Accreditation  # noqa: F401  # imported so autogenerate sees it
-from models.assignment import Assignment  # noqa: F401  # imported so autogenerate sees it
-from models.base import Base
-from models.course import Course  # noqa: F401  # imported so autogenerate sees it
-from models.course_benefit import CourseBenefit  # noqa: F401  # imported so autogenerate sees it
-from models.course_question import CourseQuestion  # noqa: F401  # imported so autogenerate sees it
-from models.course_unit import CourseUnit  # noqa: F401  # imported so autogenerate sees it
-from models.enrollment import Enrollment  # noqa: F401  # imported so autogenerate sees it
-from models.entitlement import Entitlement  # noqa: F401  # imported so autogenerate sees it
-from models.lesson import Lesson  # noqa: F401  # imported so autogenerate sees it
-from models.lesson_progress import LessonProgress  # noqa: F401  # imported so autogenerate sees it
-from models.media_file import MediaFile  # noqa: F401  # imported so autogenerate sees it
-from models.quiz import Quiz  # noqa: F401  # imported so autogenerate sees it
-from models.quiz_attempt import (  # noqa: F401  # imported so autogenerate sees it
-    QuizAttempt,
-    QuizAttemptAnswer,
-)
-from models.quiz_question import (  # noqa: F401  # imported so autogenerate sees it
-    QuizOption,
-    QuizQuestion,
-)
-from models.refresh_token import RefreshToken  # noqa: F401  # imported so autogenerate sees it
-from models.review import Review  # noqa: F401  # imported so autogenerate sees it
-from models.specialization import Specialization  # noqa: F401  # imported so autogenerate sees it
-from models.submission import (  # noqa: F401  # imported so autogenerate sees it
-    Submission,
-    SubmissionFile,
-)
-from models.submission_review import (  # noqa: F401  # imported so autogenerate sees it
-    SubmissionReview,
-)
-from models.unit_progress import UnitProgress  # noqa: F401  # imported so autogenerate sees it
-from models.user import User  # noqa: F401  # imported so autogenerate sees it
+
+# Every table has to be imported before Alembic compares the metadata with the schema, or
+# it offers to drop everything it has not heard of. The list is shared with the seeder.
+from models.registry import Base
 
 config = context.config
 # A caller may point Alembic at another database (the integration test does); only fall
