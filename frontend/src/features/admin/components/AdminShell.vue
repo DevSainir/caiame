@@ -1,16 +1,27 @@
 <script setup>
+import { computed } from 'vue'
 import BaseContainer from '@/core/components/BaseContainer.vue'
+import { useAuthStore } from '@/core/session/store'
 
 defineProps({
   title: { type: String, required: true },
   subtitle: { type: String, default: '' },
 })
 
+const auth = useAuthStore()
+
+// Проверка работ открыта и преподавателю, остальное — только администратору. Показывать
+// преподавателю пункты, с которых его вернёт охранник роутера, значит предлагать дверь,
+// которая не откроется.
 const SECTIONS = [
-  { label: 'Курсы', to: '/admin' },
-  { label: 'Проверка работ', to: '/admin/submissions' },
-  { label: 'Студенты и доступ', to: '/admin/access' },
+  { label: 'Курсы', to: '/admin', adminOnly: true },
+  { label: 'Проверка работ', to: '/admin/submissions', adminOnly: false },
+  { label: 'Студенты и доступ', to: '/admin/access', adminOnly: true },
 ]
+
+const sections = computed(() =>
+  SECTIONS.filter((section) => !section.adminOnly || auth.user?.role === 'admin'),
+)
 </script>
 
 <template>
@@ -21,7 +32,7 @@ const SECTIONS = [
              съедает половину узкого экрана. -->
         <nav class="flex gap-2 overflow-x-auto lg:w-50 lg:shrink-0 lg:flex-col lg:gap-1">
           <RouterLink
-            v-for="section in SECTIONS"
+            v-for="section in sections"
             :key="section.to"
             active-class="bg-subtle text-ink"
             class="whitespace-nowrap rounded-sm px-4 py-3 text-sm font-medium text-muted"

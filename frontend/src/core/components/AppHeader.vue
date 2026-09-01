@@ -63,6 +63,16 @@ const GUEST_LINKS = {
 }
 
 const guestLinks = computed(() => GUEST_LINKS[route.name] ?? GUEST_LINKS.default)
+
+// Куда сотруднику: администратору — в курсы, преподавателю — в очередь работ, потому что
+// больше ему в администрировании ничего не открыто. Без этой ссылки преподаватель попадал
+// к своей очереди только набрав адрес руками.
+const STAFF_HOME = { admin: { label: 'Админка', to: '/admin' } }
+const staffLink = computed(() => {
+  if (auth.user?.role === 'admin') return STAFF_HOME.admin
+  if (auth.user?.role === 'instructor') return { label: 'Проверка работ', to: '/admin/submissions' }
+  return null
+})
 </script>
 
 <template>
@@ -88,6 +98,14 @@ const guestLinks = computed(() => GUEST_LINKS[route.name] ?? GUEST_LINKS.default
           v-if="auth.isReady && auth.isAuthenticated"
           class="flex items-center gap-3 lg:gap-8 lg:justify-self-end"
         >
+          <RouterLink
+            v-if="staffLink"
+            class="hidden text-xs font-semibold text-ink lg:block lg:text-sm"
+            :to="staffLink.to"
+          >
+            {{ staffLink.label }}
+          </RouterLink>
+          <span v-if="staffLink" class="hidden h-3 w-0.25 bg-neutral-400 lg:block lg:h-3.5" />
           <RouterLink aria-label="Личный кабинет" class="text-ink" to="/profile">
             <IconUser class="w-6" />
           </RouterLink>
