@@ -24,3 +24,19 @@ describe('describeError', () => {
     expect(describeError({ status: 418, code: 'teapot' }, 'Не получилось')).toBe('Не получилось')
   })
 })
+
+describe('слишком много попыток', () => {
+  it('говорит, через сколько пробовать снова', () => {
+    // Ограничитель отвечает заголовком; без него фраза превращается в «подождите
+    // неизвестно сколько».
+    const failure = { status: 429, original: { response: { headers: { 'retry-after': '300' } } } }
+
+    expect(describeError(failure)).toContain('через 5 мин')
+  })
+
+  it('на короткой паузе говорит «через минуту», а не «через 0 мин»', () => {
+    const failure = { status: 429, original: { response: { headers: { 'retry-after': '20' } } } }
+
+    expect(describeError(failure)).toContain('через минуту')
+  })
+})

@@ -27,6 +27,23 @@ const BY_STATUS = {
 
 const SERVER_TROUBLE = 'На нашей стороне неполадки. Мы уже разбираемся — попробуйте позже'
 
+const SECONDS_IN_MINUTE = 60
+
+/**
+ * «Слишком часто» — с указанием, когда пробовать снова.
+ *
+ * Ограничитель на сервере отвечает заголовком Retry-After, и без него фраза превращается в
+ * «подождите неизвестно сколько». Живёт здесь, а не в форме входа, потому что упереться в
+ * счётчик можно и загрузкой файла, и сменой пароля.
+ */
+export function describeTooManyAttempts(failure) {
+  const seconds = Number(failure?.original?.response?.headers?.['retry-after'] ?? 0)
+  const minutes = Math.ceil(seconds / SECONDS_IN_MINUTE)
+  return minutes > 1
+    ? `Слишком много попыток. Попробуйте через ${minutes} мин.`
+    : 'Слишком много попыток. Попробуйте через минуту.'
+}
+
 /**
  * Превратить отказ в предложение, которое можно показать человеку.
  *
@@ -36,5 +53,6 @@ const SERVER_TROUBLE = 'На нашей стороне неполадки. Мы 
 export function describeError(failure, fallback = 'Не удалось выполнить действие') {
   const status = failure?.status ?? 0
   if (status >= 500) return SERVER_TROUBLE
+  if (status === 429) return describeTooManyAttempts(failure)
   return BY_CODE[failure?.code] ?? BY_STATUS[status] ?? fallback
 }
