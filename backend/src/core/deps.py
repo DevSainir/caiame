@@ -109,12 +109,23 @@ def get_object_storage() -> ObjectStorage:
     return ObjectStorage(get_settings())
 
 
+def get_rate_limit_service() -> RateLimitService:
+    """Provide the rate limiter backed by Redis."""
+    return RateLimitService(store=RedisCounterStore(get_redis()))
+
+
 def get_media_service(
     media_repo: Annotated[MediaRepo, Depends(get_media_repo)],
     storage: Annotated[ObjectStorage, Depends(get_object_storage)],
+    rate_limiter: Annotated[RateLimitService, Depends(get_rate_limit_service)],
 ) -> MediaService:
-    """Provide the media service with its repository and the storage it signs links for."""
-    return MediaService(media_repo=media_repo, storage=storage, settings=get_settings())
+    """Provide the media service with its repository, the storage and the limiter."""
+    return MediaService(
+        media_repo=media_repo,
+        storage=storage,
+        settings=get_settings(),
+        rate_limiter=rate_limiter,
+    )
 
 
 def get_assignment_repo(session: SessionDep) -> AssignmentRepo:
@@ -351,11 +362,6 @@ def get_taxonomy_service(
     return TaxonomyService(
         specialization_repo=specialization_repo, accreditation_repo=accreditation_repo
     )
-
-
-def get_rate_limit_service() -> RateLimitService:
-    """Provide the rate limiter backed by Redis."""
-    return RateLimitService(store=RedisCounterStore(get_redis()))
 
 
 def get_auth_service(

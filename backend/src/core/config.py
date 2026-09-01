@@ -64,6 +64,12 @@ class Settings(BaseSettings):
     register_attempts_per_ip: int = 5
     register_window_seconds: int = 60 * 60
 
+    # Every issued upload link is a row in the database and a place in storage, so they
+    # cannot be asked for without a count. Forty an hour is far more than a person filling
+    # a course needs and far less than anybody needs to do damage.
+    upload_tickets_per_account: int = 40
+    upload_window_seconds: int = 60 * 60
+
     @model_validator(mode="after")
     def refuse_placeholder_secret_in_production(self) -> Self:
         """

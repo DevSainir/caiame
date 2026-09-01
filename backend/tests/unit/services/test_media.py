@@ -19,7 +19,8 @@ from services.media import (
     UploadNotFinishedError,
     UploadRejectedError,
 )
-from tests.support.fakes import FakeMediaRepo
+from services.rate_limit import RateLimitExceededError, RateLimitService
+from tests.support.fakes import FakeCounterStore, FakeMediaRepo
 
 MP4_HEAD = b"\x00\x00\x00\x18ftypmp42"
 PDF_HEAD = b"%PDF-1.7 head..."
@@ -55,7 +56,12 @@ class FakeStorage:
 
 def _service(storage: FakeStorage, repo: FakeMediaRepo | None = None) -> MediaService:
     """The media service over a storage that answers from memory."""
-    return MediaService(media_repo=repo or FakeMediaRepo(), storage=storage, settings=Settings())
+    return MediaService(
+        media_repo=repo or FakeMediaRepo(),
+        storage=storage,
+        settings=Settings(),
+        rate_limiter=RateLimitService(store=FakeCounterStore()),
+    )
 
 
 async def test_a_video_over_the_limit_is_refused() -> None:
@@ -221,3 +227,58 @@ async def test_an_absurd_length_is_capped_rather_than_believed() -> None:
     media = await service.confirm_upload(media_id=ticket.media_id, duration_seconds=10**9)
 
     assert media.duration_seconds == 12 * 60 * 60
+
+
+async def test_asking_for_links_without_end_is_refused() -> None:
+    """
+    Every issued link leaves a row behind, whether or not a file follows it.
+
+    Without a count, a loop asking for links fills the table with reservations nobody will
+    ever use — and it costs the person doing it nothing.
+    """
+    repo = FakeMediaRepo()
+    service = MediaService(
+        media_repo=repo,
+        storage=FakeStorage(),
+        settings=Settings(),
+        rate_limiter=RateLimitService(store=FakeCounterStore()),
+    )
+    uploader = uuid7()
+
+    for _ in range(Settings().upload_tickets_per_account):
+        await service.start_upload(
+            kind=LessonKind.PDF,
+            file_name="handout.pdf",
+            size_bytes=MEGABYTE,
+            uploaded_by_id=uploader,
+        )
+
+    with pytest.raises(RateLimitExceededError):
+        await service.start_upload(
+            kind=LessonKind.PDF,
+            file_name="handout.pdf",
+            size_bytes=MEGABYTE,
+            uploaded_by_id=uploader,
+        )
+
+
+async def test_the_count_is_kept_per_account() -> None:
+    """One person filling a course must not lock out everybody else."""
+    limiter = RateLimitService(store=FakeCounterStore())
+    service = MediaService(
+        media_repo=FakeMediaRepo(),
+        storage=FakeStorage(),
+        settings=Settings(),
+        rate_limiter=limiter,
+    )
+    busy = uuid7()
+    for _ in range(Settings().upload_tickets_per_account):
+        await service.start_upload(
+            kind=LessonKind.PDF, file_name="a.pdf", size_bytes=MEGABYTE, uploaded_by_id=busy
+        )
+
+    ticket = await service.start_upload(
+        kind=LessonKind.PDF, file_name="b.pdf", size_bytes=MEGABYTE, uploaded_by_id=uuid7()
+    )
+
+    assert ticket.url

@@ -16,10 +16,12 @@ from models.media_file import MediaFile
 from services.billing import AccessRequiredError
 from services.learning import LearningService
 from services.media import MediaService
+from services.rate_limit import RateLimitService
 from tests.support.factories import make_course, make_lesson, make_unit, make_user
 from tests.support.fakes import (
     FakeBilling,
     FakeCompletion,
+    FakeCounterStore,
     FakeCourseRepo,
     FakeEnrollmentRepo,
     FakeLessonRepo,
@@ -65,7 +67,12 @@ def _service(
         lesson_repo=lesson_repo,
         media_repo=media_repo,
         playback_repo=lesson_repo,
-        media_service=MediaService(media_repo=media_repo, storage=storage, settings=Settings()),
+        media_service=MediaService(
+            media_repo=media_repo,
+            storage=storage,
+            settings=Settings(),
+            rate_limiter=RateLimitService(store=FakeCounterStore()),
+        ),
         enrollment_repo=FakeEnrollmentRepo(),
         completion=FakeCompletion(),
         billing=FakeBilling(allowed=allowed),

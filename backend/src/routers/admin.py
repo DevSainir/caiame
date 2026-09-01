@@ -36,6 +36,7 @@ from services.media import (
     UploadNotFinishedError,
     UploadRejectedError,
 )
+from services.rate_limit import RateLimitExceededError
 
 router = APIRouter(prefix="/admin", tags=["Administration"])
 
@@ -335,7 +336,11 @@ async def get_lesson(
 @router.post(
     "/uploads",
     response_model=UploadTicketOut,
-    responses={**FORBIDDEN, 422: {"description": "The file is of a kind or size that is refused."}},
+    responses={
+        **FORBIDDEN,
+        422: {"description": "The file is of a kind or size that is refused."},
+        429: {"description": "Too many upload links asked for by this account."},
+    },
 )
 async def start_upload(svc: MediaSvc, admin: AdminUser, payload: UploadStartIn) -> UploadTicketOut:
     """
@@ -354,6 +359,12 @@ async def start_upload(svc: MediaSvc, admin: AdminUser, payload: UploadStartIn) 
     except UploadRejectedError as error:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)
+        ) from error
+    except RateLimitExceededError as error:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="too_many_attempts",
+            headers={"Retry-After": str(error.retry_after)},
         ) from error
     return UploadTicketOut(
         media_id=ticket.media_id,

@@ -153,13 +153,29 @@ class MediaStore(Protocol):
         ...
 
 
+class Limiter(Protocol):
+    """Counts attempts and refuses the ones past the allowance."""
+
+    async def hit(self, key: str, *, limit: int, window_seconds: int) -> None:
+        """Register an attempt and raise once the allowance is spent."""
+        ...
+
+
 class MediaService:
     """Issuing upload links, confirming what arrived, and signing playback links."""
 
-    def __init__(self, *, media_repo: MediaStore, storage: Storage, settings: Settings) -> None:
+    def __init__(
+        self,
+        *,
+        media_repo: MediaStore,
+        storage: Storage,
+        settings: Settings,
+        rate_limiter: Limiter,
+    ) -> None:
         self.media_repo = media_repo
         self.storage = storage
         self.settings = settings
+        self.rate_limiter = rate_limiter
 
     async def start_upload(
         self, *, kind: LessonKind, file_name: str, size_bytes: int, uploaded_by_id: UUID
@@ -201,6 +217,15 @@ class MediaService:
         """
         if size_bytes <= 0 or size_bytes > rule.max_bytes:
             raise UploadRejectedError("file_too_large")
+
+        # Counted per account, before anything is written: a link that was asked for leaves
+        # a row behind whether or not a file ever arrives, and an unbounded loop of asking
+        # fills the table with reservations nobody will use.
+        await self.rate_limiter.hit(
+            f"uploads:{uploaded_by_id}",
+            limit=self.settings.upload_tickets_per_account,
+            window_seconds=self.settings.upload_window_seconds,
+        )
 
         name = slugify(file_name.rsplit(".", 1)[0], fallback="file")[:60]
         key = f"{scope}/{uuid7()}/{name}.{rule.extension}"

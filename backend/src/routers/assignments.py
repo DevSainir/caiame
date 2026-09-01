@@ -14,6 +14,7 @@ from services.assignment import (
 )
 from services.billing import AccessRequiredError
 from services.media import UploadRejectedError
+from services.rate_limit import RateLimitExceededError
 
 router = APIRouter(tags=["Learning"])
 
@@ -90,6 +91,7 @@ async def submit_work(
     responses={
         401: {"description": "No valid access token."},
         422: {"description": "A file of a kind or size that is refused."},
+        429: {"description": "Too many upload links asked for by this account."},
     },
 )
 async def start_attachment_upload(
@@ -111,6 +113,12 @@ async def start_attachment_upload(
     except UploadRejectedError as error:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)
+        ) from error
+    except RateLimitExceededError as error:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="too_many_attempts",
+            headers={"Retry-After": str(error.retry_after)},
         ) from error
     return UploadTicketOut(
         media_id=ticket.media_id,
