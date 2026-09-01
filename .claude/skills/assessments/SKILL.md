@@ -105,10 +105,18 @@ attempt_answer  (attempt_id, question_id, payload, is_correct, points_awarded)
 ### Модель и цикл
 
 ```
-assignment  (lesson_id, description, deadline_at, max_score, allow_late)
-submission  (enrollment_id, assignment_id, attempt_no, status, submitted_at, is_late, files)
-review      (submission_id, reviewer_id, score, comment, decision, created_at)
+assignment  (unit_id, description, deadline_at, max_score, allow_late)
+submission  (enrollment_id, assignment_id, attempt_no, status, comment, submitted_at, is_late)
+review      (submission_id, reviewer_id, score, comment, decision, reviewed_at)
 ```
+
+**Как это сделано здесь (1 сентября 2026).** Задание висит на строке плана курса
+(`course_units` вида `assignment`), а не на уроке: в этом продукте задание — самостоятельная
+строка программы, ровно как тестирование, и именно её видит студент на странице курса.
+Файлы работы — отдельная таблица `submission_files`, ссылающаяся на `media_files`: работ с
+одним вложением не бывает, а колонка со списком не даёт сослаться на файл по идентификатору.
+Рецензия названа `submission_review`, чтобы не делить слово с отзывом студента о курсе —
+`review` в этой базе уже занято, и однажды они встретились бы в одном запросе.
 
 Статусы работы: `draft` → `submitted` → `in_review` → `accepted` | `needs_revision`.
 
@@ -127,6 +135,9 @@ review      (submission_id, reviewer_id, score, comment, decision, created_at)
 * Проверяющий видит работы по тем курсам, где он назначен проверяющим, и **не может
   проверять собственную** — при совпадении `reviewer_id` и владельца зачисления операция
   запрещена.
+  Назначение живёт в `course_reviewers (course_id, user_id)`; администратор в этой таблице
+  не нуждается — его ступень покрывает всю академию. Пустой список назначений означает «не
+  видит ничего», а не «видит всё»: эти два ответа в коде различаются явно.
 * Комментарий рецензии виден студенту целиком. Внутренних заметок «для своих» в этой же
   таблице быть не должно — если они понадобятся, это отдельное поле с явным именем
   (`internal_note`) и отдельная схема ответа.
