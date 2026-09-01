@@ -3,8 +3,10 @@ from fastapi import APIRouter
 from routers import (
     access,
     admin,
+    assignments,
     auth,
     courses,
+    grading,
     health,
     learning,
     quiz,
@@ -20,6 +22,8 @@ api_router.include_router(auth.router)
 api_router.include_router(users.router)
 api_router.include_router(courses.router)
 api_router.include_router(learning.router)
+api_router.include_router(assignments.router)
+api_router.include_router(grading.router)
 api_router.include_router(admin.router)
 api_router.include_router(access.router)
 api_router.include_router(quiz.router)

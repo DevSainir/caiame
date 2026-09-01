@@ -65,6 +65,36 @@ RULES: dict[LessonKind, UploadRule] = {
 }
 
 
+# What a student may attach to a piece of work. Narrower than it looks on purpose: every
+# type here is one somebody has to be able to open on the other side.
+ATTACHMENT_RULES: tuple[UploadRule, ...] = (
+    UploadRule(
+        content_type="application/pdf",
+        extension="pdf",
+        max_bytes=50 * MEGABYTE,
+        signature=(0, b"%PDF"),
+    ),
+    UploadRule(
+        content_type="image/png",
+        extension="png",
+        max_bytes=20 * MEGABYTE,
+        signature=(0, b"\x89PNG"),
+    ),
+    UploadRule(
+        content_type="image/jpeg",
+        extension="jpg",
+        max_bytes=20 * MEGABYTE,
+        signature=(0, b"\xff\xd8\xff"),
+    ),
+    UploadRule(
+        content_type="application/zip",
+        extension="zip",
+        max_bytes=100 * MEGABYTE,
+        signature=(0, b"PK\x03\x04"),
+    ),
+)
+
+
 @dataclass(frozen=True)
 class UploadTicket:
     """Everything the browser needs to put one file into storage itself."""
@@ -144,13 +174,36 @@ class MediaService:
         rule = RULES.get(kind)
         if rule is None:
             raise UploadRejectedError("unsupported_kind")
-        if size_bytes <= 0 or size_bytes > rule.max_bytes:
-            raise UploadRejectedError("file_too_large")
         if file_extension(file_name, fallback="") != rule.extension:
             raise UploadRejectedError("unsupported_type")
+        return await self._reserve(
+            rule=rule,
+            scope="lessons",
+            file_name=file_name,
+            size_bytes=size_bytes,
+            uploaded_by_id=uploaded_by_id,
+        )
 
-        name = slugify(file_name.rsplit(".", 1)[0], fallback="lecture")[:60]
-        key = f"lessons/{uuid7()}/{name}.{rule.extension}"
+    async def _reserve(
+        self,
+        *,
+        rule: UploadRule,
+        scope: str,
+        file_name: str,
+        size_bytes: int,
+        uploaded_by_id: UUID,
+    ) -> UploadTicket:
+        """
+        Write down an upload and sign a link that fits this one file.
+
+        Shared by both kinds of upload, because the dangerous parts are the same for both:
+        the size travels inside the signature, and the key is ours.
+        """
+        if size_bytes <= 0 or size_bytes > rule.max_bytes:
+            raise UploadRejectedError("file_too_large")
+
+        name = slugify(file_name.rsplit(".", 1)[0], fallback="file")[:60]
+        key = f"{scope}/{uuid7()}/{name}.{rule.extension}"
         media = await self.media_repo.create(
             bucket=self.settings.media_bucket_private,
             key=key,
@@ -169,6 +222,27 @@ class MediaService:
         )
         return UploadTicket(
             media_id=media.id, url=url, content_type=rule.content_type, size_bytes=size_bytes
+        )
+
+    async def start_attachment_upload(
+        self, *, file_name: str, size_bytes: int, uploaded_by_id: UUID
+    ) -> UploadTicket:
+        """
+        Reserve a place for a file a student attaches to their work.
+
+        Same shape as a lecture upload and a different white list: work comes as documents,
+        photographs of a form or an archive, and never as a video.
+        """
+        extension = file_extension(file_name, fallback="")
+        rule = next((item for item in ATTACHMENT_RULES if item.extension == extension), None)
+        if rule is None:
+            raise UploadRejectedError("unsupported_type")
+        return await self._reserve(
+            rule=rule,
+            scope="submissions",
+            file_name=file_name,
+            size_bytes=size_bytes,
+            uploaded_by_id=uploaded_by_id,
         )
 
     async def confirm_upload(self, *, media_id: UUID, duration_seconds: int) -> MediaFile:
@@ -217,9 +291,8 @@ class MediaService:
 
     async def _check_signature(self, media: MediaFile) -> None:
         """The head of the file must match the format it was uploaded as."""
-        rule = next(
-            (item for item in RULES.values() if item.content_type == media.content_type), None
-        )
+        known = (*RULES.values(), *ATTACHMENT_RULES)
+        rule = next((item for item in known if item.content_type == media.content_type), None)
         if rule is None:
             raise UploadRejectedError("unsupported_type")
         offset, expected = rule.signature

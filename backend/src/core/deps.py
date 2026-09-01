@@ -13,6 +13,7 @@ from integrations.redis import RedisCounterStore, get_redis
 from integrations.storage import ObjectStorage
 from models.user import User
 from repos.admin import AdminRepo
+from repos.assignment import AssignmentRepo
 from repos.benefit import BenefitRepo
 from repos.course import CourseRepo
 from repos.enrollment import EnrollmentRepo
@@ -29,9 +30,11 @@ from repos.taxonomy import AccreditationRepo, SpecializationRepo
 from repos.user import UserRepo
 from services.access import AccessService
 from services.administration import AdministrationService
+from services.assignment import AssignmentService
 from services.auth import AuthService
 from services.billing import BillingService
 from services.course import CourseService
+from services.grading import GradingService
 from services.health import HealthService
 from services.learning import LearningService
 from services.media import MediaService
@@ -111,6 +114,11 @@ def get_media_service(
 ) -> MediaService:
     """Provide the media service with its repository and the storage it signs links for."""
     return MediaService(media_repo=media_repo, storage=storage, settings=get_settings())
+
+
+def get_assignment_repo(session: SessionDep) -> AssignmentRepo:
+    """Provide the assignment repository bound to the request session."""
+    return AssignmentRepo(session)
 
 
 def get_billing_service(
@@ -264,6 +272,40 @@ def get_question_bank_service(
     return QuestionBankService(unit_repo=syllabus_repo, quiz_repo=quiz_repo)
 
 
+def get_assignment_service(
+    syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
+    course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
+    assignment_repo: Annotated[AssignmentRepo, Depends(get_assignment_repo)],
+    enrollment_repo: Annotated[EnrollmentRepo, Depends(get_enrollment_repo)],
+    media_repo: Annotated[MediaRepo, Depends(get_media_repo)],
+    media_service: Annotated[MediaService, Depends(get_media_service)],
+    billing: Annotated[BillingService, Depends(get_billing_service)],
+) -> AssignmentService:
+    """Provide the student's side of an assignment."""
+    return AssignmentService(
+        unit_repo=syllabus_repo,
+        course_repo=course_repo,
+        assignment_repo=assignment_repo,
+        enrollment_repo=enrollment_repo,
+        media_repo=media_repo,
+        media_service=media_service,
+        billing=billing,
+    )
+
+
+def get_grading_service(
+    assignment_repo: Annotated[AssignmentRepo, Depends(get_assignment_repo)],
+    syllabus_repo: Annotated[SyllabusRepo, Depends(get_syllabus_repo)],
+    media_service: Annotated[MediaService, Depends(get_media_service)],
+) -> GradingService:
+    """Provide the reviewer's side; the outline repository is where unit progress is written."""
+    return GradingService(
+        assignment_repo=assignment_repo,
+        progress_repo=syllabus_repo,
+        media_service=media_service,
+    )
+
+
 def get_sitemap_service(
     course_repo: Annotated[CourseRepo, Depends(get_course_repo)],
 ) -> SitemapService:
@@ -374,6 +416,8 @@ HealthSvc = Annotated[HealthService, Depends(get_health_service)]
 TaxonomySvc = Annotated[TaxonomyService, Depends(get_taxonomy_service)]
 SitemapSvc = Annotated[SitemapService, Depends(get_sitemap_service)]
 QuestionBankSvc = Annotated[QuestionBankService, Depends(get_question_bank_service)]
+AssignmentSvc = Annotated[AssignmentService, Depends(get_assignment_service)]
+GradingSvc = Annotated[GradingService, Depends(get_grading_service)]
 AuthSvc = Annotated[AuthService, Depends(get_auth_service)]
 UserSvc = Annotated[UserService, Depends(get_user_service)]
 ClientIp = Annotated[str, Depends(get_client_ip)]

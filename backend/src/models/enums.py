@@ -92,3 +92,25 @@ class AccessSource(StrEnum):
     SUBSCRIPTION = "subscription"
     MANUAL = "manual"
     PROMO = "promo"
+
+
+class SubmissionStatus(StrEnum):
+    """
+    Where one attempt at an assignment stands.
+
+    `accepted` closes the line on the course page. `needs_revision` leaves it open — the
+    status does not roll back, because it never went up.
+    """
+
+    DRAFT = "draft"
+    SUBMITTED = "submitted"
+    IN_REVIEW = "in_review"
+    ACCEPTED = "accepted"
+    NEEDS_REVISION = "needs_revision"
+
+
+class ReviewDecision(StrEnum):
+    """The two ways a review ends. Sending back for revision opens the next attempt."""
+
+    ACCEPTED = "accepted"
+    NEEDS_REVISION = "needs_revision"
