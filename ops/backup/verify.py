@@ -126,6 +126,10 @@ STUDENT_TABLES = (
     "submissions",
     "submission_reviews",
     "quiz_attempts",
+    # Who may review whose work. Empty is a legitimate state, so only its existence is
+    # checked — but a restore without this table would leave every teacher seeing nothing,
+    # and nobody would connect that to the restore.
+    "course_reviewers",
 )
 
 
