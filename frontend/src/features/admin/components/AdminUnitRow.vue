@@ -1,4 +1,5 @@
 <script setup>
+import AdminLessonUploadButton from '@/features/admin/components/AdminLessonUploadButton.vue'
 import { lessonKindLabel } from '@/features/learning/labels'
 
 const props = defineProps({
@@ -7,7 +8,15 @@ const props = defineProps({
   courseId: { type: String, default: '' },
 })
 
-const emit = defineEmits(['move', 'rename', 'remove', 'add-lesson', 'move-lesson', 'remove-lesson'])
+const emit = defineEmits([
+  'move',
+  'rename',
+  'remove',
+  'add-lesson',
+  'move-lesson',
+  'remove-lesson',
+  'material-uploaded',
+])
 
 const KIND_LABELS = { module: 'модуль', assignment: 'задание', test: 'тест' }
 </script>
@@ -99,7 +108,12 @@ const KIND_LABELS = { module: 'модуль', assignment: 'задание', test
         >
           {{ lesson.has_material ? 'материал загружен' : 'без материала' }}
         </span>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
+          <AdminLessonUploadButton
+            :course-id="props.courseId"
+            :lesson="lesson"
+            @uploaded="emit('material-uploaded')"
+          />
           <button
             class="rounded-sm border border-subtle px-3 py-2 text-2xs font-semibold text-muted disabled:opacity-50"
             :disabled="props.isBusy"

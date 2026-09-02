@@ -15,6 +15,7 @@ const emit = defineEmits([
   'move-lesson',
   'remove-unit',
   'remove-lesson',
+  'material-uploaded',
 ])
 </script>
 
@@ -40,6 +41,7 @@ const emit = defineEmits([
         :is-busy="props.isBusy"
         :unit="unit"
         @add-lesson="emit('add-lesson', unit)"
+        @material-uploaded="emit('material-uploaded')"
         @move="emit('move-unit', unit, $event)"
         @move-lesson="(lesson, direction) => emit('move-lesson', lesson, direction)"
         @remove="emit('remove-unit', unit)"

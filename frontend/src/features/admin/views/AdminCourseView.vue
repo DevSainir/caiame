@@ -199,6 +199,7 @@ watch(courseId, load, { immediate: true })
       @add-lesson="openLessonForm"
       @add-unit="openUnitForm(null, $event)"
       @edit-unit="openUnitForm"
+      @material-uploaded="load"
       @move-lesson="(lesson, direction) => step(() => moveLesson(courseId, lesson.id, direction))"
       @move-unit="(unit, direction) => step(() => moveUnit(courseId, unit.id, direction))"
       @remove-lesson="removeLesson"
