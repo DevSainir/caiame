@@ -1,19 +1,63 @@
 <script setup>
-import { onBeforeUnmount, onMounted } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 const props = defineProps({
   title: { type: String, required: true },
 })
 const emit = defineEmits(['close'])
 
-// Escape закрывает окно, потому что этого от него ждут; клик по затемнению — тоже, но
-// только по самому затемнению, иначе окно закрывается при выделении текста внутри формы.
-function onKey(event) {
-  if (event.key === 'Escape') emit('close')
+const dialog = ref(null)
+// Куда вернуть фокус: человек открыл окно с какой-то кнопки, и после закрытия он ждёт себя
+// там же, а не в начале страницы.
+let opener = null
+
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]),' +
+  ' textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
+function focusable() {
+  return [...(dialog.value?.querySelectorAll(FOCUSABLE) ?? [])]
 }
 
-onMounted(() => document.addEventListener('keydown', onKey))
-onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
+/**
+ * Клавиатура внутри окна.
+ *
+ * Escape закрывает: этого от него ждут. Tab ходит по кругу внутри окна — иначе фокус
+ * уходит за затемнение, на страницу, которой в этот момент как бы нет: человек нажимает
+ * Enter и попадает в кнопку, которой не видит.
+ */
+function onKey(event) {
+  if (event.key === 'Escape') {
+    emit('close')
+    return
+  }
+  if (event.key !== 'Tab') return
+  const items = focusable()
+  if (!items.length) return
+  const first = items[0]
+  const last = items[items.length - 1]
+  const active = document.activeElement
+  if (!event.shiftKey && (active === last || !dialog.value?.contains(active))) {
+    event.preventDefault()
+    first.focus()
+  } else if (event.shiftKey && (active === first || !dialog.value?.contains(active))) {
+    event.preventDefault()
+    last.focus()
+  }
+}
+
+onMounted(() => {
+  opener = document.activeElement
+  document.addEventListener('keydown', onKey)
+  // Первое поле, а не заголовок: окно почти всегда — форма, и человек начинает печатать.
+  const items = focusable()
+  ;(items.find((item) => item.tagName !== 'BUTTON') ?? items[0] ?? dialog.value)?.focus()
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', onKey)
+  opener?.focus?.()
+})
 </script>
 
 <template>
@@ -23,9 +67,12 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
     @click.self="emit('close')"
   >
     <div
+      ref="dialog"
       :aria-label="props.title"
-      class="w-full max-w-xl rounded-xl bg-page p-5 lg:p-8"
+      aria-modal="true"
+      class="w-full max-w-xl rounded-xl bg-page p-5 outline-none lg:p-8"
       role="dialog"
+      tabindex="-1"
     >
       <div class="flex items-start justify-between gap-4">
         <h2 class="text-xl font-bold text-ink">{{ props.title }}</h2>
