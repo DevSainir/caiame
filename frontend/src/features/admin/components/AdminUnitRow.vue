@@ -95,7 +95,12 @@ const KIND_LABELS = { module: 'модуль', assignment: 'задание', test
         <span class="rounded-xs bg-primary-50 px-2 py-1 text-2xs font-semibold text-accent">
           {{ lessonKindLabel(lesson.kind) }}
         </span>
-        <span class="min-w-0 flex-1 truncate text-sm font-medium text-ink">
+        <!-- На телефоне название занимает строку целиком: рядом со значком вида, минутами
+             и отметкой о материале оно ужимается до «1. …», и строка перестаёт говорить,
+             о какой лекции она. -->
+        <span
+          class="order-first w-full truncate text-sm font-medium text-ink lg:order-none lg:w-auto lg:min-w-0 lg:flex-1"
+        >
           {{ lesson.position }}. {{ lesson.title }}
         </span>
         <span class="text-2xs font-medium text-subtle">{{ lesson.duration_minutes }} мин</span>
