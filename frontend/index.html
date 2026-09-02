@@ -25,7 +25,18 @@
     />
     <meta property="og:url" content="https://caiame.org/" />
     <meta property="og:locale" content="ru_RU" />
+    <!-- Карточка без картинки в мессенджере выглядит как ссылка на что-то сомнительное, а
+         ссылками на курсы обмениваются именно там. Рисуется из тех же токенов и того же
+         шрифта: tools/covers/og-image.mjs. -->
+    <meta property="og:image" content="https://caiame.org/og-cover.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="ЦАИДМО — Центрально-Азиатский Институт Дополнительного Медицинского Образования"
+    />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://caiame.org/og-cover.jpg" />
 
     <!-- Manrope лежит в репозитории: внешний хост шрифтов — это ещё два рукопожатия
          DNS+TCP+TLS на критическом пути, и таблица стилей блокирует отрисовку.
