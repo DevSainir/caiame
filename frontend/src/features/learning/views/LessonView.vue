@@ -20,6 +20,10 @@ const error = ref(null)
 
 const player = ref(null)
 const tracker = createPlaybackTracker()
+// Файл может быть на месте и всё равно не открываться: браузер не берёт кодек, файл
+// повреждён при загрузке. Без этой отметки студент смотрит на чёрный прямоугольник и не
+// знает, ждать ему или уходить.
+const isBroken = ref(false)
 
 const isDone = computed(() => lesson.value?.status === 'done')
 // 402 — это не поломка, а закрытый доступ: экран для него отдельный.
@@ -28,6 +32,7 @@ const isLocked = computed(() => error.value?.status === 402)
 async function load(id) {
   isLoading.value = true
   error.value = null
+  isBroken.value = false
   try {
     lesson.value = await fetchLesson(id)
     setPageTitle(lesson.value.title)
@@ -138,7 +143,7 @@ watch(
             class="flex flex-col items-center gap-6 pt-6 lg:pt-14"
           >
             <video
-              v-if="lesson.material_url"
+              v-if="lesson.material_url && !isBroken"
               ref="player"
               class="aspect-video w-full rounded-md bg-neutral-900"
               controls
@@ -146,18 +151,25 @@ watch(
               preload="metadata"
               :src="lesson.material_url"
               @ended="onPause"
+              @error="isBroken = true"
               @loadedmetadata="onLoaded"
               @pause="onPause"
               @timeupdate="onTimeUpdate"
             ></video>
             <div
               v-else
-              class="flex aspect-video w-full items-center justify-center rounded-md bg-neutral-100"
+              class="flex aspect-video w-full items-center justify-center rounded-md bg-neutral-100 px-6"
             >
-              <p class="text-sm font-medium text-subtle">Видео пока не загружено</p>
+              <p class="text-center text-sm font-medium text-subtle">
+                {{
+                  isBroken
+                    ? 'Видео не открывается. Обновите страницу, а если не поможет — скажите об этом в учебную часть: файл лекции нужно заменить.'
+                    : 'Видео пока не загружено'
+                }}
+              </p>
             </div>
             <p v-if="isDone" class="text-sm font-semibold text-success-600">Лекция пройдена</p>
-            <p v-else class="text-center text-sm font-medium text-subtle">
+            <p v-else-if="!isBroken" class="text-center text-sm font-medium text-subtle">
               Лекция засчитается сама, когда вы досмотрите её почти до конца
             </p>
           </div>

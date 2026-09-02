@@ -1,13 +1,41 @@
 <script setup>
+import { computed } from 'vue'
 import AnchorLink from '@/core/components/AnchorLink.vue'
 import BaseContainer from '@/core/components/BaseContainer.vue'
 import IconArrowUpRight from '@/core/components/icons/IconArrowUpRight.vue'
 import heroUrl from '@/assets/images/hero-laboratory.webp'
+import { useAuthStore } from '@/core/session/store'
 
-const ACTIONS = [
-  { label: 'Войти', to: '/login', surface: 'bg-accent hover:bg-primary-600' },
-  { label: 'Изучить курсы', anchor: 'courses', surface: 'bg-success-500 hover:bg-success-600' },
-]
+const auth = useAuthStore()
+
+// Вошедшему «Войти» ведёт обратно на эту же страницу — то есть никуда. Пока сессия ещё не
+// восстановлена, показываем гостевой вариант: он верен для большинства и не мигает
+// «личным кабинетом» перед тем, кто не вошёл.
+const isSignedIn = computed(() => auth.isReady && auth.isAuthenticated)
+
+const CATALOGUE = {
+  label: 'Изучить курсы',
+  anchor: 'courses',
+  surface: 'bg-success-500 hover:bg-success-600',
+}
+const actions = computed(() => [
+  isSignedIn.value
+    ? { label: 'Личный кабинет', to: '/profile', surface: 'bg-accent hover:bg-primary-600' }
+    : { label: 'Войти', to: '/login', surface: 'bg-accent hover:bg-primary-600' },
+  CATALOGUE,
+])
+
+// Приглашение войти вошедшему не адресовано: для него та же фраза заканчивается на выборе
+// курса, а не на регистрации.
+const intro = computed(() =>
+  isSignedIn.value
+    ? 'ЦАИДМО — ваш надежный помощник в обучении и повышении квалификации. Выберите курс ' +
+      'ниже, чтобы продолжить обучение, которое поможет вам расти профессионально и ' +
+      'расширять вашу карьеру.'
+    : 'ЦАИДМО — ваш надежный помощник в обучении и повышении квалификации. ' +
+      'Зарегистрируйтесь или войдите, чтобы начать обучение, которое поможет вам расти ' +
+      'профессионально и расширять вашу карьеру.',
+)
 </script>
 
 <template>
@@ -29,16 +57,14 @@ const ACTIONS = [
           <p
             class="absolute inset-x-0 bottom-0 max-w-xl p-5 text-sm font-medium text-inverse lg:p-12 lg:text-lg"
           >
-            ЦАИДМО — ваш надежный помощник в обучении и повышении квалификации. Зарегистрируйтесь
-            или войдите, чтобы начать обучение, которое поможет вам расти профессионально и
-            расширять вашу карьеру.
+            {{ intro }}
           </p>
         </div>
 
         <div class="grid grid-cols-2 gap-2 lg:flex lg:basis-1/5 lg:flex-col lg:gap-8">
           <component
             :is="action.anchor ? AnchorLink : 'RouterLink'"
-            v-for="action in ACTIONS"
+            v-for="action in actions"
             :key="action.label"
             :anchor="action.anchor"
             :to="action.anchor ? undefined : action.to"

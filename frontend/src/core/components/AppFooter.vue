@@ -1,19 +1,28 @@
 <script setup>
+import { computed } from 'vue'
 import AnchorLink from '@/core/components/AnchorLink.vue'
 import BaseContainer from '@/core/components/BaseContainer.vue'
+import { useAuthStore } from '@/core/session/store'
+
+const auth = useAuthStore()
 
 // Только то, что действительно открывается. Ссылка на страницу, которой нет, хуже её
-// отсутствия: человек по ней уходит и возвращается ни с чем.
-const COLUMNS = [
+// отсутствия: человек по ней уходит и возвращается ни с чем. Вошедшему «Регистрация» и
+// «Войти» — ровно такие ссылки: охранник разворачивает его обратно.
+const isSignedIn = computed(() => auth.isReady && auth.isAuthenticated)
+
+const COLUMNS = computed(() => [
   [
     { label: 'Курсы', anchor: 'courses' },
     { label: 'Личный кабинет', to: '/profile' },
   ],
-  [
-    { label: 'Регистрация', to: '/register' },
-    { label: 'Войти', to: '/login' },
-  ],
-]
+  isSignedIn.value
+    ? []
+    : [
+        { label: 'Регистрация', to: '/register' },
+        { label: 'Войти', to: '/login' },
+      ],
+])
 </script>
 
 <template>
