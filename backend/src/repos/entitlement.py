@@ -39,6 +39,30 @@ class EntitlementRepo:
         )
         return row is not None
 
+    async def find_live(
+        self, *, user_id: UUID, course_id: UUID | None, at: datetime
+    ) -> Entitlement | None:
+        """
+        The live right this account already holds to exactly this course, if any.
+
+        Exactly this one: a right to the whole catalogue and a right to one course are two
+        different rights, and withdrawing one must not look like withdrawing the other.
+        """
+        entitlement: Entitlement | None = await self.session.scalar(
+            select(Entitlement)
+            .where(
+                Entitlement.user_id == user_id,
+                Entitlement.course_id.is_(None)
+                if course_id is None
+                else Entitlement.course_id == course_id,
+                Entitlement.revoked_at.is_(None),
+                Entitlement.starts_at <= at,
+                or_(Entitlement.ends_at.is_(None), Entitlement.ends_at > at),
+            )
+            .limit(1)
+        )
+        return entitlement
+
     async def live_for_user(self, *, user_id: UUID, at: datetime) -> Sequence[UUID | None]:
         """Every course this account may open now; an empty id means the whole catalogue."""
         rows = await self.session.scalars(

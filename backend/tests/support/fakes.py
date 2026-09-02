@@ -647,6 +647,23 @@ class FakeEntitlementRepo:
         """One grant by its id."""
         return next((item for item in self.entitlements if item.id == entitlement_id), None)
 
+    async def find_live(
+        self, *, user_id: UUID, course_id: UUID | None, at: datetime
+    ) -> Entitlement | None:
+        """The live right to exactly this course, if there is one."""
+        return next(
+            (
+                item
+                for item in self.entitlements
+                if item.user_id == user_id
+                and item.course_id == course_id
+                and item.revoked_at is None
+                and item.starts_at <= at
+                and (item.ends_at is None or item.ends_at > at)
+            ),
+            None,
+        )
+
     async def create(
         self,
         *,

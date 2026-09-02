@@ -159,3 +159,65 @@ async def test_a_manual_grant_records_who_gave_it_and_why() -> None:
     assert granted.granted_by_id == admin.id
     assert granted.reason == "paid by bank transfer"
     assert granted.source is AccessSource.MANUAL
+
+
+async def test_granting_the_same_course_twice_gives_one_right() -> None:
+    """
+    The button gets pressed twice — by two people, or by one who did not see the first row.
+
+    Two live rows for one course are two lines on the access screen, and withdrawing the
+    line somebody sees leaves the course open through the line they do not see.
+    """
+    repo = FakeEntitlementRepo()
+    service = BillingService(entitlement_repo=repo)
+    admin = make_user(email="admin@example.org", role=UserRole.ADMIN)
+    student = make_user()
+    course_id = uuid7()
+
+    first = await service.grant(
+        user_id=student.id, course_id=course_id, granted_by_id=admin.id, reason="paid"
+    )
+    second = await service.grant(
+        user_id=student.id, course_id=course_id, granted_by_id=admin.id, reason="paid again"
+    )
+
+    assert second.id == first.id
+    assert len(repo.entitlements) == 1
+
+
+async def test_withdrawing_a_repeated_grant_actually_closes_the_course() -> None:
+    """The whole point of the rule above, stated as the thing that used to break."""
+    repo = FakeEntitlementRepo()
+    service = BillingService(entitlement_repo=repo)
+    admin = make_user(email="admin@example.org", role=UserRole.ADMIN)
+    student = make_user()
+    course_id = uuid7()
+    await service.grant(
+        user_id=student.id, course_id=course_id, granted_by_id=admin.id, reason="paid"
+    )
+    granted = await service.grant(
+        user_id=student.id, course_id=course_id, granted_by_id=admin.id, reason="paid"
+    )
+
+    await service.revoke(granted)
+
+    assert await service.has_access(user=student, course_id=course_id) is False
+
+
+async def test_a_right_to_the_catalogue_is_not_the_same_right_as_one_course() -> None:
+    """Withdrawing one course must not look like withdrawing everything, or the reverse."""
+    repo = FakeEntitlementRepo()
+    service = BillingService(entitlement_repo=repo)
+    admin = make_user(email="admin@example.org", role=UserRole.ADMIN)
+    student = make_user()
+    course_id = uuid7()
+
+    everything = await service.grant(
+        user_id=student.id, course_id=None, granted_by_id=admin.id, reason="staff"
+    )
+    one = await service.grant(
+        user_id=student.id, course_id=course_id, granted_by_id=admin.id, reason="paid"
+    )
+
+    assert one.id != everything.id
+    assert len(repo.entitlements) == 2

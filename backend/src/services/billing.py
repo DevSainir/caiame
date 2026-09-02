@@ -39,6 +39,12 @@ class EntitlementStore(Protocol):
         """One grant by its id."""
         ...
 
+    async def find_live(
+        self, *, user_id: UUID, course_id: UUID | None, at: datetime
+    ) -> Entitlement | None:
+        """The live right to exactly this course, if the account already holds one."""
+        ...
+
     async def create(
         self,
         *,
@@ -100,7 +106,16 @@ class BillingService:
         Who granted it and why are not optional: a right with nobody's name against it
         cannot be explained later, and «who opened this course for free» is exactly the
         question that gets asked.
+
+        Granting twice gives the same right back rather than a second one. Two live rows
+        for one course look like two lines on the access screen, and withdrawing the line
+        somebody sees then leaves the course open through the row they do not.
         """
+        existing = await self.entitlement_repo.find_live(
+            user_id=user_id, course_id=course_id, at=datetime.now(UTC)
+        )
+        if existing is not None:
+            return existing
         return await self.entitlement_repo.create(
             user_id=user_id,
             course_id=course_id,
