@@ -49,16 +49,23 @@ def make_course(
     The id is set here too — the column default only fires on INSERT, and these objects
     never reach a database.
     """
+    specialization = specialization or make_specialization()
+    accreditation = accreditation if accreditation is not None else make_accreditation()
     return Course(
         id=uuid7(),
+        # Both the relation and the key it is written through: the key is filled in on
+        # flush, and these objects never reach a database — without it a course looks like
+        # one nobody assigned to a field of practice.
+        specialization_id=specialization.id,
+        accreditation_id=accreditation.id if accreditation is not None else None,
         slug=slug,
         title=title,
         summary="A short summary.",
         description="A short summary.",
         cover_url=f"/covers/{slug}.jpg",
         status=CourseStatus.PUBLISHED,
-        specialization=specialization or make_specialization(),
-        accreditation=accreditation if accreditation is not None else make_accreditation(),
+        specialization=specialization,
+        accreditation=accreditation,
         price_minor=750_000,
         currency="KGS",
         credit_hours=72,

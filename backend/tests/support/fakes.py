@@ -150,7 +150,17 @@ class FakeAdminRepo:
         return any(course.slug == slug and course.id != except_id for course in self.courses)
 
     async def add_course(self, course: Course) -> Course:
-        """Insert a course."""
+        """
+        Insert a course.
+
+        Column defaults are filled in by hand: they fire on INSERT, and these objects never
+        reach a database. Without it a freshly created course has no id and no currency,
+        which the real one always has by the time the service answers.
+        """
+        if course.id is None:
+            course.id = uuid7()
+        if course.currency is None:
+            course.currency = "KGS"
         self.courses.append(course)
         return course
 
