@@ -1,7 +1,7 @@
 # Автоматический выкат: то же самое, что выкатывающий делает руками, только по зелёному CI.
 #
-# Пока секретов нет, каждый запуск честно останавливается на первом шаге и говорит, чего
-# не хватает: workflow, который делает вид, что выкатил, хуже отсутствующего.
+# Пока секретов нет, выкат пропускается и пишет в запуск, чего не хватает. Не падает:
+# красное на каждом коммите учит не смотреть на красное. И не делает вид, что выкатил.
 #
 # Что нужно завести в Settings → Secrets and variables → Actions:
 #   DEPLOY_HOST        — адрес сервера
@@ -25,15 +25,19 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    name: Выкатить на сервер
+  # Отдельным шагом, чтобы ненастроенный выкат пропускался, а не краснел. Красный запуск на
+  # каждом коммите учит не смотреть на красное — и настоящую поломку потом не заметят.
+  ready:
+    name: Проверить, что ключи заведены
     runs-on: ubuntu-latest
     # Красный CI до сервера не доезжает; ручной запуск проверяет только себя.
     if: >-
       github.event_name == 'workflow_dispatch' ||
       github.event.workflow_run.conclusion == 'success'
+    outputs:
+      configured: ${{ steps.check.outputs.configured }}
     steps:
-      - name: Проверить, что ключи заведены
+      - id: check
         env:
           HOST: ${{ secrets.DEPLOY_HOST }}
           USER: ${{ secrets.DEPLOY_USER }}
@@ -46,11 +50,18 @@ jobs:
           [ -n "$KEY" ] || missing="$missing DEPLOY_SSH_KEY"
           [ -n "$KNOWN_HOSTS" ] || missing="$missing DEPLOY_KNOWN_HOSTS"
           if [ -n "$missing" ]; then
-            echo "Выкат не настроен: нет секретов$missing."
-            echo "Как их завести — docs/deploy.md, раздел «Автоматический выкат»."
-            exit 1
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Выкат не настроен: нет секретов$missing. Как их завести — docs/deploy.md, раздел «Автоматический выкат»."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
+  deploy:
+    name: Выкатить на сервер
+    runs-on: ubuntu-latest
+    needs: ready
+    if: needs.ready.outputs.configured == 'true'
+    steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
