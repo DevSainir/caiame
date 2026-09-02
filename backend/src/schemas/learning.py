@@ -63,6 +63,10 @@ class LessonDetailOut(BaseModel):
     description: str
     kind: LessonKind
     duration_minutes: int
+    # Whether the student closes this lecture themselves. The rule is decided here and
+    # answered to the page: a page that repeats the condition drifts away from the one the
+    # progress is counted by.
+    is_self_declared: bool
     material_url: str | None
     status: UnitStatus
     # Where the student stopped last time, so the player opens there. Zero means «from the

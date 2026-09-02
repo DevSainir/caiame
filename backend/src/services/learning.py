@@ -135,15 +135,20 @@ WATCHED_SHARE_TO_FINISH = 0.9
 MAX_REPORTED_SECONDS = 60
 
 
-def completion_is_the_students_to_declare(kind: LessonKind) -> bool:
+def completion_is_the_students_to_declare(kind: LessonKind, *, duration_seconds: int) -> bool:
     """
-    Whether pressing «finished» is what closes a lesson of this kind.
+    Whether pressing «finished» is what closes this lesson.
 
-    The rule per kind lives here and in no `if` anywhere else. A handout is closed by the
-    student saying so — nothing else can be observed about reading a file. A video is
-    closed by how much of it was actually played, so the button is not what decides.
+    The rule lives here and in no `if` anywhere else. A handout is closed by the student
+    saying so — nothing else can be observed about reading a file. A video is closed by how
+    much of it was actually played, so the button is not what decides.
+
+    Unless nobody could read its length: the duration comes from the browser that uploaded
+    the file, and a codec it cannot decode leaves a zero. Measured against zero a lecture
+    never finishes, and with it the module and the course never finish either — silently.
+    Asking the student is then the only honest way to close it.
     """
-    return kind is LessonKind.PDF
+    return kind is LessonKind.PDF or duration_seconds <= 0
 
 
 def is_watched_enough(*, watched_seconds: int, duration_seconds: int) -> bool:
@@ -258,6 +263,9 @@ class LearningService:
             description=lesson.description,
             kind=lesson.kind,
             duration_minutes=lesson.duration_minutes,
+            is_self_declared=completion_is_the_students_to_declare(
+                lesson.kind, duration_seconds=await self._duration(lesson)
+            ),
             material_url=await self._material_url(lesson),
             status=status_of(lesson.id, statuses),
             last_position_sec=progress.last_position_sec if progress else 0,

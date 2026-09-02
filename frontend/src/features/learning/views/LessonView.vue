@@ -169,6 +169,18 @@ watch(
               </p>
             </div>
             <p v-if="isDone" class="text-sm font-semibold text-success-600">Лекция пройдена</p>
+            <!-- Длительность файла прочитать удалось не всегда: тогда засчитать просмотр
+                 нечем, и лекцию закрывает сам студент. Условие спрашиваем у сервера, а не
+                 повторяем здесь: иначе оно разъедется с тем, по которому считается
+                 прогресс. -->
+            <BaseButton
+              v-else-if="lesson.is_self_declared && !isBroken"
+              :disabled="isSaving"
+              size="sm"
+              @click="markDone"
+            >
+              Пометить, как выполненное
+            </BaseButton>
             <p v-else-if="!isBroken" class="text-center text-sm font-medium text-subtle">
               Лекция засчитается сама, когда вы досмотрите её почти до конца
             </p>

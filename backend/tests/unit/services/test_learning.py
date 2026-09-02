@@ -14,7 +14,7 @@ from models.enums import CourseUnitKind, LessonKind, MediaStatus, UnitStatus
 from models.lesson import Lesson
 from models.media_file import MediaFile
 from services.billing import AccessRequiredError
-from services.learning import LearningService
+from services.learning import LearningService, completion_is_the_students_to_declare
 from services.media import MediaService
 from services.rate_limit import RateLimitService
 from tests.support.factories import make_course, make_lesson, make_unit, make_user
@@ -239,3 +239,22 @@ async def test_playback_of_a_closed_course_is_refused() -> None:
         await service.report_playback(
             lesson_id=lesson.id, viewer=make_user(), position_sec=1, delta_sec=1
         )
+
+
+def test_a_handout_is_closed_by_the_student() -> None:
+    """Nothing can be observed about reading a file; the button is the only evidence."""
+    assert completion_is_the_students_to_declare(LessonKind.PDF, duration_seconds=0) is True
+
+
+def test_a_video_of_known_length_is_closed_by_watching_it() -> None:
+    """Otherwise the button would close a lecture nobody played."""
+    assert completion_is_the_students_to_declare(LessonKind.VIDEO, duration_seconds=600) is False
+
+
+def test_a_video_nobody_could_measure_falls_back_to_the_student() -> None:
+    """
+    The length is read by the browser that uploaded the file, and an undecodable codec
+    leaves a zero. Measured against zero the lecture never finishes — and neither does the
+    module, nor the course, and nobody is told why.
+    """
+    assert completion_is_the_students_to_declare(LessonKind.VIDEO, duration_seconds=0) is True
