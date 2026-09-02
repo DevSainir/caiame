@@ -74,7 +74,9 @@ jobs:
             curl -sf http://localhost:9100/minio/health/live && break
             sleep 1
           done
-          docker run --rm --network host minio/mc:latest sh -c \
+          # Точка входа образа — сам mc, поэтому оболочка задаётся явно: иначе `sh`
+          # приезжает ему как имя команды.
+          docker run --rm --network host --entrypoint sh minio/mc:latest -c \
             "mc alias set local http://localhost:9100 caiame caiame-dev-secret \
              && mc mb --ignore-existing local/caiame-private local/caiame-public"
 
