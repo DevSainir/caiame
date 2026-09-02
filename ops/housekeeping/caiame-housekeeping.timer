@@ -1,0 +1,12 @@
+[Unit]
+Description=Еженедельная уборка за докером
+
+[Timer]
+# По понедельникам в 04:30 UTC — после ночной резервной копии, чтобы две тяжёлые операции
+# не делили диск и процессор.
+OnCalendar=Mon *-*-* 04:30:00
+Persistent=true
+RandomizedDelaySec=600
+
+[Install]
+WantedBy=timers.target

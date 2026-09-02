@@ -1,0 +1,14 @@
+[Unit]
+Description=Уборка за докером на сервере Caiame
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+# Кэш сборки растёт с каждым выкатом и сам не убирается: неделя истории здесь ничего не
+# ускоряет, потому что следующий выкат всё равно пересобирает изменившееся.
+ExecStart=/usr/bin/docker builder prune -f --filter until=168h
+# Только висячие образы. Предыдущий тег остаётся на месте: это то, на что откатываются,
+# когда новый образ оказался хуже старого.
+ExecStart=/usr/bin/docker image prune -f
+TimeoutStartSec=600
