@@ -17,6 +17,14 @@ const HINTS = { video: 'Видео в формате MP4, до 2 ГБ', pdf: 'Ф
 const input = ref(null)
 const isOver = ref(false)
 
+// Длительность читает браузер в момент загрузки. Ноль означает, что прочитать её не
+// удалось: засчитывать просмотр нечем, и лекцию закрывает сам студент. Файл при этом
+// лежит на месте и открывается — молча это оставлять нельзя, заменить его может только
+// человек.
+const isLengthUnknown = computed(
+  () => props.kind === 'video' && props.material !== null && !props.material.duration_seconds,
+)
+
 // Килобайты, мегабайты, гигабайты: одна и та же строка «1 МБ» и на файле в 40 КБ, и на
 // файле в мегабайт не даёт понять, тот ли файл загрузился.
 const sizeLabel = computed(() => {
@@ -87,6 +95,10 @@ function onDrop(event) {
           <p class="truncate text-sm font-medium text-ink">{{ props.material.original_name }}</p>
           <p class="pt-2 text-2xs font-medium text-subtle">
             {{ sizeLabel }} · загружен {{ dateLabel }}
+          </p>
+          <p v-if="isLengthUnknown" class="pt-2 text-2xs font-medium text-danger-600">
+            Длительность файла прочитать не удалось: студент закроет лекцию сам, а не просмотром.
+            Лучше заменить его на MP4.
           </p>
         </div>
         <button

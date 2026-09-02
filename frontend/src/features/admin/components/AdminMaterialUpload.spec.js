@@ -44,3 +44,29 @@ describe('загрузка материала', () => {
     expect(block.html()).toContain('width: 40%')
   })
 })
+
+describe('длительность, которую не прочитали', () => {
+  it('говорит об этом на видео', () => {
+    // Файл лежит и открывается, но засчитывать просмотр нечем. Заменить его может только
+    // человек — значит, человеку надо об этом сказать.
+    const block = mount(AdminMaterialUpload, {
+      props: { kind: 'video', material: { ...MATERIAL, duration_seconds: 0 } },
+    })
+
+    expect(block.text()).toContain('Длительность файла прочитать не удалось')
+  })
+
+  it('молчит, когда длительность известна', () => {
+    const block = mount(AdminMaterialUpload, { props: { kind: 'video', material: MATERIAL } })
+
+    expect(block.text()).not.toContain('Длительность файла')
+  })
+
+  it('молчит на файле-раздатке: у него длительности и не бывает', () => {
+    const block = mount(AdminMaterialUpload, {
+      props: { kind: 'pdf', material: { ...MATERIAL, duration_seconds: 0 } },
+    })
+
+    expect(block.text()).not.toContain('Длительность файла')
+  })
+})
