@@ -176,6 +176,7 @@ export default {
       maxWidth: {
         container: '1240px',
         card: '466px',
+        phone: '480px',
       },
       // Breakpoints stay at the Tailwind defaults: the file has exactly one
       // artboard width (1440px), so there is nothing to derive a ladder from.

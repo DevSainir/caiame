@@ -10,7 +10,7 @@ onBeforeUnmount(() => setNoIndex(false))
 
 <template>
   <section
-    class="mx-auto flex max-w-container flex-col items-center gap-6 px-4 py-24 text-center lg:px-25 lg:py-35"
+    class="mx-auto flex max-w-phone flex-col items-center gap-6 px-4 py-24 text-center lg:max-w-container lg:px-25 lg:py-35"
   >
     <h1 class="text-2xl font-bold text-ink lg:text-3xl">Такой страницы нет</h1>
     <p class="max-w-lg text-sm font-medium leading-relaxed text-muted">

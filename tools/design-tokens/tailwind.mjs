@@ -7,7 +7,9 @@ const TOKENS = resolve(ROOT, 'tokens.json')
 const OUT = resolve(ROOT, 'frontend/tailwind.config.js')
 
 // Measured on page "profile": content column and the auth card, in 1440px frames.
-const LAYOUT = { container: '1240px', gutter: '100px', card: '466px' }
+// `phone` is not measured: the file has no tablet artboard, so between 431px and the
+// desktop layout the phone column is simply centred instead of stretched edge to edge.
+const LAYOUT = { container: '1240px', gutter: '100px', card: '466px', phone: '480px' }
 // Invented in tokens.json, so it stays out of the config until a real one is picked.
 const EXCLUDED_RAMPS = ['warning']
 
@@ -148,6 +150,7 @@ ${scale('borderWidth')}
       maxWidth: {
         container: '${LAYOUT.container}',
         card: '${LAYOUT.card}',
+        phone: '${LAYOUT.phone}',
       },
       // Breakpoints stay at the Tailwind defaults: the file has exactly one
       // artboard width (1440px), so there is nothing to derive a ladder from.

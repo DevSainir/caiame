@@ -54,5 +54,8 @@ export function describeError(failure, fallback = 'Не удалось выпо�
   const status = failure?.status ?? 0
   if (status >= 500) return SERVER_TROUBLE
   if (status === 429) return describeTooManyAttempts(failure)
+  // Чтение ничего не заполняет: 422 на открытии страницы — это разбор адреса, а не форма.
+  // Для человека это значит ровно то же, что и 404: открытого им больше нет.
+  if (status === 422 && failure?.method === 'get') return BY_STATUS[404]
   return BY_CODE[failure?.code] ?? BY_STATUS[status] ?? fallback
 }

@@ -71,6 +71,10 @@ client.interceptors.response.use(
     return Promise.reject({
       status,
       code: error.response?.data?.detail ?? error.code ?? 'unknown_error',
+      // The method decides how a rejection reads to a person: nothing was filled in on a
+      // page that only reads, so "check the fields" would be talking about a form the
+      // visitor never saw.
+      method: String(request.method ?? 'get').toLowerCase(),
       original: error,
     })
   },
