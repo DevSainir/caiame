@@ -157,6 +157,21 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Сценарий загрузки материала идёт мимо приложения — из браузера прямо в хранилище.
+      # Без него он не то что упадёт: он не сможет проверить ровно то, ради чего написан.
+      - name: Хранилище
+        run: |
+          docker run -d --name storage -p 9100:9000 \
+            -e MINIO_ROOT_USER=caiame -e MINIO_ROOT_PASSWORD=caiame-dev-secret \
+            minio/minio:latest server /data
+          for _ in $(seq 30); do
+            curl -sf http://localhost:9100/minio/health/live && break
+            sleep 1
+          done
+          docker run --rm --network host --entrypoint sh minio/mc:latest -c \
+            "mc alias set local http://localhost:9100 caiame caiame-dev-secret \
+             && mc mb --ignore-existing local/caiame-private local/caiame-public"
+
       - name: Установить зависимости бэкенда
         working-directory: backend
         env:
