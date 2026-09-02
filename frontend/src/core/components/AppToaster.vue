@@ -16,9 +16,11 @@ const TONES = {
     class="pointer-events-none fixed bottom-6 right-6 z-notice flex flex-col gap-3"
     role="status"
   >
-    <!-- Живая область объявлена на контейнере, а не на самом сообщении: диктор читает то,
-         что меняется внутри уже существующей области, а появившуюся вместе с текстом он
-         может и не заметить. -->
+    <!-- Живая область одна и объявлена на контейнере, который есть на странице всегда:
+         диктор читает то, что появляется внутри уже существующей области, а область,
+         возникшую вместе с текстом, может и не заметить. На самих сообщениях роли нет
+         намеренно — вложенная область спорит с внешней, и что из них прочитают, зависит
+         от диктора. -->
     <TransitionGroup
       enter-active-class="transition"
       enter-from-class="translate-y-3 opacity-0"
@@ -30,7 +32,6 @@ const TONES = {
         :key="item.id"
         class="pointer-events-auto rounded-lg px-6 py-4 text-sm font-semibold"
         :class="TONES[item.tone] ?? TONES.success"
-        :role="item.tone === 'danger' ? 'alert' : 'status'"
       >
         {{ item.text }}
       </div>

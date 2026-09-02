@@ -16,7 +16,9 @@ describe('сообщения в углу', () => {
     expect(toaster.element.getAttribute('aria-live')).toBe('polite')
   })
 
-  it('удачу произносит спокойно, а неудачу — сразу', async () => {
+  it('область одна: у самих сообщений роли нет', async () => {
+    // Вложенная живая область спорит с внешней, и что из них прочитают — зависит от
+    // диктора. Текст сообщений при этом попадает внутрь той, что объявлена.
     const toaster = mount(AppToaster)
     const notifications = useNotificationStore()
 
@@ -24,8 +26,8 @@ describe('сообщения в углу', () => {
     notifications.notify('Не удалось загрузить файл', 'danger')
     await toaster.vm.$nextTick()
 
-    const roles = toaster.findAll('[role]').map((node) => node.attributes('role'))
-    expect(roles).toContain('status')
-    expect(roles).toContain('alert')
+    expect(toaster.findAll('[role]')).toHaveLength(1)
+    expect(toaster.text()).toContain('Материал загружен')
+    expect(toaster.text()).toContain('Не удалось загрузить файл')
   })
 })
