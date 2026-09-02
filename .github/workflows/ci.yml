@@ -62,6 +62,22 @@ jobs:
         working-directory: backend
         run: .venv/bin/mypy src scripts tests
 
+      # Хранилище поднимается шагом, а не сервисом: образ MinIO запускается командой
+      # `server /data`, а сервисам в Actions команду задать нельзя. Без него тесты подписи
+      # пропускают себя — то есть молча перестают что-либо проверять.
+      - name: Хранилище
+        run: |
+          docker run -d --name storage -p 9100:9000 \
+            -e MINIO_ROOT_USER=caiame -e MINIO_ROOT_PASSWORD=caiame-dev-secret \
+            minio/minio:latest server /data
+          for _ in $(seq 30); do
+            curl -sf http://localhost:9100/minio/health/live && break
+            sleep 1
+          done
+          docker run --rm --network host minio/mc:latest sh -c \
+            "mc alias set local http://localhost:9100 caiame caiame-dev-secret \
+             && mc mb --ignore-existing local/caiame-private local/caiame-public"
+
       - name: Тесты всех тиров
         working-directory: backend
         run: .venv/bin/pytest -q
