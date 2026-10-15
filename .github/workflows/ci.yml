@@ -38,6 +38,12 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Строго по backend/uv.lock. Свободная установка берёт самое свежее с PyPI, то есть
+      # набор версий зависит от даты запуска: так CI покраснел сам по себе, приехав на
+      # sqlalchemy 2.1 с другой типизацией select(). `--locked` вместе с этим требует,
+      # чтобы лок отвечал pyproject.toml, — разошедшийся лок теперь виден здесь, а не
+      # через полтора месяца.
+      #
       # Путь окружения задаётся явно: setup-uv выставляет VIRTUAL_ENV в корень
       # репозитория, и без этого зависимости уезжают мимо backend/.venv, куда
       # смотрят все следующие шаги.
@@ -45,9 +51,7 @@ jobs:
         working-directory: backend
         env:
           VIRTUAL_ENV: ${{ github.workspace }}/backend/.venv
-        run: |
-          uv venv --python 3.12 "$VIRTUAL_ENV"
-          uv pip install -e . --group dev
+        run: uv sync --locked --python 3.12
 
       - name: ruff
         working-directory: backend
@@ -88,7 +92,7 @@ jobs:
       # --skip-editable пропускает наш собственный пакет: на PyPI его нет и не будет.
       - name: Аудит зависимостей
         working-directory: backend
-        run: uv run --with pip-audit pip-audit --skip-editable
+        run: uv run --locked --with pip-audit pip-audit --skip-editable
 
   frontend:
     name: Фронтенд
@@ -172,13 +176,12 @@ jobs:
             "mc alias set local http://localhost:9100 caiame caiame-dev-secret \
              && mc mb --ignore-existing local/caiame-private local/caiame-public"
 
+      # Тот же лок, что и в бэкенд-джобе: см. комментарий там.
       - name: Установить зависимости бэкенда
         working-directory: backend
         env:
           VIRTUAL_ENV: ${{ github.workspace }}/backend/.venv
-        run: |
-          uv venv --python 3.12 "$VIRTUAL_ENV"
-          uv pip install -e . --group dev
+        run: uv sync --locked --python 3.12
 
       # База со всем каталогом и демо-аккаунтами: сценарии ходят теми же аккаунтами,
       # что и человек на своей машине.
