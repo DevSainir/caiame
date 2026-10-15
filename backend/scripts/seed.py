@@ -110,11 +110,13 @@ async def seed_courses(
         slug = str(item["slug"])
         existing = await session.scalar(select(Course).where(Course.slug == slug))
         if existing is not None:
-            # The cover is refreshed even on a course that is already there: it is the one
-            # field that gets replaced after the fact — a photograph swapped for another, or
-            # for a generated card — and a seeder that only ever inserts leaves the old file
-            # on the live site with nothing to say why.
+            # The cover and the price are refreshed even on a course that is already there:
+            # they are the fields that get replaced after the fact — a photograph swapped for
+            # another, or for a generated card; a price the academy reconsiders — and a seeder
+            # that only ever inserts leaves the old ones on the live site with nothing to say
+            # why.
             existing.cover_url = str(item["cover"])
+            existing.price_minor = int(item["price_minor"])
             result[slug] = existing
             continue
         course = Course(
