@@ -32,8 +32,12 @@ services:
 
   # Object storage for lecture material, so an upload can be exercised end to end without
   # an account anywhere. Production points the same settings at R2.
+  #
+  # The image comes from cgr.dev: minio/minio and minio/mc were removed from Docker Hub and
+  # quay.io refuses anonymous pulls, so both of the usual addresses answer with an access
+  # denial. Only `latest` is published there — versioned tags at that source are paid.
   storage:
-    image: minio/minio:latest
+    image: cgr.dev/chainguard/minio:latest
     command: ["server", "/data", "--console-address", ":9101"]
     environment:
       MINIO_ROOT_USER: caiame
@@ -55,8 +59,11 @@ services:
 
   # Creates the two buckets and opens the public one for reading, then exits. A bucket that
   # has to be made by hand is a bucket that is missing on somebody's machine.
+  #
+  # The server image is reused rather than a separate client one: it ships `mc` and a shell,
+  # which the published client image does not, and that is one image to pull instead of two.
   storage-init:
-    image: minio/mc:latest
+    image: cgr.dev/chainguard/minio:latest
     depends_on:
       storage:
         condition: service_healthy

@@ -69,20 +69,26 @@ jobs:
       # Хранилище поднимается шагом, а не сервисом: образ MinIO запускается командой
       # `server /data`, а сервисам в Actions команду задать нельзя. Без него тесты подписи
       # пропускают себя — то есть молча перестают что-либо проверять.
+      #
+      # Образ берётся с cgr.dev: minio/minio и minio/mc удалены с Docker Hub, а на quay.io
+      # анонимная выкачка закрыта — оба адреса отвечают отказом доступа. Тег только
+      # `latest`: версионные теги у этого источника платные.
       - name: Хранилище
         run: |
           docker run -d --name storage -p 9100:9000 \
             -e MINIO_ROOT_USER=caiame -e MINIO_ROOT_PASSWORD=caiame-dev-secret \
-            minio/minio:latest server /data
+            cgr.dev/chainguard/minio:latest server /data
           for _ in $(seq 30); do
             curl -sf http://localhost:9100/minio/health/live && break
             sleep 1
           done
-          # Точка входа образа — сам mc, поэтому оболочка задаётся явно: иначе `sh`
-          # приезжает ему как имя команды.
-          docker run --rm --network host --entrypoint sh minio/mc:latest -c \
-            "mc alias set local http://localhost:9100 caiame caiame-dev-secret \
-             && mc mb --ignore-existing local/caiame-private local/caiame-public"
+          # Корзины делает тот же образ: в нём лежит и mc, так что второй выкачивать
+          # незачем. Адрес и ключи приезжают переменной MC_HOST_<алиас> — отдельный
+          # `mc alias set` ей не нужен.
+          docker run --rm --network host \
+            -e MC_HOST_local=http://caiame:caiame-dev-secret@localhost:9100 \
+            --entrypoint mc cgr.dev/chainguard/minio:latest \
+            mb --ignore-existing local/caiame-private local/caiame-public
 
       - name: Тесты всех тиров
         working-directory: backend
@@ -163,18 +169,25 @@ jobs:
 
       # Сценарий загрузки материала идёт мимо приложения — из браузера прямо в хранилище.
       # Без него он не то что упадёт: он не сможет проверить ровно то, ради чего написан.
+      # Про адрес образа — комментарий в бэкенд-джобе.
+      #
+      # Разрешение CORS здесь обязательно и ровно по той же причине: PUT делает страница,
+      # а не наш сервер, и без этого заголовка браузер не даст его отправить. В
+      # docker-compose.yml та же строка стоит с самого начала.
       - name: Хранилище
         run: |
           docker run -d --name storage -p 9100:9000 \
             -e MINIO_ROOT_USER=caiame -e MINIO_ROOT_PASSWORD=caiame-dev-secret \
-            minio/minio:latest server /data
+            -e MINIO_API_CORS_ALLOW_ORIGIN='*' \
+            cgr.dev/chainguard/minio:latest server /data
           for _ in $(seq 30); do
             curl -sf http://localhost:9100/minio/health/live && break
             sleep 1
           done
-          docker run --rm --network host --entrypoint sh minio/mc:latest -c \
-            "mc alias set local http://localhost:9100 caiame caiame-dev-secret \
-             && mc mb --ignore-existing local/caiame-private local/caiame-public"
+          docker run --rm --network host \
+            -e MC_HOST_local=http://caiame:caiame-dev-secret@localhost:9100 \
+            --entrypoint mc cgr.dev/chainguard/minio:latest \
+            mb --ignore-existing local/caiame-private local/caiame-public
 
       # Тот же лок, что и в бэкенд-джобе: см. комментарий там.
       - name: Установить зависимости бэкенда
